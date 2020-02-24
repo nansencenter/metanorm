@@ -9,7 +9,8 @@ if: 'type = push'
 # - DOCKER_PASS: the password of this user
 
 env:
-  - TESTING_IMAGE_NAME="${DOCKER_ORG}/metanorm_tests"
+  global:
+    - TESTING_IMAGE_NAME="${DOCKER_ORG}/metanorm_tests"
 
 install:
   - docker pull "${TESTING_IMAGE_NAME}" || true
