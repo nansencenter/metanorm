@@ -1,5 +1,7 @@
 # Metadata normalizing tool
 
+[![Build Status](https://travis-ci.org/nansencenter/metanorm.svg?branch=master)](https://travis-ci.org/nansencenter/metanorm) [![Coverage Status](https://coveralls.io/repos/github/nansencenter/metanorm/badge.svg?branch=init)](https://coveralls.io/github/nansencenter/metanorm?branch=master)
+
 The purpose of this tool is to extract a defined set of parameter from raw metadata. It is meant
 primarily for use with geo-spatial datasets, but can be extend to process any kind of data.
 
