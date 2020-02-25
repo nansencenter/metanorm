@@ -1,8 +1,10 @@
 """Tests for the default metadata normalizer"""
 
 import unittest
+import unittest.mock as mock
 from collections import OrderedDict
 
+import metanorm.errors as errors
 import metanorm.normalizers as normalizers
 
 
@@ -25,6 +27,14 @@ class GeoSpatialDefaultMetadataNormalizerTestCase(unittest.TestCase):
             OrderedDict([('iso_topic_category', 'Oceans')])
         )
 
+    def test_iso_topic_category_pti_error(self):
+        """A MetadataNormalizationError must be raised in case of pythesint error"""
+        pti_mock = mock.Mock(**{'get_iso19115_topic_category.side_effect': IndexError})
+
+        with mock.patch('metanorm.normalizers.geospatial_defaults.pti', pti_mock):
+            with self.assertRaises(errors.MetadataNormalizationError):
+                _ = self.normalizer.get_iso_topic_category({})
+
     def test_gcmd_location(self):
         """gcmd_location default value"""
         self.assertDictEqual(
@@ -37,6 +47,14 @@ class GeoSpatialDefaultMetadataNormalizerTestCase(unittest.TestCase):
                 ('Location_Subregion3', '')
             ])
         )
+
+    def test_gcmd_location_pti_error(self):
+        """A MetadataNormalizationError must be raised in case of pythesint error"""
+        pti_mock = mock.Mock(**{'get_gcmd_location.side_effect': IndexError})
+
+        with mock.patch('metanorm.normalizers.geospatial_defaults.pti', pti_mock):
+            with self.assertRaises(errors.MetadataNormalizationError):
+                _ = self.normalizer.get_gcmd_location({})
 
     def test_summary(self):
         """summary default value"""
