@@ -20,10 +20,18 @@ class ACDDMetadataNormalizerTestCase(unittest.TestCase):
         attributes = {'title': 'title_value'}
         self.assertEqual(self.normalizer.get_entry_title(attributes), 'title_value')
 
+    def test_entry_title_missing_attribute(self):
+        """Parameter method must return None if the attribute is missing"""
+        self.assertEqual(self.normalizer.get_entry_title({}), None)
+
     def test_summary(self):
         """summary from ACDDMetadataNormalizer"""
         attributes = {'summary': 'summary_value'}
         self.assertEqual(self.normalizer.get_summary(attributes), 'summary_value')
+
+    def test_summary_missing_attribute(self):
+        """Parameter method must return None if the attribute is missing"""
+        self.assertEqual(self.normalizer.get_summary({}), None)
 
     def test_time_coverage_start(self):
         """time_coverage_start from ACDDMetadataNormalizer"""
@@ -42,6 +50,10 @@ class ACDDMetadataNormalizerTestCase(unittest.TestCase):
                 {'time_coverage_start': "2020-01-01T00:00:01Z"}),
             datetime(year=2020, month=1, day=1, hour=0, minute=0, second=1, tzinfo=tzlocal()))
 
+    def test_time_coverage_start_missing_attribute(self):
+        """Parameter method must return None if the attribute is missing"""
+        self.assertEqual(self.normalizer.get_time_coverage_start({}), None)
+
     def test_time_coverage_end(self):
         """time_coverage_end from ACDDMetadataNormalizer"""
         self.assertEqual(
@@ -56,6 +68,10 @@ class ACDDMetadataNormalizerTestCase(unittest.TestCase):
         self.assertEqual(
             self.normalizer.get_time_coverage_end({'time_coverage_end': "2020-01-01T00:05:59Z"}),
             datetime(year=2020, month=1, day=1, hour=0, minute=5, second=59, tzinfo=tzlocal()))
+
+    def test_time_coverage_end_missing_attribute(self):
+        """Parameter method must return None if the attribute is missing"""
+        self.assertEqual(self.normalizer.get_time_coverage_end({}), None)
 
     def test_gcmd_platform(self):
         """gcmd_platform from ACDDMetadataNormalizer"""
@@ -103,6 +119,10 @@ class ACDDMetadataNormalizerTestCase(unittest.TestCase):
                 ('Long_Name', attributes['platform'][:250])
             ])
         )
+
+    def test_platform_missing_attribute(self):
+        """Parameter method must return None if the attribute is missing"""
+        self.assertEqual(self.normalizer.get_platform({}), None)
 
     def test_gcmd_instrument(self):
         """GCMD instrument from ACDDMetadataNormalizer"""
@@ -161,6 +181,10 @@ class ACDDMetadataNormalizerTestCase(unittest.TestCase):
             ])
         )
 
+    def test_instrument_missing_attribute(self):
+        """Parameter method must return None if the attribute is missing"""
+        self.assertEqual(self.normalizer.get_instrument({}), None)
+
     def test_min_max_lon_lat_location_geometry(self):
         """location_geometry from ACDDMetadataNormalizer"""
 
@@ -204,6 +228,10 @@ class ACDDMetadataNormalizerTestCase(unittest.TestCase):
             srid=4326)
 
         self.assertTrue(self.normalizer.get_location_geometry(attributes).equals(expected_geometry))
+
+    def test_location_geometry_missing_attribute(self):
+        """Parameter method must return None if the attribute is missing"""
+        self.assertEqual(self.normalizer.get_location_geometry({}), None)
 
     def test_gcmd_provider(self):
         """GCMD provider from ACDDMetadataNormalizer"""
@@ -269,3 +297,25 @@ class ACDDMetadataNormalizerTestCase(unittest.TestCase):
                 ('Data_Center_URL', 'http://random.url')
             ])
         )
+
+    def test_non_gcmd_provider_no_name(self):
+        """Non-GCMD provider from ACDDMetadataNormalizer, with no name provided"""
+
+        attributes = {'publisher_url': 'http://random.url'}
+
+        self.assertEqual(
+            self.normalizer.get_provider(attributes),
+            OrderedDict([
+                ('Bucket_Level0', 'Unknown'),
+                ('Bucket_Level1', 'Unknown'),
+                ('Bucket_Level2', 'Unknown'),
+                ('Bucket_Level3', 'Unknown'),
+                ('Short_Name', 'Unknown'),
+                ('Long_Name', 'Unknown'),
+                ('Data_Center_URL', 'http://random.url')
+            ])
+        )
+
+    def test_provider_missing_attribute(self):
+        """Parameter method must return None if the attribute is missing"""
+        self.assertEqual(self.normalizer.get_provider({}), None)
