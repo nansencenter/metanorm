@@ -90,13 +90,16 @@ class ACDDMetadataNormalizer(BaseMetadataNormalizer):
             if attr in raw_attributes.keys()
         ]
 
-        # Try to find a GCMD value using all possible attributes
-        provider = utils.get_gcmd_provider(name_values + url_values)
+        if name_values or url_values:
+            # Try to find a GCMD value using all possible attributes
+            provider = utils.get_gcmd_provider(name_values + url_values)
 
-        # No provider was found, we generate one from the available information
-        if not provider:
-            name = name_values[0] if name_values else None
-            url = url_values[0] if url_values else None
-            provider = utils.get_gcmd_like_provider(name, url)
+            # No provider was found, we generate one from the available information
+            if not provider:
+                name = name_values[0] if name_values else None
+                url = url_values[0] if url_values else None
+                provider = utils.get_gcmd_like_provider(name, url)
+        else:
+            provider = None
 
         return provider
