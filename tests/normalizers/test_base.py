@@ -117,9 +117,7 @@ class BaseDefaultMetadataNormalizerTestCase(unittest.TestCase):
             'test_attribute': "test_attribute_value",
         }
 
-        normalizer_one = self.TestMetadataNormalizer(parameter_names)
-        normalizer_two = self.TestDefaultMetadataNormalizer(parameter_names)
-        normalizer_one.next = normalizer_two
+        normalizer = self.TestDefaultMetadataNormalizer(parameter_names)
 
         with self.assertRaises(MetadataNormalizationError):
-            _ = normalizer_one.normalize(attributes)
+            _ = normalizer.normalize(attributes)
