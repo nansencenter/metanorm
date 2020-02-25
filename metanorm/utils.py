@@ -29,9 +29,9 @@ def get_gcmd_like_provider(name=None, url=None):
     if not name:
         short_name = long_name = UNKNOWN
     else:
-        if len(name) < 50:
+        if len(name) <= 50:
             short_name = long_name = name
-        elif len(name) > 50:
+        else:
             short_name = name[:50]
             long_name = name if len(name) < 250 else name[:250]
     provider = OrderedDict([
