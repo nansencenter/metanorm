@@ -29,7 +29,3 @@ class GeospatialMetadataHandlerTestCase(unittest.TestCase):
         handler = handlers.GeospatialMetadataHandler(['test_parameter'])
         _ = handler.get_parameters({})
         mock_normalize.assert_called()
-
-
-if __name__ == '__main__':
-    unittest.main()

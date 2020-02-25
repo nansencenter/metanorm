@@ -200,7 +200,3 @@ class ACDDMetadataNormalizerTestCase(unittest.TestCase):
                 ('Data_Center_URL', 'http://random.url')
             ])
         )
-
-
-if __name__ == '__main__':
-    unittest.main()

@@ -123,7 +123,3 @@ class BaseDefaultMetadataNormalizerTestCase(unittest.TestCase):
 
         with self.assertRaises(MetadataNormalizationError):
             _ = normalizer_one.normalize(attributes)
-
-
-if __name__ == '__main__':
-    unittest.main()

@@ -41,7 +41,3 @@ class GeoSpatialDefaultMetadataNormalizerTestCase(unittest.TestCase):
     def test_summary(self):
         """summary default value"""
         self.assertEqual(self.normalizer.get_summary({}), 'Unknown')
-
-
-if __name__ == '__main__':
-    unittest.main()

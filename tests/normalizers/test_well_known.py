@@ -50,7 +50,3 @@ class GeoSpatialWellKnownMetadataNormalizerTestCase(unittest.TestCase):
         }
         normalizer = normalizers.GeoSpatialWellKnownMetadataNormalizer(['instrument'])
         self.assertDictEqual(normalizer.normalize(attributes), expected_result)
-
-
-if __name__ == '__main__':
-    unittest.main()
