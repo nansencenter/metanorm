@@ -5,6 +5,7 @@ from collections import OrderedDict
 
 from django.contrib.gis.geos.geometry import GEOSGeometry
 
+import metanorm.errors as errors
 import metanorm.normalizers as normalizers
 
 
@@ -35,6 +36,12 @@ class GeoSpatialWellKnownMetadataNormalizerTestCase(unittest.TestCase):
         self.assertTrue('location_geometry' in normalized_params)
         self.assertTrue(normalized_params['location_geometry'].equals(expected_geometry))
 
+    def test_missing_location_attribute(self):
+        """If the location attributes are not all present, an exception must be raised"""
+        normalizer = normalizers.GeoSpatialWellKnownMetadataNormalizer(['location_geometry'])
+        with self.assertRaises(errors.MetadataNormalizationError):
+            _ = normalizer.normalize({})
+
     def test_instrument(self):
         """instrument from GeoSpatialWellKnownMetadataNormalizer"""
         attributes = {'sensor': "VIIRS"}
@@ -50,3 +57,9 @@ class GeoSpatialWellKnownMetadataNormalizerTestCase(unittest.TestCase):
         }
         normalizer = normalizers.GeoSpatialWellKnownMetadataNormalizer(['instrument'])
         self.assertDictEqual(normalizer.normalize(attributes), expected_result)
+
+    def test_missing_instrument_attribute(self):
+        """If the 'sensor' attribute is not present, an exception must be raised"""
+        normalizer = normalizers.GeoSpatialWellKnownMetadataNormalizer(['instrument'])
+        with self.assertRaises(errors.MetadataNormalizationError):
+            _ = normalizer.normalize({})
