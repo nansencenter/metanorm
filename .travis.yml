@@ -1,5 +1,6 @@
 ---
-language: shell
+language: python
+python: '3.7'
 services: docker
 if: 'type = push'
 
@@ -7,6 +8,7 @@ if: 'type = push'
 # - DOCKER_ORG: the docker hub organization (or user) to which the image will be pushed
 # - DOCKER_USER: the docker hub user used to log in to the docker hub
 # - DOCKER_PASS: the password of this user
+# - GITHUB_API_TOKEN: Github API key for the nerscci user
 
 env:
   global:
@@ -35,4 +37,18 @@ script:
 after_success:
   - docker login -u "${DOCKER_USER}" -p "${DOCKER_PASS}"
   - docker push "${TESTING_IMAGE_NAME}"
+
+# If the build is triggered by a tag and an API token is defined for the branch
+# (in the travis repository settings), a package is built and added to the release
+before_deploy:
+  - docker run --rm -v "$(pwd):/src" "${TESTING_IMAGE_NAME}" python setup.py sdist bdist_wheel
+deploy:
+  on:
+    tags: true
+    condition: -n "${GITHUB_API_TOKEN}"
+  provider: releases
+  api_key: "${GITHUB_API_TOKEN}"
+  file: 'dist/*'
+  file_glob: true
+  skip_cleanup: true
 ...
