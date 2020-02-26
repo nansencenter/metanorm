@@ -10,6 +10,8 @@ import metanorm.utils as utils
 from .base import BaseMetadataNormalizer
 
 LOGGER = logging.getLogger(__name__)
+LOGGER.addHandler(logging.NullHandler())
+
 
 class ACDDMetadataNormalizer(BaseMetadataNormalizer):
     """Generate the properties of a GeoSPaaS Dataset using ACDD attributes"""
