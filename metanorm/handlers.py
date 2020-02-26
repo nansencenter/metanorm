@@ -1,6 +1,11 @@
 """
 Handler class for normalizers. It is possible to create a custom handler which uses a custom list
 of normalizers: just inherit from MetadataHandler and override the NORMALIZERS class attribute.
+
+This is roughly an implementation of the "chain of responsibility" design pattern:
+    - each MetadataNormalizer interprets keywords from a given convention
+    - the MetadataHandler instantiates a chain of normalizers through which the attributes of a
+      dataset can be processed
 """
 import logging
 
