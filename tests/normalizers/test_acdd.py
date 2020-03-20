@@ -3,7 +3,7 @@ import unittest
 from collections import OrderedDict
 from datetime import datetime
 
-from dateutil.tz import tzlocal
+from dateutil.tz import tzutc
 from django.contrib.gis.geos.geometry import GEOSGeometry
 
 import metanorm.normalizers as normalizers
@@ -40,7 +40,7 @@ class ACDDMetadataNormalizerTestCase(unittest.TestCase):
             datetime(year=2020, month=1, day=1, hour=0, minute=0, second=1))
         self.assertEqual(
             self.normalizer.get_time_coverage_start({'time_coverage_start': "20200101T000001Z"}),
-            datetime(year=2020, month=1, day=1, hour=0, minute=0, second=1, tzinfo=tzlocal()))
+            datetime(year=2020, month=1, day=1, hour=0, minute=0, second=1, tzinfo=tzutc()))
         self.assertEqual(
             self.normalizer.get_time_coverage_start(
                 {'time_coverage_start': "2020-01-01T00:00:01"}),
@@ -48,7 +48,7 @@ class ACDDMetadataNormalizerTestCase(unittest.TestCase):
         self.assertEqual(
             self.normalizer.get_time_coverage_start(
                 {'time_coverage_start': "2020-01-01T00:00:01Z"}),
-            datetime(year=2020, month=1, day=1, hour=0, minute=0, second=1, tzinfo=tzlocal()))
+            datetime(year=2020, month=1, day=1, hour=0, minute=0, second=1, tzinfo=tzutc()))
 
     def test_time_coverage_start_missing_attribute(self):
         """Parameter method must return None if the attribute is missing"""
@@ -61,13 +61,13 @@ class ACDDMetadataNormalizerTestCase(unittest.TestCase):
             datetime(year=2020, month=1, day=1, hour=0, minute=5, second=59))
         self.assertEqual(
             self.normalizer.get_time_coverage_end({'time_coverage_end': "20200101T000559Z"}),
-            datetime(year=2020, month=1, day=1, hour=0, minute=5, second=59, tzinfo=tzlocal()))
+            datetime(year=2020, month=1, day=1, hour=0, minute=5, second=59, tzinfo=tzutc()))
         self.assertEqual(
             self.normalizer.get_time_coverage_end({'time_coverage_end': "2020-01-01T00:05:59"}),
             datetime(year=2020, month=1, day=1, hour=0, minute=5, second=59))
         self.assertEqual(
             self.normalizer.get_time_coverage_end({'time_coverage_end': "2020-01-01T00:05:59Z"}),
-            datetime(year=2020, month=1, day=1, hour=0, minute=5, second=59, tzinfo=tzlocal()))
+            datetime(year=2020, month=1, day=1, hour=0, minute=5, second=59, tzinfo=tzutc()))
 
     def test_time_coverage_end_missing_attribute(self):
         """Parameter method must return None if the attribute is missing"""
