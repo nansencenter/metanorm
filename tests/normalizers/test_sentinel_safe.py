@@ -219,9 +219,9 @@ class SentinelSAFEMetadataNormalizerTestCase(unittest.TestCase):
         """Parameter method must return None if the attribute is missing"""
         self.assertEqual(self.normalizer.get_location_geometry({}), None)
 
-    def test_gcmd_provider(self):
+    def test_gcmd_provider_from_url(self):
         """GCMD provider from SentinelSAFEMetadataNormalizer"""
-        attributes = {'Operator': 'European Space Agency'}
+        attributes = {'url': 'https://scihub.copernicus.eu'}
 
         self.assertEqual(
             self.normalizer.get_provider(attributes),
@@ -234,46 +234,10 @@ class SentinelSAFEMetadataNormalizerTestCase(unittest.TestCase):
                          ('Data_Center_URL', 'http://www.esa.int/esaEO/')])
         )
 
-    def test_non_gcmd_provider(self):
-        """Non-GCMD provider from SentinelSAFEMetadataNormalizer"""
-        attributes = {'Operator': 'TEST'}
-
-        self.assertEqual(
-            self.normalizer.get_provider(attributes),
-            OrderedDict([
-                ('Bucket_Level0', 'Unknown'),
-                ('Bucket_Level1', 'Unknown'),
-                ('Bucket_Level2', 'Unknown'),
-                ('Bucket_Level3', 'Unknown'),
-                ('Short_Name', 'TEST'),
-                ('Long_Name', 'TEST'),
-                ('Data_Center_URL', 'Unknown')
-            ])
-        )
-
-    def test_non_gcmd_provider_long_name(self):
-        """Non-GCMD provider from SentinelSAFEMetadataNormalizer, with a name longer than 250 characters"""
-
-        attributes = {
-            'Operator':
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod ' +
-                'tempor incididunt ut labore et dolore magna aliqua. Bibendum neque egest' +
-                'as congue quisque egestas diam in. Eget magna fermentum iaculis eu non d' +
-                'iam phasellus vestibulum lorvgem. Tempor commodo.'
-        }
-
-        self.assertEqual(
-            self.normalizer.get_provider(attributes),
-            OrderedDict([
-                ('Bucket_Level0', 'Unknown'),
-                ('Bucket_Level1', 'Unknown'),
-                ('Bucket_Level2', 'Unknown'),
-                ('Bucket_Level3', 'Unknown'),
-                ('Short_Name', attributes['Operator'][:50]),
-                ('Long_Name', attributes['Operator'][:250]),
-                ('Data_Center_URL', 'Unknown')
-            ])
-        )
+    def test_provider_is_none_for_non_scihub_url(self):
+        """No provider must be returned if the URL is not one from Copernicus scihub"""
+        attributes = {'url': 'https://random.url'}
+        self.assertIs(self.normalizer.get_provider(attributes), None)
 
     def test_provider_missing_attribute(self):
         """Parameter method must return None if the attribute is missing"""

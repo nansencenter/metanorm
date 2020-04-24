@@ -80,18 +80,8 @@ class SentinelSAFEMetadataNormalizer(BaseMetadataNormalizer):
 
     def get_provider(self, raw_attributes):
         """Returns a GCMD-like provider data structure"""
-        if set(['Operator']).issubset(raw_attributes.keys()):
-            if 'European Space Agency' in raw_attributes['Operator']:
-                provider_name = 'ESA/EO'
-            else:
-                provider_name = raw_attributes['Operator']
-
-            # Try to find a GCMD provider
-            provider = utils.get_gcmd_provider([provider_name])
-            # No provider was found, we generate one from the available information
-            if not provider:
-                provider = utils.get_gcmd_like_provider(provider_name)
-        else:
-            provider = None
-
+        provider = None
+        if set(['url']).issubset(raw_attributes.keys()):
+            if 'scihub.copernicus.eu' in raw_attributes['url']:
+                provider = utils.get_gcmd_provider(['ESA/EO'])
         return provider
