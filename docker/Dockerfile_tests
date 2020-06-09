@@ -1,7 +1,7 @@
 FROM nansencenter/nansat_base:1.2.1
 
 RUN pip install --no-cache-dir \
-    django==2.2 \
+    django==3.0 \
     setuptools \
     wheel
 
