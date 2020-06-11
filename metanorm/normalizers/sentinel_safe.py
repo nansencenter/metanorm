@@ -60,12 +60,16 @@ class SentinelSAFEMetadataNormalizer(BaseMetadataNormalizer):
     def get_instrument(self, raw_attributes):
         """Get the instrument from the attributes'"""
         if set(['Instrument']).issubset(raw_attributes.keys()):
-            # This is ugly but necessary as long as pythesint can't find SAR from 'SAR-C'
-            if raw_attributes['Instrument'].startswith('SAR-'):
-                instrument = 'SAR'
+            # This is ugly but pythesint can't find C-SAR from 'SAR-C'
+            if 'SAR-C' in raw_attributes['Instrument']:
+                instrument = 'C-SAR'
             else:
                 instrument = raw_attributes['Instrument']
-            return utils.get_gcmd_instrument(instrument)
+
+            additional_keywords = []
+            if set(['Satellite name']).issubset(raw_attributes.keys()):
+                additional_keywords.append(raw_attributes['Satellite name'])
+            return utils.get_gcmd_instrument(instrument, additional_keywords)
         else:
             return None
 

@@ -75,29 +75,27 @@ class ACDDMetadataNormalizerTestCase(unittest.TestCase):
 
     def test_gcmd_platform(self):
         """gcmd_platform from ACDDMetadataNormalizer"""
-        attributes = {'platform': 'SENTINEL-1'}
-
+        attributes = {'platform': 'SENTINEL-1A'}
         self.assertEqual(
             self.normalizer.get_platform(attributes),
             OrderedDict([
                 ('Category', 'Earth Observation Satellites'),
                 ('Series_Entity', 'SENTINEL-1'),
-                ('Short_Name', ''),
-                ('Long_Name', '')
+                ('Short_Name', 'SENTINEL-1A'),
+                ('Long_Name', 'SENTINEL-1A')
             ])
         )
 
     def test_non_gcmd_platform(self):
         """Non-GCMD platform from ACDDMetadataNormalizer"""
-        attributes = {'platform': 'TEST'}
-
+        attributes = {'platform': 'NONGCMD'}
         self.assertEqual(
             self.normalizer.get_platform(attributes),
             OrderedDict([
                 ('Category', 'Unknown'),
                 ('Series_Entity', 'Unknown'),
-                ('Short_Name', 'TEST'),
-                ('Long_Name', 'TEST')
+                ('Short_Name', 'NONGCMD'),
+                ('Long_Name', 'NONGCMD')
             ])
         )
 
@@ -256,7 +254,7 @@ class ACDDMetadataNormalizerTestCase(unittest.TestCase):
     def test_non_gcmd_provider(self):
         """Non-GCMD provider from ACDDMetadataNormalizer"""
         attributes = {
-            'publisher_name': 'TEST',
+            'publisher_name': 'NONGCMD',
             'publisher_url': 'http://random.url'
         }
 
@@ -267,8 +265,8 @@ class ACDDMetadataNormalizerTestCase(unittest.TestCase):
                 ('Bucket_Level1', 'Unknown'),
                 ('Bucket_Level2', 'Unknown'),
                 ('Bucket_Level3', 'Unknown'),
-                ('Short_Name', 'TEST'),
-                ('Long_Name', 'TEST'),
+                ('Short_Name', 'NONGCMD'),
+                ('Long_Name', 'NONGCMD'),
                 ('Data_Center_URL', 'http://random.url')
             ])
         )

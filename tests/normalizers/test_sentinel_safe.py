@@ -132,18 +132,66 @@ class SentinelSAFEMetadataNormalizerTestCase(unittest.TestCase):
         """Parameter method must return None if the attribute is missing"""
         self.assertEqual(self.normalizer.get_platform({}), None)
 
-    def test_gcmd_instrument(self):
-        """GCMD instrument from SentinelSAFEMetadataNormalizer"""
-        attributes = {'Instrument': 'SAR-C SAR'}
+    def test_gcmd_instrument_from_get(self):
+        """
+        GCMD instrument from SentinelSAFEMetadataNormalizer which is found using
+        `pythesint.get_gcmd_instrument()`
+        """
+        attributes = {'Instrument': 'MODIS'}
+        self.assertEqual(
+            self.normalizer.get_instrument(attributes),
+            OrderedDict([('Category', 'Earth Remote Sensing Instruments'),
+                         ('Class', 'Passive Remote Sensing'),
+                         ('Type', 'Spectrometers/Radiometers'),
+                         ('Subtype', 'Imaging Spectrometers/Radiometers'),
+                         ('Short_Name', 'MODIS'),
+                         ('Long_Name', 'Moderate-Resolution Imaging Spectroradiometer')])
+        )
 
+    def test_gcmd_instrument_from_search(self):
+        """
+        GCMD instrument from SentinelSAFEMetadataNormalizer which is found using
+        `pythesint.search_gcmd_instrument_list()`
+        """
+        attributes = {'Instrument': 'SRAL'}
+        self.assertEqual(
+            self.normalizer.get_instrument(attributes),
+            OrderedDict([('Category', 'Earth Remote Sensing Instruments'),
+                         ('Class', 'Active Remote Sensing'),
+                         ('Type', 'Altimeters'),
+                         ('Subtype', 'Radar Altimeters'),
+                         ('Short_Name', 'Sentinel-3 SRAL'),
+                         ('Long_Name', 'Sentinel-3 SAR Radar Altimeter')])
+        )
+
+    def test_gcmd_instrument_from_restricted_search(self):
+        """
+        GCMD instrument from SentinelSAFEMetadataNormalizer which is found using
+        `pythesint.search_gcmd_instrument_list()` and restricting the search with an
+        additional keyword
+        """
+        attributes = {'Satellite name': 'SENTINEL-2', 'Instrument': 'MSI'}
+        self.assertEqual(
+            self.normalizer.get_instrument(attributes),
+            OrderedDict([('Category', 'Earth Remote Sensing Instruments'),
+                         ('Class', 'Passive Remote Sensing'),
+                         ('Type', 'Spectrometers/Radiometers'),
+                         ('Subtype', 'Imaging Spectrometers/Radiometers'),
+                         ('Short_Name', 'Sentinel-2 MSI'),
+                         ('Long_Name', 'Sentinel-2 Multispectral Imager')])
+        )
+
+    def test_c_sar_instrument(self):
+        """Special case for C-SAR GCMD instrument from SentinelSAFEMetadataNormalizer"""
+        attributes = {'Satellite name': 'SENTINEL-1', 'Instrument': 'SAR-C SAR'}
         self.assertEqual(
             self.normalizer.get_instrument(attributes),
             OrderedDict([('Category', 'Earth Remote Sensing Instruments'),
                          ('Class', 'Active Remote Sensing'),
                          ('Type', 'Imaging Radars'),
                          ('Subtype', ''),
-                         ('Short_Name', 'SAR'),
-                         ('Long_Name', 'Synthetic Aperture Radar')])
+                         ('Short_Name', 'SENTINEL-1 C-SAR'),
+                         ('Long_Name', '')])
         )
 
     def test_non_gcmd_instrument(self):
