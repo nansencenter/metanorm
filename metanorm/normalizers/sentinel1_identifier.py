@@ -67,16 +67,14 @@ class SentinelOneIdentifierMetadataNormalizer(BaseMetadataNormalizer):
 
     def get_time_coverage_start(self, raw_attributes):
         """ returns the suitable time_coverage_start based on the filename """
-        s_time_str = self.create_attr_string(
-            'time_coverage_start', raw_attributes)
+        s_time_str = self.create_attr_string('time_coverage_start', raw_attributes)
         if s_time_str is None:
             return None
         return dateutil.parser.parse(s_time_str)
 
     def get_time_coverage_end(self, raw_attributes):
         """ returns the suitable time_coverage_end based on the filename """
-        e_time_str = self.create_attr_string(
-            'time_coverage_end', raw_attributes)
+        e_time_str = self.create_attr_string('time_coverage_end', raw_attributes)
         if e_time_str is None:
             return None
         return dateutil.parser.parse(e_time_str)

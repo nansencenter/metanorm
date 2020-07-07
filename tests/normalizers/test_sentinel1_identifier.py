@@ -13,13 +13,14 @@ class SentinelOneIdentifierMetadataNormalizerTestCase(unittest.TestCase):
     """
 
     def setUp(self):
-        DATASET_PARAMETER_NAMES = ["entry_id",
-                                   "platform",
-                                   "instrument",
-                                   "time_coverage_start",
-                                   "time_coverage_end",
-                                   "provider"
-                                   ]
+        DATASET_PARAMETER_NAMES = [
+            "entry_id",
+            "platform",
+            "instrument",
+            "time_coverage_start",
+            "time_coverage_end",
+            "provider"
+        ]
         self.normalizer = normalizers.sentinel1_identifier.SentinelOneIdentifierMetadataNormalizer(
             DATASET_PARAMETER_NAMES)
 
