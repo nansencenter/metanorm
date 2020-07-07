@@ -19,8 +19,8 @@ class SentinelIdentifierMetadataNormalizer(BaseMetadataNormalizer):
     def format_checker(self, raw_attributes):
         """ For more information, please check the format of filename to be correct as declared in
         "https://sentinel.esa.int/web/sentinel/user-guides/sentinel-1-sar/naming-conventions" """
-        for i in [3, 6, 11, 16, 32, 48]:
-            assert raw_attributes['entry_id'][i] == '_'
+        import re
+        re.match('S1\D_\D{2}_\D{4}_\d\D{3}_\d{8}T\d{6}_\d{8}T\d{6}', filename)
 
     def string_cutter(self, raw_attributes, part):
         """ Cuts the filename string based on incoming part """
