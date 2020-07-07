@@ -15,6 +15,7 @@ LOGGER.addHandler(logging.NullHandler())
 
 class SentinelOneIdentifierMetadataNormalizer(BaseMetadataNormalizer):
     """ Normalizer for extraction of information from the filename """
+    metadata_name = 'Identifier'
     MATCHER = re.compile('_'.join([
         r'^(?P<platform>S1[AB])',
         r'(?P<mode>[A-Z]{2})',
@@ -38,21 +39,18 @@ class SentinelOneIdentifierMetadataNormalizer(BaseMetadataNormalizer):
 
     def get_entry_id(self, raw_attributes):
         """ returns the whole raw attribute as the indentifier """
-        instrument_str = self.create_attr_string('platform', raw_attributes)
-        if instrument_str is None:
-            return None
-        return raw_attributes['Identifier']
+        if self.check_format(raw_attributes[self.metadata_name]):
+            return raw_attributes['Identifier']
 
     def create_attr_string(self, attr_str, raw_attributes):
-        """in the case of existance of 'metadata_name' in row data, it will check the format of it
-        and cut the desired part of the string from the raw attribute of 'metadata_name' """
-        metadata_name = 'Identifier'
-        if not set([metadata_name]).issubset(raw_attributes.keys()):
+        """in the case of existance of 'self.metadata_name' in row data, it will check the format of it
+        and cut the desired part of the string from the raw attribute of 'self.metadata_name' """
+        if not set([self.metadata_name]).issubset(raw_attributes.keys()):
             return None
-        match_result = self.check_format(raw_attributes[metadata_name])
+        match_result = self.check_format(raw_attributes[self.metadata_name])
         if match_result is None:
             return None
-        return self.cut_string(raw_attributes[metadata_name], attr_str).upper()
+        return self.cut_string(raw_attributes[self.metadata_name], attr_str).upper()
 
     def get_platform(self, raw_attributes):
         """ returns the suitable platform based on the filename """
@@ -64,11 +62,7 @@ class SentinelOneIdentifierMetadataNormalizer(BaseMetadataNormalizer):
 
     def get_instrument(self, raw_attributes):
         """ returns the suitable instrument based on the filename """
-        instrument_str = self.create_attr_string('platform', raw_attributes)
-        if instrument_str is None:
-            return None
-        # This if is only for safety checking
-        if instrument_str.upper()[:2] == 'S1':
+        if self.check_format(raw_attributes[self.metadata_name]):
             return utils.get_gcmd_instrument('C-SAR')
 
     def get_time_coverage_start(self, raw_attributes):
@@ -89,9 +83,5 @@ class SentinelOneIdentifierMetadataNormalizer(BaseMetadataNormalizer):
 
     def get_provider(self, raw_attributes):
         """ returns the suitable provider based on the filename """
-        instrument_str = self.create_attr_string('platform', raw_attributes)
-        if instrument_str is None:
-            return None
-        # This if is only for safety checking
-        if instrument_str.upper()[:2] == 'S1':
+        if self.check_format(raw_attributes[self.metadata_name]):
             return utils.get_gcmd_provider(['ESA/EO'])
