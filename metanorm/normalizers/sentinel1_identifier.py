@@ -44,7 +44,7 @@ class SentinelOneIdentifierMetadataNormalizer(BaseMetadataNormalizer):
         return raw_attributes['Identifier']
 
     def create_attr_string(self, attr_str, raw_attributes):
-        """in the case of existance of 'metadata_name' in row data, it will check the format of it
+        """in the case of existence of 'metadata_name' in row data, it will check the format of it
         and cut the desired part of the string from the raw attribute of 'metadata_name' """
         metadata_name = 'Identifier'
         if not set([metadata_name]).issubset(raw_attributes.keys()):
