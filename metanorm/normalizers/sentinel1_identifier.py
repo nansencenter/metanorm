@@ -37,7 +37,7 @@ class SentinelOneIdentifierMetadataNormalizer(BaseMetadataNormalizer):
         return self.MATCHER.match(raw_attributes_entry_id).groupdict()[part]
 
     def get_entry_id(self, raw_attributes):
-        """ returns the whole raw attribute as the indentifier """
+        """ returns the whole raw attribute as the identifier """
         instrument_str = self.create_attr_string('platform', raw_attributes)
         if instrument_str is None:
             return None
