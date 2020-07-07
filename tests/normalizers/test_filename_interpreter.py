@@ -1,4 +1,4 @@
-"""Tests for the default metadata normalizer"""
+"""Tests for the filename metadata normalizer"""
 import datetime
 import unittest
 from collections import OrderedDict
@@ -6,10 +6,9 @@ from collections import OrderedDict
 import metanorm.normalizers as normalizers
 
 
-class GeoSpatialDefaultMetadataNormalizerTestCase(unittest.TestCase):
+class SentinelIdentifierMetadataNormalizerTestCase(unittest.TestCase):
     """
-    Test case for the GeoSpatialDefaultMetadataNormalizer, mainly checking default values and raised
-    exceptions
+    Test case for the SentinelIdentifierMetadataNormalizerTestCase, mainly extract the data from file name
     """
 
     def setUp(self):
@@ -20,11 +19,20 @@ class GeoSpatialDefaultMetadataNormalizerTestCase(unittest.TestCase):
                                    "time_coverage_end",
                                    "provider"
                                    ]
-        self.normalizer = normalizers.filename_interpreter.SentinelFilenameInterpreterNormalizer(
+        self.normalizer = normalizers.filename_interpreter.SentinelIdentifierMetadataNormalizer(
             DATASET_PARAMETER_NAMES)
 
     def tearDown(self):
         self.normalizer = None
+
+    def test_none_identification_for_incorrect_filename(self):
+        """ Shall return the correct sentinel based on the filename """
+        result_normalization = self.normalizer.normalize(
+            {'entry_id': 'S1A_EW_GRDM_XXSDH_20150702T172954_20150702T173054_006635_008DA5_55D1'})
+        self.assertEqual(result_normalization['platform'], None)
+        self.assertEqual(result_normalization['entry_id'], None)
+        self.assertEqual(result_normalization['time_coverage_start'], None)
+        self.assertEqual(result_normalization['time_coverage_end'], None)
 
     def test_start_and_end_time_of_filename(self):
         """ Shall return the start and end time and extraction them from the filename """
@@ -47,4 +55,46 @@ class GeoSpatialDefaultMetadataNormalizerTestCase(unittest.TestCase):
                 ('Short_Name', 'SENTINEL-1A'),
                 ('Long_Name', 'SENTINEL-1A')
             ])
+        )
+
+    def test_instrument_identification(self):
+        """ Shall return the correct sentinel instrument based on the filename """
+        result_normalization = self.normalizer.normalize(
+            {'entry_id': 'S1A_EW_GRDM_1SDH_20150702T172954_20150702T173054_006635_008DA5_55D1'})
+        self.assertDictEqual(
+            result_normalization['instrument'],
+            OrderedDict([
+                ('Category', 'Earth Remote Sensing Instruments'),
+                ('Class', 'Active Remote Sensing'),
+                ('Type', 'Imaging Radars'),
+                ('Subtype', ''),
+                ('Short_Name', 'C-SAR'),
+                ('Long_Name', 'C-Band Synthetic Aperture Radar')
+            ])
+        )
+
+    def test_provider_identification(self):
+        """ Shall return the correct sentinel provider based on the filename """
+        result_normalization = self.normalizer.normalize(
+            {'entry_id': 'S1A_EW_GRDM_1SDH_20150702T172954_20150702T173054_006635_008DA5_55D1'})
+        self.assertDictEqual(
+            result_normalization['provider'],
+            OrderedDict([
+                ('Bucket_Level0', 'MULTINATIONAL ORGANIZATIONS'),
+                ('Bucket_Level1', ''),
+                ('Bucket_Level2', ''),
+                ('Bucket_Level3', ''),
+                ('Short_Name', 'ESA/EO'),
+                ('Long_Name', 'Observing the Earth, European Space Agency'),
+                ('Data_Center_URL', 'http://www.esa.int/esaEO/')
+            ])
+        )
+
+    def test_entry_id_identification(self):
+        """ Shall return the correct sentinel entry_id based on the filename """
+        result_normalization = self.normalizer.normalize(
+            {'entry_id': 'S1A_EW_GRDM_1SDH_20150702T172954_20150702T173054_006635_008DA5_55D1'})
+        self.assertEqual(
+            result_normalization['entry_id'],
+            'S1A_EW_GRDM_1SDH_20150702T172954_20150702T173054_006635_008DA5_55D1'
         )
