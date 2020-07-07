@@ -13,7 +13,7 @@ LOGGER = logging.getLogger(__name__)
 LOGGER.addHandler(logging.NullHandler())
 
 
-class SentinelFilenameInterpreterNormalizer(BaseMetadataNormalizer):
+class SentinelIdentifierMetadataNormalizer(BaseMetadataNormalizer):
     """ Normalizer for extraction of information from the filename """
 
     def format_checker(self, raw_attributes):
