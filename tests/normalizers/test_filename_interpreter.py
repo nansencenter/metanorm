@@ -6,9 +6,10 @@ from collections import OrderedDict
 import metanorm.normalizers as normalizers
 
 
-class SentinelIdentifierMetadataNormalizerTestCase(unittest.TestCase):
+class SentinelOneIdentifierMetadataNormalizerTestCase(unittest.TestCase):
     """
-    Test case for the SentinelIdentifierMetadataNormalizerTestCase, mainly extract the data from file name
+    Test case for the SentinelIdentifierMetadataNormalizerTestCase,
+    mainly extract the data from file name
     """
 
     def setUp(self):
@@ -19,16 +20,16 @@ class SentinelIdentifierMetadataNormalizerTestCase(unittest.TestCase):
                                    "time_coverage_end",
                                    "provider"
                                    ]
-        self.normalizer = normalizers.filename_interpreter.SentinelIdentifierMetadataNormalizer(
+        self.normalizer = normalizers.sentinel1_identifier.SentinelOneIdentifierMetadataNormalizer(
             DATASET_PARAMETER_NAMES)
 
     def tearDown(self):
         self.normalizer = None
 
     def test_none_identification_for_incorrect_filename(self):
-        """ Shall return the correct sentinel based on the filename """
+        """ Shall return None from the incorrect sentinel Identifier """
         result_normalization = self.normalizer.normalize(
-            {'entry_id': 'S1A_EW_GRDM_XXSDH_20150702T172954_20150702T173054_006635_008DA5_55D1'})
+            {'Identifier': 'S1A_EW_GRDM_XXSDH_20150702T172954_20150702T173054_006635_008DA5_55D1'})
         self.assertEqual(result_normalization['platform'], None)
         self.assertEqual(result_normalization['entry_id'], None)
         self.assertEqual(result_normalization['time_coverage_start'], None)
@@ -37,7 +38,7 @@ class SentinelIdentifierMetadataNormalizerTestCase(unittest.TestCase):
     def test_start_and_end_time_of_filename(self):
         """ Shall return the start and end time and extraction them from the filename """
         result_normalization = self.normalizer.normalize(
-            {'entry_id': 'S1A_EW_GRDM_1SDH_20150702T172954_20150702T173054_006635_008DA5_55D1'})
+            {'Identifier': 'S1A_EW_GRDM_1SDH_20150702T172954_20150702T173054_006635_008DA5_55D1'})
         self.assertEqual(result_normalization['time_coverage_start'], datetime.datetime(
             2015, 7, 2, 17, 29, 54))
         self.assertEqual(result_normalization['time_coverage_end'], datetime.datetime(
@@ -46,7 +47,7 @@ class SentinelIdentifierMetadataNormalizerTestCase(unittest.TestCase):
     def test_platform_identification(self):
         """ Shall return the correct sentinel based on the filename """
         result_normalization = self.normalizer.normalize(
-            {'entry_id': 'S1A_EW_GRDM_1SDH_20150702T172954_20150702T173054_006635_008DA5_55D1'})
+            {'Identifier': 'S1A_EW_GRDM_1SDH_20150702T172954_20150702T173054_006635_008DA5_55D1'})
         self.assertDictEqual(
             result_normalization['platform'],
             OrderedDict([
@@ -60,7 +61,7 @@ class SentinelIdentifierMetadataNormalizerTestCase(unittest.TestCase):
     def test_instrument_identification(self):
         """ Shall return the correct sentinel instrument based on the filename """
         result_normalization = self.normalizer.normalize(
-            {'entry_id': 'S1A_EW_GRDM_1SDH_20150702T172954_20150702T173054_006635_008DA5_55D1'})
+            {'Identifier': 'S1A_EW_GRDM_1SDH_20150702T172954_20150702T173054_006635_008DA5_55D1'})
         self.assertDictEqual(
             result_normalization['instrument'],
             OrderedDict([
@@ -76,7 +77,7 @@ class SentinelIdentifierMetadataNormalizerTestCase(unittest.TestCase):
     def test_provider_identification(self):
         """ Shall return the correct sentinel provider based on the filename """
         result_normalization = self.normalizer.normalize(
-            {'entry_id': 'S1A_EW_GRDM_1SDH_20150702T172954_20150702T173054_006635_008DA5_55D1'})
+            {'Identifier': 'S1A_EW_GRDM_1SDH_20150702T172954_20150702T173054_006635_008DA5_55D1'})
         self.assertDictEqual(
             result_normalization['provider'],
             OrderedDict([
@@ -91,9 +92,9 @@ class SentinelIdentifierMetadataNormalizerTestCase(unittest.TestCase):
         )
 
     def test_entry_id_identification(self):
-        """ Shall return the correct sentinel entry_id based on the filename """
+        """ Shall return the correct sentinel Identifier based on the filename """
         result_normalization = self.normalizer.normalize(
-            {'entry_id': 'S1A_EW_GRDM_1SDH_20150702T172954_20150702T173054_006635_008DA5_55D1'})
+            {'Identifier': 'S1A_EW_GRDM_1SDH_20150702T172954_20150702T173054_006635_008DA5_55D1'})
         self.assertEqual(
             result_normalization['entry_id'],
             'S1A_EW_GRDM_1SDH_20150702T172954_20150702T173054_006635_008DA5_55D1'
