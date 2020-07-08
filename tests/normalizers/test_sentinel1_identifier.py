@@ -100,3 +100,10 @@ class SentinelOneIdentifierMetadataNormalizerTestCase(unittest.TestCase):
             result_normalization['entry_id'],
             'S1A_EW_GRDM_1SDH_20150702T172954_20150702T173054_006635_008DA5_55D1'
         )
+
+    def test_return_none_for_incorrect_raw_attribute(self):
+        """ Shall return None based on non-recognizable raw attribute """
+        result_normalization = self.normalizer.normalize(
+            {'Iifi': 'S1A_EW_GRDM_1SDH_20150702T172954_20150702T173054_006635_008DA5_55D1'})
+        self.assertEqual(
+            result_normalization['entry_id'], None)
