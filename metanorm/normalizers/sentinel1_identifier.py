@@ -46,7 +46,7 @@ class SentinelOneIdentifierMetadataNormalizer(BaseMetadataNormalizer):
     def get_platform(self, raw_attributes):
         """ returns the suitable platform based on the filename """
         platform_map = dict(S1A='SENTINEL-1A', S1B='SENTINEL-1B')
-        platform_str = self.create_attr_string('platform', raw_attributes)
+        platform_str = self.match_identifier(raw_attributes).get('platform', None)
         if platform_str is None:
             return None
         return utils.get_gcmd_platform(platform_map[platform_str])
