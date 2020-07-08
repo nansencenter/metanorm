@@ -34,15 +34,14 @@ class SentinelOneIdentifierMetadataNormalizer(BaseMetadataNormalizer):
         if self.check_format(raw_attributes[self.metadata_name]):
             return raw_attributes['Identifier']
 
-    def create_attr_string(self, attr_str, raw_attributes):
-        """in the case of existance of 'self.metadata_name' in row data, it will check the format of it
-        and cut the desired part of the string from the raw attribute of 'self.metadata_name' """
-        if not set([self.metadata_name]).issubset(raw_attributes.keys()):
-            return None
-        match_result = self.check_format(raw_attributes[self.metadata_name])
-        if match_result is None:
-            return None
-        return self.cut_string(raw_attributes[self.metadata_name], attr_str).upper()
+    def match_identifier(self, raw_attributes):
+        """ Find Identifier in raw_attributes and match agains pattern.
+              Return all metadata from Identifier or empty dictionary """
+        if set([self.metadata_name]).issubset(raw_attributes.keys()):
+            match_result = self.MATCHER.match(raw_attributes[self.metadata_name])
+            if match_result:
+                return match_result.groupdict()
+        return {}
 
     def get_platform(self, raw_attributes):
         """ returns the suitable platform based on the filename """
