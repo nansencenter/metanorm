@@ -72,5 +72,5 @@ class SentinelOneIdentifierMetadataNormalizer(BaseMetadataNormalizer):
 
     def get_provider(self, raw_attributes):
         """ returns the suitable provider based on the filename """
-        if self.check_format(raw_attributes[self.metadata_name]):
+        if self.match_identifier(raw_attributes):
             return utils.get_gcmd_provider(['ESA/EO'])
