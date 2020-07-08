@@ -53,7 +53,7 @@ class SentinelOneIdentifierMetadataNormalizer(BaseMetadataNormalizer):
 
     def get_instrument(self, raw_attributes):
         """ returns the suitable instrument based on the filename """
-        if self.check_format(raw_attributes[self.metadata_name]):
+        if self.match_identifier(raw_attributes):
             return utils.get_gcmd_instrument('C-SAR')
 
     def get_time_coverage_start(self, raw_attributes):
