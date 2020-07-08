@@ -31,7 +31,7 @@ class SentinelOneIdentifierMetadataNormalizer(BaseMetadataNormalizer):
 
     def get_entry_id(self, raw_attributes):
         """ returns the whole raw attribute as the indentifier """
-        if self.check_format(raw_attributes[self.metadata_name]):
+        if self.match_identifier(raw_attributes):
             return raw_attributes['Identifier']
 
     def match_identifier(self, raw_attributes):
