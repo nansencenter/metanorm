@@ -28,14 +28,6 @@ class SentinelOneIdentifierMetadataNormalizer(BaseMetadataNormalizer):
         r'(?P<product_id>[A-Z0-9]{4})',
     ]))
 
-    def check_format(self, raw_attributes_entry_id):
-        """ For more information, please check the format of filename to be correct as declared in
-        "https://sentinel.esa.int/web/sentinel/user-guides/sentinel-1-sar/naming-conventions" """
-        return self.MATCHER.match(raw_attributes_entry_id)
-
-    def cut_string(self, raw_attributes_entry_id, part):
-        """ Cuts the filename string based on incoming part """
-        return self.MATCHER.match(raw_attributes_entry_id).groupdict()[part]
 
     def get_entry_id(self, raw_attributes):
         """ returns the whole raw attribute as the indentifier """
