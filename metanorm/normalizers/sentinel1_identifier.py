@@ -4,7 +4,7 @@ import logging
 import re
 
 import dateutil.parser
-
+import pythesint as pti
 import metanorm.utils as utils
 
 from .base import BaseMetadataNormalizer
@@ -74,3 +74,8 @@ class SentinelOneIdentifierMetadataNormalizer(BaseMetadataNormalizer):
         """ returns the suitable provider based on the filename """
         if self.match_identifier(raw_attributes):
             return utils.get_gcmd_provider(['ESA/EO'])
+
+    def get_geospaas_parameter(self, raw_attributes):
+        """ returns the suitable provider based on the filename """
+        if self.match_identifier(raw_attributes):
+            return [pti.get_wkv_variable('surface_backwards_scattering_coefficient_of_radar_wave')]

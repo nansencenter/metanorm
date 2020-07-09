@@ -19,7 +19,8 @@ class SentinelOneIdentifierMetadataNormalizerTestCase(unittest.TestCase):
             "instrument",
             "time_coverage_start",
             "time_coverage_end",
-            "provider"
+            "provider",
+            "geospaas_parameter"
         ]
         self.normalizer = normalizers.sentinel1_identifier.SentinelOneIdentifierMetadataNormalizer(
             DATASET_PARAMETER_NAMES)
@@ -100,6 +101,23 @@ class SentinelOneIdentifierMetadataNormalizerTestCase(unittest.TestCase):
             result_normalization['entry_id'],
             'S1A_EW_GRDM_1SDH_20150702T172954_20150702T173054_006635_008DA5_55D1'
         )
+
+    def test_parameter_identification(self):
+        """ Shall return the correct sentinel1 parameter based on the filename """
+        result_normalization = self.normalizer.normalize(
+            {'Identifier': 'S1A_EW_GRDM_1SDH_20150702T172954_20150702T173054_006635_008DA5_55D1'})
+        self.assertEqual(
+            result_normalization['geospaas_parameter'],
+            [
+                OrderedDict([
+                    ('standard_name', 'surface_backwards_scattering_coefficient_of_radar_wave'),
+                    ('long_name', 'Normalized Radar Cross Section'),
+                    ('short_name', 'sigma0'),
+                    ('units', 'm/m'),
+                    ('minmax', '0 0.1'),
+                    ('colormap', 'gray')
+                    ])
+            ])
 
     def test_return_none_for_incorrect_raw_attribute(self):
         """ Shall return None based on non-recognizable raw attribute """
