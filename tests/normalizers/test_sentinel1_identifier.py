@@ -102,7 +102,7 @@ class SentinelOneIdentifierMetadataNormalizerTestCase(unittest.TestCase):
             'S1A_EW_GRDM_1SDH_20150702T172954_20150702T173054_006635_008DA5_55D1'
         )
 
-    def test_parameter_identification(self):
+    def test_parameters_identification(self):
         """ Shall return the correct sentinel1 parameter based on the filename """
         result_normalization = self.normalizer.normalize(
             {'Identifier': 'S1A_EW_GRDM_1SDH_20150702T172954_20150702T173054_006635_008DA5_55D1'})
