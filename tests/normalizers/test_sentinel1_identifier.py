@@ -20,7 +20,7 @@ class SentinelOneIdentifierMetadataNormalizerTestCase(unittest.TestCase):
             "time_coverage_start",
             "time_coverage_end",
             "provider",
-            "geospaas_parameter"
+            "geospaas_parameters"
         ]
         self.normalizer = normalizers.sentinel1_identifier.SentinelOneIdentifierMetadataNormalizer(
             DATASET_PARAMETER_NAMES)
