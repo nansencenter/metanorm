@@ -24,7 +24,6 @@ class SentinelOneIdentifierMetadataNormalizerTestCase(unittest.TestCase):
         ]
         self.normalizer = normalizers.sentinel1_identifier.SentinelOneIdentifierMetadataNormalizer(
             DATASET_PARAMETER_NAMES)
-
     def tearDown(self):
         self.normalizer = None
 
@@ -125,3 +124,62 @@ class SentinelOneIdentifierMetadataNormalizerTestCase(unittest.TestCase):
             {'Iifi': 'S1A_EW_GRDM_1SDH_20150702T172954_20150702T173054_006635_008DA5_55D1'})
         self.assertEqual(
             result_normalization['entry_id'], None)
+
+    def test_return_proper_output_of_regex_based_on_different_raw_attribute_situation(self):
+        """ Shall return None based on situation of specific character inside the Identifier attribute """
+
+
+        result_normalization = self.normalizer.match_identifier({'Identifier': 'S1A_EW_GRDM_1SDH_20150702T172954_20150702T173054_006635_008DA5_55D1'})
+        self.assertEqual(result_normalization['type'], "GRD")
+        self.assertEqual(result_normalization['resolution'], "M")
+        self.assertEqual(result_normalization['mode'], "EW")
+        self.assertEqual(result_normalization['orbit'], "006635")
+        self.assertEqual(result_normalization['mission_id'], "008DA5")
+        self.assertEqual(result_normalization['product_id'], "55D1")
+        self.assertEqual(result_normalization['processing_level'], "1")
+        self.assertEqual(result_normalization['class'], "S")
+        self.assertEqual(result_normalization['polarization'], "DH")
+        self.assertEqual(result_normalization['time_coverage_start'], "20150702T172954")
+        self.assertEqual(result_normalization['time_coverage_end'], "20150702T173054")
+
+        result_normalization = self.normalizer.match_identifier({'Identifier': 'S1A_EW____M_1SDH_20150702T172954_20150702T173054_006635_008DA5_55D1'})
+        self.assertEqual(result_normalization['type'], "___")
+
+        result_normalization = self.normalizer.match_identifier({'Identifier': 'S1A_EW_GRD__1SDH_20150702T172954_20150702T173054_006635_008DA5_55D1'})
+        self.assertEqual(result_normalization['resolution'], "_")
+
+
+        result_normalization = self.normalizer.match_identifier({'Identifier': 'S1A____GRD__1SDH_20150702T172954_20150702T173054_006635_008DA5_55D1'})
+        self.assertEqual(result_normalization['mode'], "__")
+
+
+        result_normalization = self.normalizer.match_identifier({'Identifier': 'S1A_EW_GRDM_1SDH_20150702T172954_20150702T173054________008DA5_55D1'})
+        self.assertEqual(result_normalization['orbit'], "______")
+
+
+        result_normalization = self.normalizer.match_identifier({'Identifier': 'S1A_EW_GRDM_1SDH_20150702T172954_20150702T173054_006635________55D1'})
+        self.assertEqual(result_normalization['mission_id'], "______")
+
+
+        result_normalization = self.normalizer.match_identifier({'Identifier': 'S1A_EW_GRDM_1SDH_20150702T172954_20150702T173054_006635_008DA5_____'})
+        self.assertEqual(result_normalization['product_id'], "____")
+
+
+        result_normalization = self.normalizer.match_identifier({'Identifier': 'S1A_EW_GRDM__SDH_20150702T172954_20150702T173054_006635_008DA5_55D1'})
+        self.assertEqual(result_normalization['processing_level'], "_")
+
+
+        result_normalization = self.normalizer.match_identifier({'Identifier': 'S1A_EW_GRDM_1_DH_20150702T172954_20150702T173054_006635_008DA5_55D1'})
+        self.assertEqual(result_normalization['class'], "_")
+
+
+        result_normalization = self.normalizer.match_identifier({'Identifier': 'S1A_EW_GRDM_1S___20150702T172954_20150702T173054_006635_008DA5_55D1'})
+        self.assertEqual(result_normalization['polarization'], "__")
+
+
+        result_normalization = self.normalizer.match_identifier({'Identifier': 'S1A_EW_GRDM_1S___________________20150702T173054_006635_008DA5_55D1'})
+        self.assertEqual(result_normalization['time_coverage_start'], "_______________")
+
+
+        result_normalization = self.normalizer.match_identifier({'Identifier': 'S1A_EW_GRDM_1SDH_20150702T172954_________________006635_008DA5_55D1'})
+        self.assertEqual(result_normalization['time_coverage_end'], "_______________")

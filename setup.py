@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="metanorm",
-    version="1.0.0",
+    version="1.0.1",
     author="Adrien Perrin",
     author_email="adrien.perrin@nersc.no",
     description="Normalizing tool for Geospatial metadata",
