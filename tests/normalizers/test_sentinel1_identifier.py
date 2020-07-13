@@ -24,7 +24,6 @@ class SentinelOneIdentifierMetadataNormalizerTestCase(unittest.TestCase):
         ]
         self.normalizer = normalizers.sentinel1_identifier.SentinelOneIdentifierMetadataNormalizer(
             DATASET_PARAMETER_NAMES)
-        #MATCHER=self.normalizer.MATCHER
     def tearDown(self):
         self.normalizer = None
 
