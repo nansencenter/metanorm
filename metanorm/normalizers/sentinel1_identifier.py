@@ -18,14 +18,14 @@ class SentinelOneIdentifierMetadataNormalizer(BaseMetadataNormalizer):
     metadata_name = 'Identifier'
     MATCHER = re.compile('_'.join([
         r'^(?P<platform>S1[AB])',
-        r'(?P<mode>[A-Z]{2})',
-        r'(?P<type>[A-Z]{3})(?P<resolution>[A-Z])',
-        r'(?P<processing_level>[12])(?P<class>[SA])(?P<polarization>[A-Z]{2})',
+        r'(?P<mode>[A-Z]{2}|_{2})',
+        r'(?P<type>[A-Z]{3}|_{3})(?P<resolution>[A-Z_])',
+        r'(?P<processing_level>[12_])(?P<class>[SA_])(?P<polarization>[A-Z]{2}|_{2})',
         r'(?P<time_coverage_start>\d{8}T\d{6})',
         r'(?P<time_coverage_end>\d{8}T\d{6})',
-        r'(?P<orbit>\d{6})',
-        r'(?P<mission_id>[A-Z0-9]{6})',
-        r'(?P<product_id>[A-Z0-9]{4})',
+        r'(?P<orbit>\d{6}|_{6})',
+        r'(?P<mission_id>[A-Z0-9]{6}|_{6})',
+        r'(?P<product_id>[A-Z0-9]{4}|_{4})',
     ]))
 
 

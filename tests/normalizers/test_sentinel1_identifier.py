@@ -24,7 +24,7 @@ class SentinelOneIdentifierMetadataNormalizerTestCase(unittest.TestCase):
         ]
         self.normalizer = normalizers.sentinel1_identifier.SentinelOneIdentifierMetadataNormalizer(
             DATASET_PARAMETER_NAMES)
-
+        #MATCHER=self.normalizer.MATCHER
     def tearDown(self):
         self.normalizer = None
 
@@ -125,3 +125,15 @@ class SentinelOneIdentifierMetadataNormalizerTestCase(unittest.TestCase):
             {'Iifi': 'S1A_EW_GRDM_1SDH_20150702T172954_20150702T173054_006635_008DA5_55D1'})
         self.assertEqual(
             result_normalization['entry_id'], None)
+
+    def test_return_proper_output_of_regex_based_on_different_raw_attribute_situation(self):
+        """ Shall return None based on non-recognizable raw attribute """
+
+        result_normalization = self.normalizer.match_identifier({'Identifier': 'S1A_EW_GRD__1SDH_20150702T172954_20150702T173054_006635_008DA5_55D1'})
+        self.assertEqual(result_normalization['resolution'], "_")
+
+        result_normalization = self.normalizer.match_identifier({'Identifier': 'S1A_EW_GRDM_1SDH_20150702T172954_20150702T173054_006635_008DA5_55D1'})
+        self.assertEqual(result_normalization['resolution'], "M")
+
+        result_normalization = self.normalizer.match_identifier({'Identifier': 'S1A_EW_GRDM_1SDH_20150702T172954_20150702T173054________008DA5_55D1'})
+        self.assertEqual(result_normalization['orbit'], "______")
