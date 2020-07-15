@@ -61,7 +61,6 @@ class SentinelSAFEMetadataNormalizer(BaseMetadataNormalizer):
         """Get the instrument from the attributes'"""
         if set(['Instrument']).issubset(raw_attributes.keys()):
             # This is ugly but pythesint can't find C-SAR from 'SAR-C'
-            #There is a similar code in "setinel1_identifier" normalizer
             if 'SAR-C' in raw_attributes['Instrument']:
                 instrument = 'C-SAR'
             else:
