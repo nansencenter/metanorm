@@ -75,7 +75,7 @@ class SentinelOneIdentifierMetadataNormalizer(BaseMetadataNormalizer):
         if self.match_identifier(raw_attributes):
             return utils.get_gcmd_provider(['ESA/EO'])
 
-    def get_geospaas_parameters(self, raw_attributes):
+    def get_dataset_parameters(self, raw_attributes):
         """ return list with sigma0 parameter from wkv variable """
         if self.match_identifier(raw_attributes):
             return [pti.get_wkv_variable('surface_backwards_scattering_coefficient_of_radar_wave')]

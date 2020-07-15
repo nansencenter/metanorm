@@ -20,7 +20,7 @@ class SentinelOneIdentifierMetadataNormalizerTestCase(unittest.TestCase):
             "time_coverage_start",
             "time_coverage_end",
             "provider",
-            "geospaas_parameters"
+            "dataset_parameters"
         ]
         self.normalizer = normalizers.sentinel1_identifier.SentinelOneIdentifierMetadataNormalizer(
             DATASET_PARAMETER_NAMES)
@@ -106,7 +106,7 @@ class SentinelOneIdentifierMetadataNormalizerTestCase(unittest.TestCase):
         result_normalization = self.normalizer.normalize(
             {'Identifier': 'S1A_EW_GRDM_1SDH_20150702T172954_20150702T173054_006635_008DA5_55D1'})
         self.assertEqual(
-            result_normalization['geospaas_parameters'],
+            result_normalization['dataset_parameters'],
             [
                 OrderedDict([
                     ('standard_name', 'surface_backwards_scattering_coefficient_of_radar_wave'),
