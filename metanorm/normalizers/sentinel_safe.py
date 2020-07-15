@@ -38,14 +38,14 @@ class SentinelSAFEMetadataNormalizer(BaseMetadataNormalizer):
     def get_time_coverage_start(self, raw_attributes):
         """Get the start of time coverage from the attributes"""
         if set(['Sensing start']).issubset(raw_attributes.keys()):
-            return dateutil.parser.parse(raw_attributes['Sensing start'])
+            return dateutil.parser.parse(raw_attributes['Sensing start']).replace(microsecond=0)
         else:
             return None
 
     def get_time_coverage_end(self, raw_attributes):
         """Get the end of time coverage from the attributes"""
         if set(['Sensing stop']).issubset(raw_attributes.keys()):
-            return dateutil.parser.parse(raw_attributes['Sensing stop'])
+            return dateutil.parser.parse(raw_attributes['Sensing stop']).replace(microsecond=0)
         else:
             return None
 
@@ -61,13 +61,14 @@ class SentinelSAFEMetadataNormalizer(BaseMetadataNormalizer):
         """Get the instrument from the attributes'"""
         if set(['Instrument']).issubset(raw_attributes.keys()):
             # This is ugly but pythesint can't find C-SAR from 'SAR-C'
+            #There is a similar code in "setinel1_identifier" normalizer
             if 'SAR-C' in raw_attributes['Instrument']:
                 instrument = 'C-SAR'
             else:
                 instrument = raw_attributes['Instrument']
 
             additional_keywords = []
-            if set(['Satellite name']).issubset(raw_attributes.keys()):
+            if set(['Satellite name']).issubset(raw_attributes.keys()) and raw_attributes['Satellite name']!='':
                 additional_keywords.append(raw_attributes['Satellite name'])
             return utils.get_gcmd_instrument(instrument, additional_keywords)
         else:
