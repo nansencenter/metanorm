@@ -68,7 +68,7 @@ class SentinelSAFEMetadataNormalizer(BaseMetadataNormalizer):
                 instrument = raw_attributes['Instrument']
 
             additional_keywords = []
-            if set(['Satellite name']).issubset(raw_attributes.keys()) and raw_attributes['Satellite name']!='':
+            if set(['Satellite name']).issubset(raw_attributes.keys()) and raw_attributes['Satellite name']:
                 additional_keywords.append(raw_attributes['Satellite name'])
             return utils.get_gcmd_instrument(instrument, additional_keywords)
         else:
