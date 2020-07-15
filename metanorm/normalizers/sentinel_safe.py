@@ -38,14 +38,14 @@ class SentinelSAFEMetadataNormalizer(BaseMetadataNormalizer):
     def get_time_coverage_start(self, raw_attributes):
         """Get the start of time coverage from the attributes"""
         if set(['Sensing start']).issubset(raw_attributes.keys()):
-            return dateutil.parser.parse(raw_attributes['Sensing start'])
+            return dateutil.parser.parse(raw_attributes['Sensing start']).replace(microsecond=0)
         else:
             return None
 
     def get_time_coverage_end(self, raw_attributes):
         """Get the end of time coverage from the attributes"""
         if set(['Sensing stop']).issubset(raw_attributes.keys()):
-            return dateutil.parser.parse(raw_attributes['Sensing stop'])
+            return dateutil.parser.parse(raw_attributes['Sensing stop']).replace(microsecond=0)
         else:
             return None
 

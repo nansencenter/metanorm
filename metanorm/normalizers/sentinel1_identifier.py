@@ -6,7 +6,7 @@ import re
 import dateutil.parser
 import pythesint as pti
 import metanorm.utils as utils
-
+from dateutil.tz import tzutc
 from .base import BaseMetadataNormalizer
 
 LOGGER = logging.getLogger(__name__)
@@ -54,28 +54,28 @@ class SentinelOneIdentifierMetadataNormalizer(BaseMetadataNormalizer):
     def get_instrument(self, raw_attributes):
         """ returns the suitable instrument based on the filename """
         if self.match_identifier(raw_attributes):
-            return utils.get_gcmd_instrument('C-SAR')
+            return utils.get_gcmd_instrument('SENTINEL-1 C-SAR')
 
     def get_time_coverage_start(self, raw_attributes):
         """ returns the suitable time_coverage_start based on the filename """
         s_time_str = self.match_identifier(raw_attributes).get('time_coverage_start', None)
         if s_time_str is None:
             return None
-        return dateutil.parser.parse(s_time_str)
+        return dateutil.parser.parse(s_time_str).replace(tzinfo=tzutc())
 
     def get_time_coverage_end(self, raw_attributes):
         """ returns the suitable time_coverage_end based on the filename """
         e_time_str = self.match_identifier(raw_attributes).get('time_coverage_end', None)
         if e_time_str is None:
             return None
-        return dateutil.parser.parse(e_time_str)
+        return dateutil.parser.parse(e_time_str).replace(tzinfo=tzutc())
 
     def get_provider(self, raw_attributes):
         """ returns the suitable provider based on the filename """
         if self.match_identifier(raw_attributes):
             return utils.get_gcmd_provider(['ESA/EO'])
 
-    def get_geospaas_parameters(self, raw_attributes):
+    def get_dataset_parameters(self, raw_attributes):
         """ return list with sigma0 parameter from wkv variable """
         if self.match_identifier(raw_attributes):
             return [pti.get_wkv_variable('surface_backwards_scattering_coefficient_of_radar_wave')]

@@ -37,11 +37,10 @@ class MetadataHandler():
 
 class GeospatialMetadataHandler(MetadataHandler):
     """Geospatial metadata handler"""
-
     NORMALIZERS = [
+        normalizers.SentinelSAFEMetadataNormalizer,
         normalizers.SentinelOneIdentifierMetadataNormalizer,
         normalizers.ACDDMetadataNormalizer,
-        normalizers.SentinelSAFEMetadataNormalizer,
         normalizers.GeoSpatialWellKnownMetadataNormalizer,
         normalizers.GeoSpatialDefaultMetadataNormalizer,
     ]

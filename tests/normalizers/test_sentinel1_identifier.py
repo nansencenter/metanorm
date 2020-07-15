@@ -2,6 +2,7 @@
 import datetime
 import unittest
 from collections import OrderedDict
+from dateutil.tz import tzutc
 
 import metanorm.normalizers as normalizers
 
@@ -20,7 +21,7 @@ class SentinelOneIdentifierMetadataNormalizerTestCase(unittest.TestCase):
             "time_coverage_start",
             "time_coverage_end",
             "provider",
-            "geospaas_parameters"
+            "dataset_parameters"
         ]
         self.normalizer = normalizers.sentinel1_identifier.SentinelOneIdentifierMetadataNormalizer(
             DATASET_PARAMETER_NAMES)
@@ -41,9 +42,9 @@ class SentinelOneIdentifierMetadataNormalizerTestCase(unittest.TestCase):
         result_normalization = self.normalizer.normalize(
             {'Identifier': 'S1A_EW_GRDM_1SDH_20150702T172954_20150702T173054_006635_008DA5_55D1'})
         self.assertEqual(result_normalization['time_coverage_start'], datetime.datetime(
-            2015, 7, 2, 17, 29, 54))
+            2015, 7, 2, 17, 29, 54,tzinfo=tzutc()))
         self.assertEqual(result_normalization['time_coverage_end'], datetime.datetime(
-            2015, 7, 2, 17, 30, 54))
+            2015, 7, 2, 17, 30, 54,tzinfo=tzutc()))
 
     def test_platform_identification(self):
         """ Shall return the correct sentinel based on the filename """
@@ -70,9 +71,8 @@ class SentinelOneIdentifierMetadataNormalizerTestCase(unittest.TestCase):
                 ('Class', 'Active Remote Sensing'),
                 ('Type', 'Imaging Radars'),
                 ('Subtype', ''),
-                ('Short_Name', 'C-SAR'),
-                ('Long_Name', 'C-Band Synthetic Aperture Radar')
-            ])
+                ('Short_Name', 'SENTINEL-1 C-SAR'),
+                ('Long_Name', '')])
         )
 
     def test_provider_identification(self):
@@ -106,7 +106,7 @@ class SentinelOneIdentifierMetadataNormalizerTestCase(unittest.TestCase):
         result_normalization = self.normalizer.normalize(
             {'Identifier': 'S1A_EW_GRDM_1SDH_20150702T172954_20150702T173054_006635_008DA5_55D1'})
         self.assertEqual(
-            result_normalization['geospaas_parameters'],
+            result_normalization['dataset_parameters'],
             [
                 OrderedDict([
                     ('standard_name', 'surface_backwards_scattering_coefficient_of_radar_wave'),
