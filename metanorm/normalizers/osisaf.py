@@ -1,10 +1,10 @@
 import logging
-import re
 
 import dateutil.parser
 import pythesint as pti
+
 import metanorm.utils as utils
-from dateutil.tz import tzutc
+
 from .base import BaseMetadataNormalizer
 
 LOGGER = logging.getLogger(__name__)
@@ -16,6 +16,8 @@ class OSISAFMetadataNormalizer(BaseMetadataNormalizer):
         """ returns the suitable instrument based on the filename """
         if set(['instrument_type']).issubset(raw_attributes.keys()):
             return utils.get_gcmd_instrument(raw_attributes['instrument_type'])
+        elif set(['activity_type']).issubset(raw_attributes.keys()):
+            return utils.get_gcmd_instrument(raw_attributes['activity_type'])
         else:
             return None
 
@@ -23,20 +25,22 @@ class OSISAFMetadataNormalizer(BaseMetadataNormalizer):
         """ returns the suitable instrument based on the filename """
         if set(['platform_name']).issubset(raw_attributes.keys()):
             return utils.get_gcmd_platform(raw_attributes['platform_name'])
+        elif set(['activity_type']).issubset(raw_attributes.keys()):
+            return utils.get_gcmd_platform(raw_attributes['activity_type'])
         else:
             return None
 
     def get_time_coverage_start(self, raw_attributes):
         """ returns the suitable instrument based on the filename """
         if set(['start_date']).issubset(raw_attributes.keys()):
-            return dateutil.parser.parse(raw_attributes['start_date'].replace(' ','T'))
+            return dateutil.parser.parse(raw_attributes['start_date'].replace(' ', 'T'))
         else:
             return None
 
     def get_time_coverage_end(self, raw_attributes):
         """ returns the suitable instrument based on the filename """
         if set(['stop_date']).issubset(raw_attributes.keys()):
-            return dateutil.parser.parse(raw_attributes['stop_date'].replace(' ','T'))
+            return dateutil.parser.parse(raw_attributes['stop_date'].replace(' ', 'T'))
         else:
             return None
 
@@ -46,12 +50,56 @@ class OSISAFMetadataNormalizer(BaseMetadataNormalizer):
             return raw_attributes['abstract']
         else:
             return None
-    # TODO
-    #def get_dataset_parameters(self, raw_attributes):
-    #    """ returns the suitable instrument based on the filename """
-    #    if set(['product_name']).issubset(raw_attributes.keys()):
-    #        if raw_attributes['product_name'][:4]=='':
-#
-    #        return [pti.get_wkv_variable(raw_attributes['osi_saf_ice_type'])]
-    #    else:
-    #        return None
+    #
+
+    def get_dataset_parameters(self, raw_attributes):
+        """ returns the suitable instrument based on the filename """
+        if set(['product_name']).issubset(raw_attributes.keys()):
+            if raw_attributes['product_name'][-4:] == 'conc':
+                return [pti.get_wkv_variable('sea_ice_area_fraction'), ]
+            elif raw_attributes['product_name'][-5:] == 'drift':
+                return [pti.get_cf_standard_name('sea_ice_x_displacement'),
+                        pti.get_cf_standard_name('sea_ice_y_displacement'), ]
+            elif raw_attributes['product_name'][-4:] == 'type':
+                return [pti.get_cf_standard_name('sea_ice_classification'), ]
+
+        else:
+            return None
+
+    def get_provider(self, raw_attributes):
+        """Returns a GCMD-like provider data structure"""
+        name_values = [
+            raw_attributes[attr] for attr in (
+                'institution', 'project_name', 'PI_name', 'project', )
+            if attr in raw_attributes.keys()
+        ]
+
+        if name_values:
+            # Try to find a GCMD value using all possible attributes
+            provider = utils.get_gcmd_provider(name_values)
+
+            # No provider was found, we generate one from the available information
+            if not provider:
+                name = name_values[0] if name_values else None
+                provider = utils.get_gcmd_like_provider(name,)
+        else:
+            provider = None
+
+        return provider
+
+    def get_location_geometry(self, raw_attributes):
+        """Returns a GEOSGeometry object corresponding to the location of the dataset"""
+        if set(['northernsmost_latitude', 'southernmost_latitude',
+                'easternmost_longitude', 'westernmost_longitude']).issubset(raw_attributes.keys()):
+
+            polygon = utils.wkt_polygon_from_wgs84_limits(
+                # notice the difference between "northernSmost_latitude" and "northernmost_latitude" of default normalizer
+                raw_attributes['northernsmost_latitude'],
+                raw_attributes['southernmost_latitude'],
+                raw_attributes['easternmost_longitude'],
+                raw_attributes['westernmost_longitude']
+            )
+            return utils.geometry_from_wkt_string(polygon)
+
+        else:
+            return None
