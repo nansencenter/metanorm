@@ -11,9 +11,10 @@ LOGGER.addHandler(logging.NullHandler())
 class BaseMetadataNormalizer():
     """Base class for standard normalizers"""
 
-    def __init__(self, parameter_names):
+    def __init__(self, parameter_names, harv_param_repetitive):
         """parameter_names: iterable"""
         self._parameter_names = parameter_names
+        self._harv_param_repetitive = harv_param_repetitive
         self._next = None
 
     @property
@@ -25,35 +26,55 @@ class BaseMetadataNormalizer():
     def next(self, normalizer):
         self._next = normalizer
 
-    def normalize(self, raw_attributes, parameters=None):
+    def normalize(self, raw_attributes, harv_parameters=None, harv_param_repetitive=None):
         """
-        Loops through parameters and checks if a method is available for each parameter.
+        Loops through harv_parameters and checks if a method is available for each parameter.
         If so try it out. The 'raw_attributes' dictionary is then passed to the next normalizer, so
         that it can attempt to fill in any None value which might be left.
         """
-        if not parameters:
-            parameters = dict({(key, None) for key in self._parameter_names})
+        if not harv_parameters:
+            harv_parameters = dict({(key, None) for key in self._parameter_names})
 
-        for param in parameters.keys():
-            if parameters[param] is None:
+        if not harv_param_repetitive:
+            harv_param_repetitive = dict({(key, None) for key in self._harv_param_repetitive})
+
+        for param in harv_parameters.keys():
+            if harv_parameters[param] is None:
                 try:
                     # Maybe there is a cleaner way to implement this?
-                    parameters[param] = getattr(self, 'get_' + param)(raw_attributes)
+                    harv_parameters[param] = getattr(self, 'get_' + param)(raw_attributes)
                 except AttributeError:
                     LOGGER.debug("%s: no method available for the '%s' parameter",
                                  self.__class__.__name__, param)
 
-                if parameters[param]:
+                if harv_parameters[param]:
                     LOGGER.debug("%s: found a value for the '%s' parameter",
                                  self.__class__.__name__, param)
                 else:
                     LOGGER.debug("%s: value not found for the '%s' parameter",
                                  self.__class__.__name__, param)
 
+        for param in harv_param_repetitive.keys():
+            try:
+                if harv_param_repetitive[param]==None:
+                    harv_param_repetitive[param]=list()
+                if getattr(self, 'get_' + param)(raw_attributes)!=None:
+                    harv_param_repetitive[param].append(getattr(self, 'get_' + param)(raw_attributes)[0])
+            except AttributeError:
+                LOGGER.debug("%s: no method available for the '%s' parameter",
+                             self.__class__.__name__, param)
+            if harv_param_repetitive[param]:
+                LOGGER.debug("%s: found a value for the '%s' parameter",
+                             self.__class__.__name__, param)
+            else:
+                LOGGER.debug("%s: value not found for the '%s' parameter",
+                             self.__class__.__name__, param)
+        #adding (updating the normalized harvested parameters with the repetitive ones)
+        harv_parameters.update(harv_param_repetitive)
         if self.next is None:
-            return parameters
+            return harv_parameters
         else:
-            return self.next.normalize(raw_attributes, parameters)
+            return self.next.normalize(raw_attributes, harv_parameters, harv_param_repetitive)
 
 
 class BaseDefaultMetadataNormalizer(BaseMetadataNormalizer):
@@ -63,22 +84,22 @@ class BaseDefaultMetadataNormalizer(BaseMetadataNormalizer):
     MetadataNormalizationError. It is strongly advised to return hard coded values in those methods.
     """
 
-    def normalize(self, raw_attributes, parameters=None):
+    def normalize(self, raw_attributes, harv_parameters=None, harv_param_repetitive=None):
         """
-        Loops through parameters and checks if a method is available for that parameter.
+        Loops through harv_parameters and checks if a method is available for that parameter.
         If so use it,
         """
-        if not parameters:
-            parameters = dict({(key, None) for key in self._parameter_names})
+        if not harv_parameters:
+            harv_parameters = dict({(key, None) for key in self._parameter_names})
 
-        for param in parameters.keys():
-            if parameters[param] is None:
+        for param in harv_parameters.keys():
+            if harv_parameters[param] is None:
                 # Maybe there is a cleaner way to implement this?
                 param_method = getattr(self, 'get_' + param, None)
                 if callable(param_method):
-                    parameters[param] = param_method(raw_attributes)
+                    harv_parameters[param] = param_method(raw_attributes)
                 else:
                     raise MetadataNormalizationError(
                         f"Unable to find a value for the {param} parameter")
 
-        return parameters
+        return harv_parameters

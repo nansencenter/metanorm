@@ -20,13 +20,13 @@ class MetadataHandler():
     # THE LAST NORMALISER MUST INHERIT FROM BaseDefaultMetadataNormalizer
     NORMALIZERS = []
 
-    def __init__(self, parameter_names):
+    def __init__(self, harv_parameter_name, repetitive_names):
         """Builds a chain of normalizers for the given parameter names"""
 
-        self._chain = last_normalizer = self.NORMALIZERS[0](parameter_names)
+        self._chain = last_normalizer = self.NORMALIZERS[0](harv_parameter_name, repetitive_names)
 
         for normalizer_class in self.NORMALIZERS[1:]:
-            current_normalizer = normalizer_class(parameter_names)
+            current_normalizer = normalizer_class(harv_parameter_name, repetitive_names)
             last_normalizer.next = current_normalizer
             last_normalizer = current_normalizer
 
