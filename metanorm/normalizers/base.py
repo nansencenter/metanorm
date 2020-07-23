@@ -87,7 +87,7 @@ class BaseDefaultMetadataNormalizer(BaseMetadataNormalizer):
         If so use it,
         """
         if not output_parameter_names:
-            output_parameter_names = dict({(key, None) for key in self._parameter_names})
+            output_parameter_names = dict({(key, None) for key in self._output_parameter_names})
 
         for param in output_parameter_names.keys():
             if output_parameter_names[param] is None:

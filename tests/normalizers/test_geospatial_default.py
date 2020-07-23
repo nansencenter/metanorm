@@ -15,7 +15,7 @@ class GeoSpatialDefaultMetadataNormalizerTestCase(unittest.TestCase):
     """
 
     def setUp(self):
-        self.normalizer = normalizers.GeoSpatialDefaultMetadataNormalizer([])
+        self.normalizer = normalizers.GeoSpatialDefaultMetadataNormalizer([],[])
 
     def tearDown(self):
         self.normalizer = None

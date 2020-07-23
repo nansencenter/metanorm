@@ -13,7 +13,7 @@ class ACDDMetadataNormalizerTestCase(unittest.TestCase):
     """Tests for the ACDD attributes normalizer"""
 
     def setUp(self):
-        self.normalizer = normalizers.ACDDMetadataNormalizer([])
+        self.normalizer = normalizers.ACDDMetadataNormalizer([],[])
 
     def test_entry_title(self):
         """entry_title from ACDDMetadataNormalizer"""
