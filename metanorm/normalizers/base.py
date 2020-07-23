@@ -11,10 +11,10 @@ LOGGER.addHandler(logging.NullHandler())
 class BaseMetadataNormalizer():
     """Base class for standard normalizers"""
 
-    def __init__(self, parameter_names, harv_param_repetitive):
+    def __init__(self, output_parameter_names, output_cumulative_parameter_names):
         """parameter_names: iterable"""
-        self._parameter_names = parameter_names
-        self._harv_param_repetitive = harv_param_repetitive
+        self._output_parameter_names = output_parameter_names
+        self._output_cumulative_parameter_names = output_cumulative_parameter_names
         self._next = None
 
     @property
@@ -26,55 +26,52 @@ class BaseMetadataNormalizer():
     def next(self, normalizer):
         self._next = normalizer
 
-    def normalize(self, raw_attributes, harv_parameters=None, harv_param_repetitive=None):
+    def normalize(self, raw_attributes, output_parameter_names=None, output_cumulative_parameter_names=None):
         """
-        Loops through harv_parameters and checks if a method is available for each parameter.
+        Loops through output_parameter_names and checks if a method is available for each parameter.
         If so try it out. The 'raw_attributes' dictionary is then passed to the next normalizer, so
         that it can attempt to fill in any None value which might be left.
         """
-        if not harv_parameters:
-            harv_parameters = dict({(key, None) for key in self._parameter_names})
+        if not output_parameter_names:
+            output_parameter_names = dict({(key, None) for key in self._output_parameter_names})
 
-        if not harv_param_repetitive:
-            harv_param_repetitive = dict({(key, None) for key in self._harv_param_repetitive})
+        if not output_cumulative_parameter_names:
+            output_cumulative_parameter_names = {key: [] for key in self._output_cumulative_parameter_names}
 
-        for param in harv_parameters.keys():
-            if harv_parameters[param] is None:
+        for param in output_parameter_names.keys():
+            if output_parameter_names[param] is None:
                 try:
                     # Maybe there is a cleaner way to implement this?
-                    harv_parameters[param] = getattr(self, 'get_' + param)(raw_attributes)
+                    output_parameter_names[param] = getattr(self, 'get_' + param)(raw_attributes)
                 except AttributeError:
                     LOGGER.debug("%s: no method available for the '%s' parameter",
                                  self.__class__.__name__, param)
 
-                if harv_parameters[param]:
+                if output_parameter_names[param]:
                     LOGGER.debug("%s: found a value for the '%s' parameter",
                                  self.__class__.__name__, param)
                 else:
                     LOGGER.debug("%s: value not found for the '%s' parameter",
                                  self.__class__.__name__, param)
 
-        for param in harv_param_repetitive.keys():
+        for param in output_cumulative_parameter_names.keys():
             try:
-                if harv_param_repetitive[param]==None:
-                    harv_param_repetitive[param]=list()
-                if getattr(self, 'get_' + param)(raw_attributes)!=None:
-                    harv_param_repetitive[param].append(getattr(self, 'get_' + param)(raw_attributes)[0])
+                if getattr(self, 'get_' + param)(raw_attributes) is not None:
+                    output_cumulative_parameter_names[param].extend(getattr(self, 'get_' + param)(raw_attributes))
             except AttributeError:
                 LOGGER.debug("%s: no method available for the '%s' parameter",
                              self.__class__.__name__, param)
-            if harv_param_repetitive[param]:
+            if output_cumulative_parameter_names[param]:
                 LOGGER.debug("%s: found a value for the '%s' parameter",
                              self.__class__.__name__, param)
             else:
                 LOGGER.debug("%s: value not found for the '%s' parameter",
                              self.__class__.__name__, param)
-        #adding (updating the normalized harvested parameters with the repetitive ones)
-        harv_parameters.update(harv_param_repetitive)
+
         if self.next is None:
-            return harv_parameters
+            return output_parameter_names
         else:
-            return self.next.normalize(raw_attributes, harv_parameters, harv_param_repetitive)
+            return self.next.normalize(raw_attributes, output_parameter_names, output_cumulative_parameter_names)
 
 
 class BaseDefaultMetadataNormalizer(BaseMetadataNormalizer):
@@ -84,22 +81,23 @@ class BaseDefaultMetadataNormalizer(BaseMetadataNormalizer):
     MetadataNormalizationError. It is strongly advised to return hard coded values in those methods.
     """
 
-    def normalize(self, raw_attributes, harv_parameters=None, harv_param_repetitive=None):
+    def normalize(self, raw_attributes, output_parameter_names=None, output_cumulative_parameter_names=None):
         """
-        Loops through harv_parameters and checks if a method is available for that parameter.
+        Loops through output_parameter_names and checks if a method is available for that parameter.
         If so use it,
         """
-        if not harv_parameters:
-            harv_parameters = dict({(key, None) for key in self._parameter_names})
+        if not output_parameter_names:
+            output_parameter_names = dict({(key, None) for key in self._parameter_names})
 
-        for param in harv_parameters.keys():
-            if harv_parameters[param] is None:
+        for param in output_parameter_names.keys():
+            if output_parameter_names[param] is None:
                 # Maybe there is a cleaner way to implement this?
                 param_method = getattr(self, 'get_' + param, None)
                 if callable(param_method):
-                    harv_parameters[param] = param_method(raw_attributes)
+                    output_parameter_names[param] = param_method(raw_attributes)
                 else:
                     raise MetadataNormalizationError(
                         f"Unable to find a value for the {param} parameter")
-
-        return harv_parameters
+        #adding (updating the normalized harvested parameters with the repetitive ones)
+        output_parameter_names.update(output_cumulative_parameter_names)
+        return output_parameter_names
