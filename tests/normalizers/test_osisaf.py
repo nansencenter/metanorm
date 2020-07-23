@@ -1,12 +1,11 @@
 """Tests for the OSISAF metadata normalizer"""
 import unittest
 from collections import OrderedDict
-from datetime import datetime
-import dateutil
 
+import dateutil
 from dateutil.tz import tzutc
 from django.contrib.gis.geos.geometry import GEOSGeometry
-
+import metanorm.handlers as handlers
 import metanorm.normalizers as normalizers
 
 
@@ -14,7 +13,7 @@ class OSISAFMetadataNormalizer(unittest.TestCase):
     """Tests for the ACDD attributes normalizer"""
 
     def setUp(self):
-        self.normalizer = normalizers.OSISAFMetadataNormalizer([],[])
+        self.normalizer = normalizers.OSISAFMetadataNormalizer([], [])
 
     def test_instrument(self):
         """instrument from OSISAFMetadataNormalizer"""
@@ -49,7 +48,8 @@ class OSISAFMetadataNormalizer(unittest.TestCase):
                          dateutil.parser.parse("2020-07-14").replace(tzinfo=tzutc()))
 
     def test_dataset_parameters(self):
-        """dataset_parameters from OSISAFMetadataNormalizer. Shall return the proper value (one of "concentration", "type" or "drift")"""
+        """ dataset_parameters from OSISAFMetadataNormalizer. Shall return the proper value
+         (one of "concentration", "type" or "drift") """
         attributes = {'product_name': 'osi_saf_amsr2ice_conc'}
         self.assertEqual(self.normalizer.get_dataset_parameters(attributes)[0],
                          OrderedDict([('standard_name', 'sea_ice_area_fraction'),
@@ -69,8 +69,8 @@ class OSISAFMetadataNormalizer(unittest.TestCase):
                                       ]))
 
         attributes = {'product_name': 'osi_saf_lr_ice_drift'}
-        self.assertEqual(self.normalizer.get_dataset_parameters(attributes)[0]['standard_name'],'sea_ice_x_displacement')
-        self.assertEqual(self.normalizer.get_dataset_parameters(attributes)[1]['standard_name'],'sea_ice_y_displacement')
+        self.assertEqual(self.normalizer.get_dataset_parameters(attributes)[0]['standard_name'], 'sea_ice_x_displacement')
+        self.assertEqual(self.normalizer.get_dataset_parameters(attributes)[1]['standard_name'], 'sea_ice_y_displacement')
 
     def test_location_geometry(self):
         """location_geometry from OSISAFMetadataNormalizer"""
@@ -89,7 +89,7 @@ class OSISAFMetadataNormalizer(unittest.TestCase):
              '-175.084000 -15.3505001))'),
             srid=4326)
 
-        normalizer = normalizers.OSISAFMetadataNormalizer(['location_geometry'],[])
+        normalizer = normalizers.OSISAFMetadataNormalizer(['location_geometry'], [])
         normalized_params = normalizer.normalize(attributes)
 
         self.assertIsInstance(normalized_params, dict)

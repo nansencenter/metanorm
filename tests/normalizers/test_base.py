@@ -35,7 +35,7 @@ class BaseMetadataNormalizerTestCase(unittest.TestCase):
 
     def test_instantiation(self):
         """Test the instantiation of a MetadataNormalizer"""
-        normalizer = self.TestMetadataNormalizer(['test_parameter'],[])
+        normalizer = self.TestMetadataNormalizer(['test_parameter'], [])
         self.assertListEqual(normalizer._output_parameter_names, ['test_parameter'])
 
     def test_first_in_chain_normalization(self):
@@ -47,7 +47,7 @@ class BaseMetadataNormalizerTestCase(unittest.TestCase):
         attributes = {'test_attribute': "test_attribute_value"}
         expected_result = {'test_parameter': "test_attribute_value"}
 
-        normalizer = self.TestMetadataNormalizer(parameter_names,[])
+        normalizer = self.TestMetadataNormalizer(parameter_names, [])
 
         self.assertDictEqual(normalizer.normalize(attributes), expected_result)
 
@@ -63,8 +63,8 @@ class BaseMetadataNormalizerTestCase(unittest.TestCase):
             'other_parameter': "other_attribute_value"
         }
 
-        normalizer_one = self.TestMetadataNormalizer(parameter_names,[])
-        normalizer_two = self.OtherTestMetadataNormalizer(parameter_names,[])
+        normalizer_one = self.TestMetadataNormalizer(parameter_names, [])
+        normalizer_two = self.OtherTestMetadataNormalizer(parameter_names, [])
         normalizer_one.next = normalizer_two
 
         self.assertDictEqual(normalizer_one.normalize(attributes), expected_result)
@@ -104,8 +104,8 @@ class BaseDefaultMetadataNormalizerTestCase(unittest.TestCase):
             'test_parameter': "test_attribute_value",
         }
 
-        normalizer_one = self.TestMetadataNormalizer(parameter_names,[])
-        normalizer_two = self.TestDefaultMetadataNormalizer(parameter_names,[])
+        normalizer_one = self.TestMetadataNormalizer(parameter_names, [])
+        normalizer_two = self.TestDefaultMetadataNormalizer(parameter_names, [])
         normalizer_one.next = normalizer_two
 
         self.assertDictEqual(normalizer_one.normalize(attributes), expected_result)
@@ -117,7 +117,7 @@ class BaseDefaultMetadataNormalizerTestCase(unittest.TestCase):
             'test_attribute': "test_attribute_value",
         }
 
-        normalizer = self.TestDefaultMetadataNormalizer(output_parameter_names,[])
+        normalizer = self.TestDefaultMetadataNormalizer(output_parameter_names, [])
 
         with self.assertRaises(MetadataNormalizationError):
             _ = normalizer.normalize(attributes)

@@ -2,9 +2,9 @@ import logging
 
 import dateutil.parser
 import pythesint as pti
+from dateutil.tz import tzutc
 
 import metanorm.utils as utils
-from dateutil.tz import tzutc
 
 from .base import BaseMetadataNormalizer
 
@@ -13,13 +13,14 @@ LOGGER.addHandler(logging.NullHandler())
 
 
 class OSISAFMetadataNormalizer(BaseMetadataNormalizer):
+    """ Test class for osisaf normalizer """
     def get_instrument(self, raw_attributes):
         """ returns the suitable instrument based on the 'instrument_type' attribute (priortized one)
         and 'activity_type' attribute """
         if set(['instrument_type']).issubset(raw_attributes.keys()):
             return utils.get_gcmd_instrument(raw_attributes['instrument_type'])
         elif set(['product_name']).issubset(raw_attributes.keys()):
-            if raw_attributes['product_name'][:7]=='osi_saf':
+            if raw_attributes['product_name'][:7] == 'osi_saf':
                 return utils.UNKNOWN # make it unknown only for osisaf products only
         else:
             return None
@@ -30,7 +31,7 @@ class OSISAFMetadataNormalizer(BaseMetadataNormalizer):
         if set(['platform_name']).issubset(raw_attributes.keys()):
             return utils.get_gcmd_platform(raw_attributes['platform_name'])
         elif set(['product_name']).issubset(raw_attributes.keys()):
-            if raw_attributes['product_name'][:7]=='osi_saf':
+            if raw_attributes['product_name'][:7] == 'osi_saf':
                 return utils.UNKNOWN # make it unknown only for osisaf products only
         else:
             return None
