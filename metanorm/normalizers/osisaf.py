@@ -69,7 +69,7 @@ class OSISAFMetadataNormalizer(BaseMetadataNormalizer):
                 return [pti.get_cf_standard_name('sea_ice_classification'), ]
 
         else:
-            return None
+            return []
 
     def get_provider(self, raw_attributes):
         """Returns a GCMD-like provider from data structure"""

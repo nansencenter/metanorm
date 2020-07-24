@@ -11,10 +11,10 @@ LOGGER.addHandler(logging.NullHandler())
 class BaseMetadataNormalizer():
     """Base class for standard normalizers"""
 
-    def __init__(self, output_parameter_names, output_cumulative_parameter_names):
+    def __init__(self, output_parameters, output_cumulative_parameters):
         """parameter_names: iterable"""
-        self._output_parameter_names = output_parameter_names
-        self._output_cumulative_parameter_names = output_cumulative_parameter_names
+        self._output_parameters = output_parameters
+        self._output_cumulative_parameters = output_cumulative_parameters
         self._next = None
 
     @property
@@ -26,42 +26,45 @@ class BaseMetadataNormalizer():
     def next(self, normalizer):
         self._next = normalizer
 
-    def normalize(self, raw_attributes, output_parameter_names=None, output_cumulative_parameter_names=None):
+    def normalize(self, raw_attributes, output_parameters=None, output_cumulative_parameters=None):
         """
-        Loops through output_parameter_names and checks if a method is available for each parameter.
+        Loops through the desired output parameter names and checks if a method is available for each parameter.cumulative parameters are lists to which each normalizer adds the values it finds
+        Cumulative parameters are lists to which each normalizer adds the values it finds regardless of normalizers ordering.
+        The search for values of other parameters are stopped as soon as a value is found for it. In this way, ordering
+        of normalizers matter for them (not for cumulative ones).
+
         If so try it out. The 'raw_attributes' dictionary is then passed to the next normalizer, so
         that it can attempt to fill in any None value which might be left.
         """
-        if not output_parameter_names:
-            output_parameter_names = dict({(key, None) for key in self._output_parameter_names})
+        if not output_parameters:
+            output_parameters = {key: None for key in self._output_parameters}
 
-        if not output_cumulative_parameter_names:
-            output_cumulative_parameter_names = {key: [] for key in self._output_cumulative_parameter_names}
+        if not output_cumulative_parameters:
+            output_cumulative_parameters = {key: [] for key in self._output_cumulative_parameters}
 
-        for param in output_parameter_names.keys():
-            if output_parameter_names[param] is None:
+        for param in output_parameters.keys():
+            if output_parameters[param] is None:
                 try:
                     # Maybe there is a cleaner way to implement this?
-                    output_parameter_names[param] = getattr(self, 'get_' + param)(raw_attributes)
+                    output_parameters[param] = getattr(self, 'get_' + param)(raw_attributes)
                 except AttributeError:
                     LOGGER.debug("%s: no method available for the '%s' parameter",
                                  self.__class__.__name__, param)
 
-                if output_parameter_names[param]:
+                if output_parameters[param]:
                     LOGGER.debug("%s: found a value for the '%s' parameter",
                                  self.__class__.__name__, param)
                 else:
                     LOGGER.debug("%s: value not found for the '%s' parameter",
                                  self.__class__.__name__, param)
 
-        for param in output_cumulative_parameter_names.keys():
+        for param in output_cumulative_parameters.keys():
             try:
-                if getattr(self, 'get_' + param)(raw_attributes) is not None:
-                    output_cumulative_parameter_names[param].extend(getattr(self, 'get_' + param)(raw_attributes))
+                output_cumulative_parameters[param].extend(getattr(self, 'get_' + param)(raw_attributes))
             except AttributeError:
                 LOGGER.debug("%s: no method available for the '%s' parameter",
                              self.__class__.__name__, param)
-            if output_cumulative_parameter_names[param]:
+            if output_cumulative_parameters[param]:
                 LOGGER.debug("%s: found a value for the '%s' parameter",
                              self.__class__.__name__, param)
             else:
@@ -69,9 +72,9 @@ class BaseMetadataNormalizer():
                              self.__class__.__name__, param)
 
         if self.next is None:
-            return output_parameter_names
+            return output_parameters
         else:
-            return self.next.normalize(raw_attributes, output_parameter_names, output_cumulative_parameter_names)
+            return self.next.normalize(raw_attributes, output_parameters, output_cumulative_parameters)
 
 
 class BaseDefaultMetadataNormalizer(BaseMetadataNormalizer):
@@ -81,23 +84,23 @@ class BaseDefaultMetadataNormalizer(BaseMetadataNormalizer):
     MetadataNormalizationError. It is strongly advised to return hard coded values in those methods.
     """
 
-    def normalize(self, raw_attributes, output_parameter_names=None, output_cumulative_parameter_names=None):
+    def normalize(self, raw_attributes, output_parameters=None, output_cumulative_parameters=None):
         """
-        Loops through output_parameter_names and checks if a method is available for that parameter.
+        Loops through output_parameters and checks if a method is available for that parameter.
         If so use it,
         """
-        if not output_parameter_names:
-            output_parameter_names = dict({(key, None) for key in self._output_parameter_names})
+        if not output_parameters:
+            output_parameters = dict({(key, None) for key in self._output_parameters})
 
-        for param in output_parameter_names.keys():
-            if output_parameter_names[param] is None:
+        for param in output_parameters.keys():
+            if output_parameters[param] is None:
                 # Maybe there is a cleaner way to implement this?
                 param_method = getattr(self, 'get_' + param, None)
                 if callable(param_method):
-                    output_parameter_names[param] = param_method(raw_attributes)
+                    output_parameters[param] = param_method(raw_attributes)
                 else:
                     raise MetadataNormalizationError(
                         f"Unable to find a value for the {param} parameter")
         #adding (updating the normalized harvested parameters with the repetitive ones)
-        output_parameter_names.update(output_cumulative_parameter_names)
-        return output_parameter_names
+        output_parameters.update(output_cumulative_parameters)
+        return output_parameters
