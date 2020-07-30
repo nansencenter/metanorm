@@ -5,7 +5,6 @@ from collections import OrderedDict
 import dateutil
 from dateutil.tz import tzutc
 from django.contrib.gis.geos.geometry import GEOSGeometry
-import metanorm.handlers as handlers
 import metanorm.normalizers as normalizers
 
 
@@ -15,26 +14,48 @@ class OSISAFMetadataNormalizer(unittest.TestCase):
     def setUp(self):
         self.normalizer = normalizers.OSISAFMetadataNormalizer([], [])
 
+    def test_summary(self):
+        """summary from OSISAFMetadataNormalizer"""
+
+        attributes = {'abstract': 'value_abs'}
+        self.assertEqual('value_abs',self.normalizer.get_summary(attributes))
+
     def test_instrument(self):
         """instrument from OSISAFMetadataNormalizer"""
-        attributes = {'instrument_type': 'value_1', 'activity_type': 'value_2'}
-        # 'instrument_type' must priortized in this normalizer
+        attributes = {'instrument_type': 'value_1'}
+        # 'instrument_type' must be used in this normalizer
         self.assertEqual(self.normalizer.get_instrument(attributes)['Short_Name'], 'value_1')
 
-        attributes = {'activity_type': 'value_2'}
-        # in the absence of 'instrument_type' value should be None regardless of 'activity_type' attribute
-        self.assertIsNone(self.normalizer.get_instrument(attributes))
-
+        attributes = {'product_name':'osi_saf_2'}
+        # in the absence of 'instrument_type' value should be UNKNOWN with GCMD template
+        self.assertEqual(
+            self.normalizer.get_instrument(attributes),
+            OrderedDict([('Category', 'Unknown'),
+                         ('Class', 'Unknown'),
+                         ('Type', 'Unknown'),
+                         ('Subtype', 'Unknown'),
+                         ('Short_Name', 'UNKNOWN'),
+                         ('Long_Name', 'UNKNOWN')])
+        )
     def test_platform(self):
         """platform from OSISAFMetadataNormalizer"""
-        attributes = {'platform_name': 'value_1', 'activity_type': 'value_2'}
-        # 'instrument_type' must priortized in this normalizer
+        attributes = {'platform_name': 'value_1'}
+        # 'instrument_type' must be used in this normalizer
         self.assertEqual(self.normalizer.get_platform(attributes)['Short_Name'], 'value_1')
 
         attributes = {'activity_type': 'value_2'}
-        # in the absence of 'instrument_type' value should be None regardless of 'activity_type' attribute
+        # in the absence of 'platform_name' value should be None
         self.assertIsNone(self.normalizer.get_instrument(attributes))
 
+        attributes = {'product_name':'osi_saf_2'}
+        # in the absence of 'platform_name' value should be UNKNOWN with GCMD template
+        self.assertEqual(
+            self.normalizer.get_platform(attributes),
+            OrderedDict([('Category', 'Unknown'),
+                         ('Series_Entity', 'Unknown'),
+                         ('Short_Name', 'UNKNOWN'),
+                         ('Long_Name', 'UNKNOWN')])
+        )
     def test_time_coverage_start(self):
         """time_coverage_start from OSISAFMetadataNormalizer."""
         attributes = {'start_date': '2020-07-12 00:00:00'}
@@ -53,11 +74,11 @@ class OSISAFMetadataNormalizer(unittest.TestCase):
         attributes = {'product_name': 'osi_saf_amsr2ice_conc'}
         self.assertEqual(self.normalizer.get_dataset_parameters(attributes)[0],
                          OrderedDict([('standard_name', 'sea_ice_area_fraction'),
-                                      ('long_name', 'Sea Ice Concentration'),
-                                      ('short_name', 'ice_conc'),
-                                      ('units', '%'),
-                                      ('minmax', '0 100'),
-                                      ('colormap', 'jet')]))
+                                      ('canonical_units', '1'),
+                                      ('grib', '91'),
+                                      ('amip', 'sic'),
+                                      ('description', '"X_area_fraction" means the fraction of horizontal area occupied by X. "X_area" means the horizontal area occupied by X within the grid cell. Sea ice area fraction is area of the sea surface occupied by sea ice. It is also called "sea ice concentration".'),
+                                      ]))
 
         attributes = {'product_name': 'osi_saf_ice_type'}
         self.assertEqual(self.normalizer.get_dataset_parameters(attributes)[0],
@@ -95,3 +116,16 @@ class OSISAFMetadataNormalizer(unittest.TestCase):
         self.assertIsInstance(normalized_params, dict)
         self.assertTrue('location_geometry' in normalized_params)
         self.assertTrue(normalized_params['location_geometry'].equals(expected_geometry))
+
+    def test_provider(self):
+        """provider information from OSISAFMetadataNormalizer """
+        attributes = {'institution': 'company1'}
+        self.assertEqual(self.normalizer.get_provider(attributes),
+                        OrderedDict([('Bucket_Level0', 'Unknown'),
+                        ('Bucket_Level1', 'Unknown'),
+                        ('Bucket_Level2', 'Unknown'),
+                        ('Bucket_Level3', 'Unknown'),
+                        ('Short_Name', 'company1'),
+                        ('Long_Name', 'company1'),
+                        ('Data_Center_URL', 'Unknown'),
+                        ]))

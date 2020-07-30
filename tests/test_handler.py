@@ -10,6 +10,12 @@ import metanorm.normalizers as normalizers
 
 class GeospatialMetadataHandlerTestCase(unittest.TestCase):
     """Test the GeospatialMetadataHandler class"""
+    def test_build_normalizer_chain(self):
+        """It is mandatory to have 'GeoSpatialDefaultMetadataNormalizer' in the list of normalizers.
+        This normalizer should never be removed from the list of normalizers"""
+        handler = handlers.GeospatialMetadataHandler(['test_output_parameters'],['test_repetitive_parameter'])
+
+        self.assertTrue(normalizers.geospatial_defaults.GeoSpatialDefaultMetadataNormalizer in handler.NORMALIZERS)
 
     def test_build_normalizer_chain(self):
         """Instantiate a handler and check the normalizer chain is correctly built"""

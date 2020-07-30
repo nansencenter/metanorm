@@ -1,3 +1,6 @@
+"""
+Normalizer for OSISAF project
+"""
 import logging
 
 import dateutil.parser
@@ -13,15 +16,15 @@ LOGGER.addHandler(logging.NullHandler())
 
 
 class OSISAFMetadataNormalizer(BaseMetadataNormalizer):
-    """ Test class for osisaf normalizer """
+    """ Container class of get_ methods for osisaf normalizer """
     def get_instrument(self, raw_attributes):
         """ returns the suitable instrument based on the 'instrument_type' attribute (priortized one)
         and 'activity_type' attribute """
         if set(['instrument_type']).issubset(raw_attributes.keys()):
             return utils.get_gcmd_instrument(raw_attributes['instrument_type'])
         elif set(['product_name']).issubset(raw_attributes.keys()):
-            if raw_attributes['product_name'][:7] == 'osi_saf':
-                return utils.UNKNOWN # make it unknown only for osisaf products only
+            if 'osi_saf' in raw_attributes['product_name']:
+                return utils.get_gcmd_instrument('UNKNOWN') # make it unknown for osisaf products only
         else:
             return None
 
@@ -31,8 +34,8 @@ class OSISAFMetadataNormalizer(BaseMetadataNormalizer):
         if set(['platform_name']).issubset(raw_attributes.keys()):
             return utils.get_gcmd_platform(raw_attributes['platform_name'])
         elif set(['product_name']).issubset(raw_attributes.keys()):
-            if raw_attributes['product_name'][:7] == 'osi_saf':
-                return utils.UNKNOWN # make it unknown only for osisaf products only
+            if 'osi_saf' in raw_attributes['product_name']:
+                return utils.get_gcmd_platform('UNKNOWN') # make it unknown for osisaf products only
         else:
             return None
 
@@ -60,12 +63,12 @@ class OSISAFMetadataNormalizer(BaseMetadataNormalizer):
     def get_dataset_parameters(self, raw_attributes):
         """ returns the suitable instrument based on the lasting letters of 'product_name' attribute """
         if set(['product_name']).issubset(raw_attributes.keys()):
-            if raw_attributes['product_name'][-4:] == 'conc':
-                return [pti.get_wkv_variable('sea_ice_area_fraction'), ]
-            elif raw_attributes['product_name'][-5:] == 'drift':
+            if raw_attributes['product_name'][-8:] == 'ice_conc' and raw_attributes['product_name'][:7] == 'osi_saf':
+                return [pti.get_cf_standard_name('sea_ice_area_fraction'), ]
+            elif raw_attributes['product_name'][-9:] == 'ice_drift' and raw_attributes['product_name'][:7] == 'osi_saf':
                 return [pti.get_cf_standard_name('sea_ice_x_displacement'),
                         pti.get_cf_standard_name('sea_ice_y_displacement'), ]
-            elif raw_attributes['product_name'][-4:] == 'type':
+            elif raw_attributes['product_name'][-8:] == 'ice_type' and raw_attributes['product_name'][:7] == 'osi_saf':
                 return [pti.get_cf_standard_name('sea_ice_classification'), ]
 
         else:

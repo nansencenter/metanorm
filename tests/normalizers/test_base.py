@@ -2,6 +2,7 @@
 #pylint: disable=protected-access
 
 import unittest
+from collections import OrderedDict
 
 import metanorm.normalizers as normalizers
 from metanorm.errors import MetadataNormalizationError
@@ -139,9 +140,25 @@ class OrderingOfNormalizer(unittest.TestCase):
         n = handler._chain
         result=n.normalize({'Identifier': 'S1A_EW_GRDM_1SDH_20150702T172954_20150702T173054_006635_008DA5_55D1', 'product_name':'osi_saf_mr_ice_drift'})
         self.assertEqual(len(result['dataset_parameters']),3)
-        self.assertIn('sea_ice_y_displacement',[i['standard_name'] for i in result['dataset_parameters']])
-        self.assertIn('sea_ice_x_displacement',[i['standard_name'] for i in result['dataset_parameters']])
-        self.assertIn('surface_backwards_scattering_coefficient_of_radar_wave',[i['standard_name'] for i in result['dataset_parameters']])
+        self.assertIn(OrderedDict([('standard_name','sea_ice_x_displacement'),
+            ('canonical_units','m'),
+            ('grib',''),
+            ('amip',''),
+            ('description','"x" indicates a vector component along the grid x-axis, positive with increasing x. "Displacement" means the change in geospatial position of an object that has moved over time. If possible, the time interval over which the motion took place should be specified using a bounds variable for the time coordinate variable.  A displacement can be represented as a vector. Such a vector should however not be interpreted as describing a rectilinear, constant speed motion but merely as an indication that the start point of the vector is found at the tip of the vector after the time interval associated with the displacement variable.  A displacement does not prescribe a trajectory. Sea ice displacement can be defined as a two-dimensional vector, with no vertical component. An x displacement is calculated from the difference in the moving object\'s grid x coordinate between the start and end of the time interval associated with the displacement variable.')]),result['dataset_parameters'])
+
+        self.assertIn(OrderedDict([('standard_name','sea_ice_y_displacement'),
+            ('canonical_units','m'),
+            ('grib',''),
+            ('amip',''),
+            ('description','"y" indicates a vector component along the grid y-axis, positive with increasing y. "Displacement" means the change in geospatial position of an object that has moved over time. If possible, the time interval over which the motion took place should be specified using a bounds variable for the time coordinate variable. A displacement can be represented as a vector. Such a vector should however not be interpreted as describing a rectilinear, constant speed motion but merely as an indication that the start point of the vector is found at the tip of the vector after the time interval associated with the displacement variable.  A displacement does not prescribe a trajectory. Sea ice displacement can be defined as a two-dimensional vector, with no vertical component. A y displacement is calculated from the difference in the moving object\'s grid y coordinate between the start and end of the time interval associated with the displacement variable.')]),result['dataset_parameters'])
+
+        self.assertIn(OrderedDict([('standard_name','surface_backwards_scattering_coefficient_of_radar_wave'),
+            ('long_name','Normalized Radar Cross Section'),
+            ('short_name','sigma0'),
+            ('units','m/m'),
+            ('minmax','0 0.1'),
+            ('colormap','gray')]),result['dataset_parameters'])
+
         #Redefinition with another order of normalizers
         handlers.NORMALIZERS = [
             normalizers.SentinelOneIdentifierMetadataNormalizer,
@@ -153,6 +170,21 @@ class OrderingOfNormalizer(unittest.TestCase):
         n = handler._chain
         result=n.normalize({'Identifier': 'S1A_EW_GRDM_1SDH_20150702T172954_20150702T173054_006635_008DA5_55D1', 'product_name':'osi_saf_mr_ice_drift'})
         self.assertEqual(len(result['dataset_parameters']),3)
-        self.assertIn('sea_ice_y_displacement',[i['standard_name'] for i in result['dataset_parameters']])
-        self.assertIn('sea_ice_x_displacement',[i['standard_name'] for i in result['dataset_parameters']])
-        self.assertIn('surface_backwards_scattering_coefficient_of_radar_wave',[i['standard_name'] for i in result['dataset_parameters']])
+        self.assertIn(OrderedDict([('standard_name','sea_ice_x_displacement'),
+            ('canonical_units','m'),
+            ('grib',''),
+            ('amip',''),
+            ('description','"x" indicates a vector component along the grid x-axis, positive with increasing x. "Displacement" means the change in geospatial position of an object that has moved over time. If possible, the time interval over which the motion took place should be specified using a bounds variable for the time coordinate variable.  A displacement can be represented as a vector. Such a vector should however not be interpreted as describing a rectilinear, constant speed motion but merely as an indication that the start point of the vector is found at the tip of the vector after the time interval associated with the displacement variable.  A displacement does not prescribe a trajectory. Sea ice displacement can be defined as a two-dimensional vector, with no vertical component. An x displacement is calculated from the difference in the moving object\'s grid x coordinate between the start and end of the time interval associated with the displacement variable.')]),result['dataset_parameters'])
+
+        self.assertIn(OrderedDict([('standard_name','sea_ice_y_displacement'),
+            ('canonical_units','m'),
+            ('grib',''),
+            ('amip',''),
+            ('description','"y" indicates a vector component along the grid y-axis, positive with increasing y. "Displacement" means the change in geospatial position of an object that has moved over time. If possible, the time interval over which the motion took place should be specified using a bounds variable for the time coordinate variable. A displacement can be represented as a vector. Such a vector should however not be interpreted as describing a rectilinear, constant speed motion but merely as an indication that the start point of the vector is found at the tip of the vector after the time interval associated with the displacement variable.  A displacement does not prescribe a trajectory. Sea ice displacement can be defined as a two-dimensional vector, with no vertical component. A y displacement is calculated from the difference in the moving object\'s grid y coordinate between the start and end of the time interval associated with the displacement variable.')]),result['dataset_parameters'])
+
+        self.assertIn(OrderedDict([('standard_name','surface_backwards_scattering_coefficient_of_radar_wave'),
+            ('long_name','Normalized Radar Cross Section'),
+            ('short_name','sigma0'),
+            ('units','m/m'),
+            ('minmax','0 0.1'),
+            ('colormap','gray')]),result['dataset_parameters'])
