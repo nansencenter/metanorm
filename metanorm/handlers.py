@@ -22,7 +22,7 @@ class MetadataHandler():
 
     def __init__(self, output_parameter_names, output_cumulative_parameter_names):
         """Builds a chain of normalizers for the given parameter names"""
-        if not isinstance(self.NORMALIZERS[-1]([], [],), normalizers.geospatial_defaults.BaseDefaultMetadataNormalizer):
+        if not isinstance(self.NORMALIZERS[-1]([], [],), normalizers.base.BaseDefaultMetadataNormalizer):
             raise ValueError(
                 "'BaseDefaultMetadataNormalizer' class must be inherited for the last one in the list of normalizers in 'MetadataHandler' class")
 

@@ -88,11 +88,9 @@ class OSISAFMetadataNormalizer(unittest.TestCase):
              '-175.084000 9.47472000,' +
              '-175.084000 -15.3505001))'),
             srid=4326)
-
         normalizer = normalizers.OSISAFMetadataNormalizer(
             ['location_geometry'], [])
         normalized_params = normalizer.normalize(attributes)
-
         self.assertIsInstance(normalized_params, dict)
         self.assertTrue('location_geometry' in normalized_params)
         self.assertTrue(
@@ -110,3 +108,84 @@ class OSISAFMetadataNormalizer(unittest.TestCase):
                                       ('Long_Name', 'company1'),
                                       ('Data_Center_URL', 'Unknown'),
                                       ]))
+
+    def test_for_returning_none(self):
+        """None should be returned for absurd raw metadata"""
+        attributes = {'absurd': 'absurd_meta_data'}
+        for param in ['instrument', 'platform', 'time_coverage_start', 'time_coverage_end', 'summary', 'provider', 'location_geometry', ]:
+            instantiated_method = getattr(self.normalizer, 'get_' + param)
+            self.assertIsNone(instantiated_method(attributes))
+
+    def test_gcmd_provider(self):
+        """GCMD provider from OSISAFMetadataNormalizer"""
+        attributes = {
+            'institution': 'NERSC',
+        }
+        self.assertEqual(
+            self.normalizer.get_provider(attributes),
+            OrderedDict([
+                ('Bucket_Level0', 'CONSORTIA/INSTITUTIONS'),
+                ('Bucket_Level1', ''),
+                ('Bucket_Level2', ''),
+                ('Bucket_Level3', ''),
+                ('Short_Name', 'NERSC'),
+                ('Long_Name', 'Nansen Environmental and Remote Sensing Centre'),
+                ('Data_Center_URL', 'http://www.nersc.no/main/index2.php')
+            ])
+        )
+
+    def test_non_gcmd_provider(self):
+        """Non-GCMD provider from OSISAFMetadataNormalizer"""
+        attributes = {
+            'institution': 'NONGCMD',
+        }
+        self.assertEqual(
+            self.normalizer.get_provider(attributes),
+            OrderedDict([
+                ('Bucket_Level0', 'Unknown'),
+                ('Bucket_Level1', 'Unknown'),
+                ('Bucket_Level2', 'Unknown'),
+                ('Bucket_Level3', 'Unknown'),
+                ('Short_Name', 'NONGCMD'),
+                ('Long_Name', 'NONGCMD'),
+                ('Data_Center_URL', 'Unknown')
+            ])
+        )
+
+    def test_non_gcmd_provider_long_name(self):
+        """Non-GCMD provider from OSISAFMetadataNormalizer, with a name longer than 250 characters"""
+        attributes = {
+            'institution':
+                'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod ' +
+                'tempor incididunt ut labore et dolore magna aliqua. Bibendum neque egest' +
+                'as congue quisque egestas diam in. Eget magna fermentum iaculis eu non d' +
+                'iam phasellus vestibulum lorvgem. Tempor commodo.',
+        }
+        self.assertEqual(
+            self.normalizer.get_provider(attributes),
+            OrderedDict([
+                ('Bucket_Level0', 'Unknown'),
+                ('Bucket_Level1', 'Unknown'),
+                ('Bucket_Level2', 'Unknown'),
+                ('Bucket_Level3', 'Unknown'),
+                ('Short_Name', attributes['institution'][:50]),
+                ('Long_Name', attributes['institution'][:250]),
+                ('Data_Center_URL', 'Unknown')
+            ])
+        )
+
+    def test_non_gcmd_provider_no_name(self):
+        """Non-GCMD provider from ACDDMetadataNormalizer, with no name provided"""
+        attributes = {'project': 'test_name'}
+        self.assertEqual(
+            self.normalizer.get_provider(attributes),
+            OrderedDict([
+                ('Bucket_Level0', 'Unknown'),
+                ('Bucket_Level1', 'Unknown'),
+                ('Bucket_Level2', 'Unknown'),
+                ('Bucket_Level3', 'Unknown'),
+                ('Short_Name', 'test_name'),
+                ('Long_Name', 'test_name'),
+                ('Data_Center_URL', 'Unknown')
+            ])
+        )

@@ -13,11 +13,22 @@ class GeospatialMetadataHandlerTestCase(unittest.TestCase):
 
     def test_GeoSpatialDefault_normalizer_be_last_in_chain(self):
         """It is mandatory to have 'GeoSpatialDefaultMetadataNormalizer' in the list of normalizers (the last one).
-        This normalizer should never be removed from the list of normalizers"""
+        This normalizer should never be removed from the list of normalizers(otherwise, ValueError must be raised)"""
         handler = handlers.GeospatialMetadataHandler(
             ['test_output_parameter'], ['test_cumulative_parameter'])
         self.assertTrue(
             normalizers.geospatial_defaults.GeoSpatialDefaultMetadataNormalizer == handler.NORMALIZERS[-1])
+
+        class testHandler(handlers.MetadataHandler):
+            """Geospatial metadata handler"""
+            NORMALIZERS = [
+                normalizers.NETCDFCFMetadataNormalizer,
+                normalizers.SentinelSAFEMetadataNormalizer,
+                normalizers.SentinelOneIdentifierMetadataNormalizer,
+                normalizers.ACDDMetadataNormalizer,
+            ]
+        with self.assertRaises(ValueError):
+            testHandler(['test_output_parameter'], ['test_cumulative_parameter'])
 
     def test_build_normalizer_chain(self):
         """Instantiate a handler and check the normalizer chain is correctly built"""
