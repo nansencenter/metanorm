@@ -17,6 +17,7 @@ LOGGER.addHandler(logging.NullHandler())
 
 class OSISAFMetadataNormalizer(BaseMetadataNormalizer):
     """ Container class of get_ methods for osisaf normalizer """
+
     def get_instrument(self, raw_attributes):
         """ returns the suitable instrument based on the 'instrument_type' attribute (priortized one)
         and 'activity_type' attribute """
@@ -24,7 +25,8 @@ class OSISAFMetadataNormalizer(BaseMetadataNormalizer):
             return utils.get_gcmd_instrument(raw_attributes['instrument_type'])
         elif set(['product_name']).issubset(raw_attributes.keys()):
             if 'osi_saf' in raw_attributes['product_name']:
-                return utils.get_gcmd_instrument('UNKNOWN') # make it unknown for osisaf products only
+                # make it unknown for osisaf products only
+                return utils.get_gcmd_instrument(utils.UNKNOWN)
         else:
             return None
 
@@ -35,7 +37,8 @@ class OSISAFMetadataNormalizer(BaseMetadataNormalizer):
             return utils.get_gcmd_platform(raw_attributes['platform_name'])
         elif set(['product_name']).issubset(raw_attributes.keys()):
             if 'osi_saf' in raw_attributes['product_name']:
-                return utils.get_gcmd_platform('UNKNOWN') # make it unknown for osisaf products only
+                # make it unknown for osisaf products only
+                return utils.get_gcmd_platform(utils.UNKNOWN)
         else:
             return None
 
@@ -60,20 +63,6 @@ class OSISAFMetadataNormalizer(BaseMetadataNormalizer):
         else:
             return None
 
-    def get_dataset_parameters(self, raw_attributes):
-        """ returns the suitable instrument based on the lasting letters of 'product_name' attribute """
-        if set(['product_name']).issubset(raw_attributes.keys()):
-            if raw_attributes['product_name'][-8:] == 'ice_conc' and raw_attributes['product_name'][:7] == 'osi_saf':
-                return [pti.get_cf_standard_name('sea_ice_area_fraction'), ]
-            elif raw_attributes['product_name'][-9:] == 'ice_drift' and raw_attributes['product_name'][:7] == 'osi_saf':
-                return [pti.get_cf_standard_name('sea_ice_x_displacement'),
-                        pti.get_cf_standard_name('sea_ice_y_displacement'), ]
-            elif raw_attributes['product_name'][-8:] == 'ice_type' and raw_attributes['product_name'][:7] == 'osi_saf':
-                return [pti.get_cf_standard_name('sea_ice_classification'), ]
-
-        else:
-            return []
-
     def get_provider(self, raw_attributes):
         """Returns a GCMD-like provider from data structure"""
         name_values = [
@@ -81,25 +70,21 @@ class OSISAFMetadataNormalizer(BaseMetadataNormalizer):
                 'institution', 'project_name', 'PI_name', 'project', )
             if attr in raw_attributes.keys()
         ]
-
         if name_values:
             # Try to find a GCMD value using all possible attributes
             provider = utils.get_gcmd_provider(name_values)
-
             # No provider was found, we generate one from the available information
             if not provider:
                 name = name_values[0] if name_values else None
                 provider = utils.get_gcmd_like_provider(name,)
         else:
             provider = None
-
         return provider
 
     def get_location_geometry(self, raw_attributes):
         """Returns a GEOSGeometry object corresponding to the location of the dataset"""
         if set(['northernsmost_latitude', 'southernmost_latitude',
                 'easternmost_longitude', 'westernmost_longitude']).issubset(raw_attributes.keys()):
-
             polygon = utils.wkt_polygon_from_wgs84_limits(
                 # notice the difference between "northernSmost_latitude" and "northernmost_latitude" of default normalizer
                 raw_attributes['northernsmost_latitude'],
@@ -108,6 +93,5 @@ class OSISAFMetadataNormalizer(BaseMetadataNormalizer):
                 raw_attributes['westernmost_longitude']
             )
             return utils.geometry_from_wkt_string(polygon)
-
         else:
             return None
