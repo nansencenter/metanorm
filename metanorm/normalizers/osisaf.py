@@ -4,7 +4,6 @@ Normalizer for OSISAF project
 import logging
 
 import dateutil.parser
-import pythesint as pti
 from dateutil.tz import tzutc
 
 import metanorm.utils as utils
@@ -16,11 +15,13 @@ LOGGER.addHandler(logging.NullHandler())
 
 
 class OSISAFMetadataNormalizer(BaseMetadataNormalizer):
-    """ Container class of get_ methods for osisaf normalizer """
+    """ Normalizer for the attributes of datasets provided by OSISAF """
 
     def get_instrument(self, raw_attributes):
-        """ returns the suitable instrument based on the 'instrument_type' attribute (priortized one)
-        and 'activity_type' attribute """
+        """
+        Returns the suitable instrument based on the 'instrument_type' attribute (prioritized one)
+        and 'activity_type' attribute
+        """
         if set(['instrument_type']).issubset(raw_attributes.keys()):
             return utils.get_gcmd_instrument(raw_attributes['instrument_type'])
         elif set(['product_name']).issubset(raw_attributes.keys()):
@@ -31,7 +32,7 @@ class OSISAFMetadataNormalizer(BaseMetadataNormalizer):
             return None
 
     def get_platform(self, raw_attributes):
-        """ returns the suitable instrument based on the 'platform_name' attribute (priortized one)
+        """ returns the suitable platform based on the 'platform_name' attribute (prioritized one)
         and 'activity_type' attribute """
         if set(['platform_name']).issubset(raw_attributes.keys()):
             return utils.get_gcmd_platform(raw_attributes['platform_name'])
@@ -43,28 +44,28 @@ class OSISAFMetadataNormalizer(BaseMetadataNormalizer):
             return None
 
     def get_time_coverage_start(self, raw_attributes):
-        """ returns the suitable instrument based on the 'start_date' attribute """
+        """ returns the suitable start time based on the 'start_date' attribute """
         if set(['start_date']).issubset(raw_attributes.keys()):
             return dateutil.parser.parse(raw_attributes['start_date']).replace(tzinfo=tzutc())
         else:
             return None
 
     def get_time_coverage_end(self, raw_attributes):
-        """ returns the suitable instrument based on the 'stop_date' attribute """
+        """ returns the suitable end time based on the 'stop_date' attribute """
         if set(['stop_date']).issubset(raw_attributes.keys()):
             return dateutil.parser.parse(raw_attributes['stop_date']).replace(tzinfo=tzutc())
         else:
             return None
 
     def get_summary(self, raw_attributes):
-        """ returns the suitable instrument based on the 'abstract' attribute """
+        """ returns the suitable summary based on the 'abstract' attribute """
         if set(['abstract']).issubset(raw_attributes.keys()):
             return raw_attributes['abstract']
         else:
             return None
 
     def get_provider(self, raw_attributes):
-        """Returns a GCMD-like provider from data structure"""
+        """Returns a GCMD-like provider data structure"""
         name_values = [
             raw_attributes[attr] for attr in (
                 'institution', 'project_name', 'PI_name', 'project', )
@@ -86,7 +87,8 @@ class OSISAFMetadataNormalizer(BaseMetadataNormalizer):
         if set(['northernsmost_latitude', 'southernmost_latitude',
                 'easternmost_longitude', 'westernmost_longitude']).issubset(raw_attributes.keys()):
             polygon = utils.wkt_polygon_from_wgs84_limits(
-                # notice the difference between "northernSmost_latitude" and "northernmost_latitude" of default normalizer
+                # notice the difference between "northernSmost_latitude"
+                #                           and "northernmost_latitude" of default normalizer
                 raw_attributes['northernsmost_latitude'],
                 raw_attributes['southernmost_latitude'],
                 raw_attributes['easternmost_longitude'],

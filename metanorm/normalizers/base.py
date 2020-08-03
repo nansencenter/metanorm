@@ -18,10 +18,11 @@ class BaseMetadataNormalizer():
         """
         self._output_parameters_names = output_parameters_names
         self._output_cumulative_parameters_names = output_cumulative_parameters_names
-        if self._output_parameters_names is None and self._output_cumulative_parameters_names is None:
+        if (self._output_parameters_names is None
+            and self._output_cumulative_parameters_names is None):
             raise ValueError((
                 "Either output_parameter_names or output_cumulative_parameter_names "
-                "must be specified and not empty"
+                "must be specified"
             ))
 
         self._next = None
@@ -37,13 +38,14 @@ class BaseMetadataNormalizer():
 
     def normalize(self, raw_attributes, output_parameters=None, output_cumulative_parameters=None):
         """
-        Loops through the desired output parameter names and checks if a method is available for each parameter.
-        Cumulative parameters are lists to which each normalizer adds the values it finds regardless of normalizers ordering.
-        The search for values of other parameters are stopped as soon as a value is found for it. In this way, ordering
-        of normalizers matter for them (not for cumulative ones).
-
-        If so try it out. The 'raw_attributes' dictionary is then passed to the next normalizer, so
-        that it can attempt to fill in any None value which might be left.
+        Loops through the desired output parameters and checks if a method is available for each
+        parameter. If so, try it out. The 'raw_attributes' dictionary is then passed to the next
+        normalizer, so that it can attempt to fill in the missing values.
+        There are two types of parameters with slightly different behavior:
+          - standard parameters: the first normalizer which finds a value "wins", so the order of
+            the normalizers matters for this type.
+          - cumulative parameters are lists to which each normalizer adds the values it finds,
+            regardless of normalizers ordering.
         """
         if not output_parameters:
             output_parameters = {
@@ -57,8 +59,7 @@ class BaseMetadataNormalizer():
             if output_parameters[param] is None:
                 try:
                     # Maybe there is a cleaner way to implement this?
-                    output_parameters[param] = getattr(
-                        self, 'get_' + param)(raw_attributes)
+                    output_parameters[param] = getattr(self, 'get_' + param)(raw_attributes)
                 except AttributeError:
                     LOGGER.debug("%s: no method available for the '%s' parameter",
                                  self.__class__.__name__, param)
@@ -73,9 +74,10 @@ class BaseMetadataNormalizer():
         for param in output_cumulative_parameters.keys():
             previous_len = len(output_cumulative_parameters[param])
             try:
-                new_member = getattr(self, 'get_' + param)(raw_attributes)
-                if new_member not in output_cumulative_parameters[param]:
-                    output_cumulative_parameters[param].extend(new_member)
+                new_members = getattr(self, 'get_' + param)(raw_attributes)
+                for new_member in new_members:
+                    if new_member not in output_cumulative_parameters[param]:
+                        output_cumulative_parameters[param].append(new_member)
             except AttributeError:
                 LOGGER.debug("%s: no method available for the '%s' parameter",
                              self.__class__.__name__, param)
@@ -91,10 +93,12 @@ class BaseMetadataNormalizer():
                              self.__class__.__name__, param)
 
         if self.next is None:
-            # the second one that is written for return statement is only for testing purposes, it have no role in a standard execution of the code
+            # the second one that is written for return statement is only for testing purposes,
+            # it have no role in a standard execution of the code
             return {**output_parameters, **output_cumulative_parameters}
         else:
-            return self.next.normalize(raw_attributes, output_parameters, output_cumulative_parameters)
+            return self.next.normalize(
+                raw_attributes, output_parameters, output_cumulative_parameters)
 
 
 class BaseDefaultMetadataNormalizer(BaseMetadataNormalizer):
@@ -110,8 +114,7 @@ class BaseDefaultMetadataNormalizer(BaseMetadataNormalizer):
         If so use it, if not raise a MetadataNormalizationError
         """
         if not output_parameters:
-            output_parameters = dict({(key, None)
-                                      for key in self._output_parameters_names})
+            output_parameters = dict({(key, None) for key in self._output_parameters_names})
 
         for param in output_parameters.keys():
             if output_parameters[param] is None:
@@ -122,6 +125,6 @@ class BaseDefaultMetadataNormalizer(BaseMetadataNormalizer):
                 else:
                     raise MetadataNormalizationError(
                         f"Unable to find a value for the {param} parameter")
-        # updating the normalized harvested parameters with the cumulative ones
+        # updating the standard normalized parameters with the cumulative ones
         output_parameters.update(output_cumulative_parameters)
         return output_parameters

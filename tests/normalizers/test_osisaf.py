@@ -9,7 +9,7 @@ import metanorm.normalizers as normalizers
 
 
 class OSISAFMetadataNormalizer(unittest.TestCase):
-    """Tests for the ACDD attributes normalizer"""
+    """Tests for the OSISAF attributes normalizer"""
 
     def setUp(self):
         self.normalizer = normalizers.OSISAFMetadataNormalizer([], [])
@@ -112,7 +112,8 @@ class OSISAFMetadataNormalizer(unittest.TestCase):
     def test_for_returning_none(self):
         """None should be returned for absurd raw metadata"""
         attributes = {'absurd': 'absurd_meta_data'}
-        for param in ['instrument', 'platform', 'time_coverage_start', 'time_coverage_end', 'summary', 'provider', 'location_geometry', ]:
+        for param in ['instrument', 'platform', 'time_coverage_start', 'time_coverage_end',
+                        'summary', 'provider', 'location_geometry', ]:
             instantiated_method = getattr(self.normalizer, 'get_' + param)
             self.assertIsNone(instantiated_method(attributes))
 
@@ -153,7 +154,9 @@ class OSISAFMetadataNormalizer(unittest.TestCase):
         )
 
     def test_non_gcmd_provider_long_name(self):
-        """Non-GCMD provider from OSISAFMetadataNormalizer, with a name longer than 250 characters"""
+        """
+        Non-GCMD provider from OSISAFMetadataNormalizer, with a name longer than 250 characters
+        """
         attributes = {
             'institution':
                 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod ' +

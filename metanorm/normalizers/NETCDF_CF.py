@@ -11,7 +11,8 @@ LOGGER.addHandler(logging.NullHandler())
 
 
 class NETCDFCFMetadataNormalizer(BaseMetadataNormalizer):
-    """Generate the GeoSPaaS Datasetparameters using raw_dataset_parameters attribute"""
+    """ Search and find the corresponding the GeoSPaaS Datasetparameters using
+    raw_dataset_parameters attribute """
 
     def get_dataset_parameters(self, raw_attributes):
         """ Get the dataset's parameters """

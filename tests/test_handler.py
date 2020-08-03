@@ -12,15 +12,20 @@ class GeospatialMetadataHandlerTestCase(unittest.TestCase):
     """Test the GeospatialMetadataHandler class"""
 
     def test_GeoSpatialDefault_normalizer_be_last_in_chain(self):
-        """It is mandatory to have 'GeoSpatialDefaultMetadataNormalizer' in the list of normalizers (the last one).
-        This normalizer should never be removed from the list of normalizers(otherwise, ValueError must be raised)"""
+        """It is mandatory to have 'GeoSpatialDefaultMetadataNormalizer' in the list of normalizers
+        (the last one)."""
         handler = handlers.GeospatialMetadataHandler(
             ['test_output_parameter'], ['test_cumulative_parameter'])
         self.assertTrue(
-            normalizers.geospatial_defaults.GeoSpatialDefaultMetadataNormalizer == handler.NORMALIZERS[-1])
+            normalizers.geospatial_defaults.GeoSpatialDefaultMetadataNormalizer
+            == handler.NORMALIZERS[-1]
+            )
 
-        class testHandler(handlers.MetadataHandler):
-            """Geospatial metadata handler"""
+    def test_GeoSpatialDefault_normalizer_is_lost_in_chain(self):
+        """ GeoSpatialDefaultMetadataNormalizer normalizer should never be removed from the list of
+        normalizers (otherwise, ValueError must be raised). Below list of NORMALIZERS lacks it """
+        class TestHandler(handlers.MetadataHandler):
+            """testing metadata handler"""
             NORMALIZERS = [
                 normalizers.NETCDFCFMetadataNormalizer,
                 normalizers.SentinelSAFEMetadataNormalizer,
@@ -28,7 +33,7 @@ class GeospatialMetadataHandlerTestCase(unittest.TestCase):
                 normalizers.ACDDMetadataNormalizer,
             ]
         with self.assertRaises(ValueError):
-            testHandler(['test_output_parameter'], ['test_cumulative_parameter'])
+            TestHandler(['test_output_parameter'], ['test_cumulative_parameter'])
 
     def test_build_normalizer_chain(self):
         """Instantiate a handler and check the normalizer chain is correctly built"""
@@ -39,8 +44,7 @@ class GeospatialMetadataHandlerTestCase(unittest.TestCase):
         i = 0
         while normalizer:
             self.assertIsInstance(normalizer, handler.NORMALIZERS[i])
-            self.assertEqual(normalizer._output_parameters_names, [
-                             'test_output_parameter'])
+            self.assertEqual(normalizer._output_parameters_names, ['test_output_parameter'])
             self.assertEqual(normalizer._output_cumulative_parameters_names, [
                              'test_cumulative_parameter'])
             normalizer = normalizer.next
