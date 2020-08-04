@@ -3,7 +3,7 @@
 import logging
 
 import pythesint as pti
-
+import metanorm.utils as utils
 from .base import BaseMetadataNormalizer
 
 LOGGER = logging.getLogger(__name__)
@@ -19,7 +19,12 @@ class NETCDFCFMetadataNormalizer(BaseMetadataNormalizer):
         if set(['raw_dataset_parameters']).issubset(raw_attributes.keys()):
             standardized_dataset_parameters = list()
             for raw_parameter_name in raw_attributes['raw_dataset_parameters']:
-                if pti.search_cf_standard_name_list(raw_parameter_name):
-                    standardized_dataset_parameters.append(
-                        pti.search_cf_standard_name_list(raw_parameter_name)[0])
+                try:
+                    result = utils.two_list_search(raw_parameter_name)
+                except:
+                    pass
+                else:
+                    standardized_dataset_parameters.append(result)
             return standardized_dataset_parameters
+        else:
+            return []

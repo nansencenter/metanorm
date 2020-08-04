@@ -110,11 +110,10 @@ class SentinelOneIdentifierMetadataNormalizerTestCase(unittest.TestCase):
             [
                 OrderedDict([
                     ('standard_name', 'surface_backwards_scattering_coefficient_of_radar_wave'),
-                    ('long_name', 'Normalized Radar Cross Section'),
-                    ('short_name', 'sigma0'),
-                    ('units', 'm/m'),
-                    ('minmax', '0 0.1'),
-                    ('colormap', 'gray')
+                    ('canonical_units', '1'),
+                    ('grib', ''),
+                    ('amip', ''),
+                    ('description', 'The scattering/absorption/attenuation coefficient is assumed to be an integral over all wavelengths, unless a coordinate of radiation_wavelength is included to specify the wavelength. Scattering of radiation is its deflection from its incident path without loss of energy. Backwards scattering refers to the sum of scattering into all backward angles i.e. scattering_angle exceeding pi/2 radians. A scattering_angle should not be specified with this quantity.')
                 ])
             ])
 

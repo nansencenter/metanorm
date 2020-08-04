@@ -147,3 +147,10 @@ def geometry_from_wkt_string(wkt_string, srid=4326):
     EPSG:4326, i.e. WGS 84
     """
     return GEOSGeometry(wkt_string, srid=srid)
+
+def two_list_search(keyword):
+    try:
+        result_list = pti.search_cf_standard_name_list(keyword)
+    except IndexError:
+        result_list = pti.get_wkv_variable(keyword)
+    return result_list[0]

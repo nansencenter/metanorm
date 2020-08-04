@@ -78,4 +78,4 @@ class SentinelOneIdentifierMetadataNormalizer(BaseMetadataNormalizer):
     def get_dataset_parameters(self, raw_attributes):
         """ return list with sigma0 parameter from wkv variable """
         if self.match_identifier(raw_attributes):
-            return [pti.get_wkv_variable('surface_backwards_scattering_coefficient_of_radar_wave')]
+            return [utils.two_list_search('surface_backwards_scattering_coefficient_of_radar_wave')]
