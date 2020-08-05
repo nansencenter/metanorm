@@ -27,8 +27,68 @@ class OSISAFMetadataNormalizer(unittest.TestCase):
         self.assertEqual(self.normalizer.get_instrument(
             attributes)['Short_Name'], 'value_1')
 
+        attributes = {'product_name': 'osi_saf_ice_conc'}
+        self.assertEqual(
+            self.normalizer.get_instrument(attributes),
+            OrderedDict([('Category', 'Earth Remote Sensing Instruments'),
+                         ('Class', 'Passive Remote Sensing'),
+                         ('Type', 'Spectrometers/Radiometers'),
+                         ('Subtype', 'Imaging Spectrometers/Radiometers'),
+                         ('Short_Name', ''),
+                         ('Long_Name', '')])
+        )
+
+        attributes = {'product_name': 'osi_saf_ice_type'}
+        self.assertEqual(
+            self.normalizer.get_instrument(attributes),
+            OrderedDict([('Category', 'Earth Remote Sensing Instruments'),
+                         ('Class', 'Passive Remote Sensing'),
+                         ('Type', 'Spectrometers/Radiometers'),
+                         ('Subtype', 'Imaging Spectrometers/Radiometers'),
+                         ('Short_Name', ''),
+                         ('Long_Name', '')])
+        )
+        attributes = {'product_name': 'osi_saf_ice_edge'}
+        self.assertEqual(
+            self.normalizer.get_instrument(attributes),
+            OrderedDict([('Category', 'Earth Remote Sensing Instruments'),
+                         ('Class', 'Passive Remote Sensing'),
+                         ('Type', 'Spectrometers/Radiometers'),
+                         ('Subtype', 'Imaging Spectrometers/Radiometers'),
+                         ('Short_Name', ''),
+                         ('Long_Name', '')])
+        )
+        attributes = {'product_name': 'osi_saf_amsr2ice_conc'}
+        self.assertEqual(
+            self.normalizer.get_instrument(attributes),
+            OrderedDict([('Category', 'Earth Remote Sensing Instruments'),
+                         ('Class', 'Passive Remote Sensing'),
+                         ('Type', 'Spectrometers/Radiometers'),
+                         ('Subtype', 'Imaging Spectrometers/Radiometers'),
+                         ('Short_Name', 'AMSR2'),
+                         ('Long_Name', 'Advanced Microwave Scanning Radiometer 2')])
+        )
+        attributes = {'product_name': 'osi_saf_lr_ice_drift'}
+        self.assertEqual(
+            self.normalizer.get_instrument(attributes),
+            OrderedDict([('Category', 'Earth Remote Sensing Instruments'),
+                         ('Class', ''),
+                         ('Type', ''),
+                         ('Subtype', ''),
+                         ('Short_Name', ''),
+                         ('Long_Name', '')])
+        )
+        attributes = {'product_name': 'osi_saf_mr_ice_drift'}
+        self.assertEqual(
+            self.normalizer.get_instrument(attributes),
+            OrderedDict([('Category', 'Earth Remote Sensing Instruments'),
+                         ('Class', 'Passive Remote Sensing'),
+                         ('Type', 'Spectrometers/Radiometers'),
+                         ('Subtype', 'Imaging Spectrometers/Radiometers'),
+                         ('Short_Name', 'AVHRR'),
+                         ('Long_Name', 'Advanced Very High Resolution Radiometer')])
+        )
         attributes = {'product_name': 'osi_saf_2'}
-        # in the absence of 'instrument_type' value should be UNKNOWN with GCMD template
         self.assertEqual(
             self.normalizer.get_instrument(attributes),
             OrderedDict([('Category', 'Unknown'),
@@ -38,6 +98,8 @@ class OSISAFMetadataNormalizer(unittest.TestCase):
                          ('Short_Name', 'Unknown'),
                          ('Long_Name', 'Unknown')])
         )
+        attributes = {'test': 'test'}
+        self.assertIsNone(self.normalizer.get_instrument(attributes))
 
     def test_platform(self):
         """platform from OSISAFMetadataNormalizer"""
@@ -54,10 +116,10 @@ class OSISAFMetadataNormalizer(unittest.TestCase):
         # in the absence of 'platform_name' value should be UNKNOWN with GCMD template
         self.assertEqual(
             self.normalizer.get_platform(attributes),
-            OrderedDict([('Category', 'Unknown'),
-                         ('Series_Entity', 'Unknown'),
-                         ('Short_Name', 'Unknown'),
-                         ('Long_Name', 'Unknown')])
+            OrderedDict([('Category', 'Earth Observation Satellites'),
+                         ('Series_Entity', ''),
+                         ('Short_Name', ''),
+                         ('Long_Name', '')])
         )
 
     def test_time_coverage_start(self):

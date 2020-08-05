@@ -21,3 +21,11 @@ class OSISAFMetadataNormalizer(unittest.TestCase):
         self.assertEqual(self.normalizer.get_dataset_parameters(attributes),
                          [{'standard_name':'test1', 'amip':'test2'},
                          {'standard_name':'test1', 'amip':'test2'}])
+
+    @mock.patch.object(pti, 'get_wkv_variable',
+    return_value={'standard_name':'test1', 'amip':'test2'})
+    def test_dataset_parameters(self, mock_normalize):
+        """ Shall return values from "get_wkv_variable" function in the case of no value from
+        "get_cf_standard_name" function """
+        self.assertEqual(utils.get_cf_or_wkv_standard_name("dummy"),
+                         {'standard_name':'test1', 'amip':'test2'})
