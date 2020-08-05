@@ -81,9 +81,6 @@ class BaseMetadataNormalizer():
             except AttributeError:
                 LOGGER.debug("%s: no method available for the '%s' parameter",
                              self.__class__.__name__, param)
-            except TypeError: # for the cases that "new_members" is become None
-                LOGGER.debug("%s: method of the '%s' parameter does not return any new values",
-                             self.__class__.__name__, param)
 
             if previous_len < len(output_cumulative_parameters[param]):
                 LOGGER.debug("%s: found a value for the '%s' parameter",
