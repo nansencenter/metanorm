@@ -148,9 +148,9 @@ def geometry_from_wkt_string(wkt_string, srid=4326):
     """
     return GEOSGeometry(wkt_string, srid=srid)
 
-def two_list_search(keyword):
+def get_cf_or_wkv_standard_name(keyword):
     try:
-        result_list = pti.search_cf_standard_name_list(keyword)
+        result_list = pti.get_cf_standard_name(keyword)
     except IndexError:
         result_list = pti.get_wkv_variable(keyword)
-    return result_list[0]
+    return result_list

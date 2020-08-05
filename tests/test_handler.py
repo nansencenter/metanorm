@@ -16,9 +16,9 @@ class GeospatialMetadataHandlerTestCase(unittest.TestCase):
         (the last one)."""
         handler = handlers.GeospatialMetadataHandler(
             ['test_output_parameter'], ['test_cumulative_parameter'])
-        self.assertTrue(
+        self.assertEqual(
             normalizers.geospatial_defaults.GeoSpatialDefaultMetadataNormalizer
-            == handler.NORMALIZERS[-1]
+            , handler.NORMALIZERS[-1]
             )
 
     def test_GeoSpatialDefault_normalizer_is_lost_in_chain(self):

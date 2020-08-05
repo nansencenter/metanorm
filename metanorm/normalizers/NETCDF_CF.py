@@ -20,8 +20,8 @@ class NETCDFCFMetadataNormalizer(BaseMetadataNormalizer):
             standardized_dataset_parameters = list()
             for raw_parameter_name in raw_attributes['raw_dataset_parameters']:
                 try:
-                    result = utils.two_list_search(raw_parameter_name)
-                except:
+                    result = utils.get_cf_or_wkv_standard_name(raw_parameter_name)
+                except IndexError:
                     pass
                 else:
                     standardized_dataset_parameters.append(result)
