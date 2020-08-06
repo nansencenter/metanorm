@@ -28,8 +28,8 @@ class OSISAFMetadataNormalizer(BaseMetadataNormalizer):
         elif set(['product_name']).issubset(raw_attributes.keys()):
             if 'osi_saf' in raw_attributes['product_name']:
                 if ('_ice_conc' in raw_attributes['product_name']
-                or '_ice_type' in raw_attributes['product_name']
-                or '_ice_edge' in raw_attributes['product_name']):
+                    or '_ice_type' in raw_attributes['product_name']
+                    or '_ice_edge' in raw_attributes['product_name']):
                     return pti.get_gcmd_instrument('Imaging Spectrometers/Radiometers')
                 elif 'amsr2ice_conc' in raw_attributes['product_name']:
                     return pti.get_gcmd_instrument('AMSR2')
@@ -37,11 +37,6 @@ class OSISAFMetadataNormalizer(BaseMetadataNormalizer):
                     return pti.get_gcmd_instrument('Earth Remote Sensing Instruments')
                 elif '_mr_ice_drift' in raw_attributes['product_name']:
                     return pti.get_gcmd_instrument('AVHRR')
-                ###elif  in raw_attributes['product_name']:
-                ###    return pti.get_gcmd_instrument('Imaging Spectrometers/Radiometers')
-                ###elif  in raw_attributes['product_name']:
-                ###    return pti.get_gcmd_instrument('Imaging Spectrometers/Radiometers')
-                # make it unknown for osisaf products only
                 return utils.get_gcmd_instrument(utils.UNKNOWN)
         else:
             return None
@@ -53,7 +48,7 @@ class OSISAFMetadataNormalizer(BaseMetadataNormalizer):
             return utils.get_gcmd_platform(raw_attributes['platform_name'])
         elif set(['product_name']).issubset(raw_attributes.keys()):
             if 'osi_saf' in raw_attributes['product_name']:
-                # make it unknown for osisaf products only
+                # name it 'Earth Observation Satellites' for osisaf products only
                 return utils.get_gcmd_platform('Earth Observation Satellites')
         else:
             return None
