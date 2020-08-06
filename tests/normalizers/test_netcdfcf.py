@@ -29,3 +29,12 @@ class OSISAFMetadataNormalizer(unittest.TestCase):
         "get_cf_standard_name" function """
         self.assertEqual(utils.get_cf_or_wkv_standard_name("dummy"),
                          {'standard_name':'test1', 'amip':'test2'})
+
+    def test_incorrect_dataset_parameters(self):
+        """ in the case of incorrect value inside 'raw_dataset_parameters' it shall pass and always
+        return an empty list """
+        attributes = {'raw_dataset_parameters': ['false_standard_name']}
+        self.assertEqual(self.normalizer.get_dataset_parameters(attributes), [])
+
+        attributes = {'testing_dictionary_key': ['dummy_standard_name']}
+        self.assertEqual(self.normalizer.get_dataset_parameters(attributes), [])
