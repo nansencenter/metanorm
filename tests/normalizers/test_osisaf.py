@@ -54,6 +54,7 @@ class OSISAFMetadataNormalizer(unittest.TestCase):
                          ('Short_Name', ''),
                          ('Long_Name', '')])
         )
+
     def test_instrument_ice_edge(self):
         """instrument from OSISAFMetadataNormalizer in the absence of 'instrument_type' and based
         on 'product_name' """
@@ -95,6 +96,7 @@ class OSISAFMetadataNormalizer(unittest.TestCase):
                          ('Short_Name', ''),
                          ('Long_Name', '')])
         )
+
     def test_instrument__mr_ice_drift(self):
         """instrument from OSISAFMetadataNormalizer in the absence of 'instrument_type' and based
         on 'product_name' """
@@ -205,7 +207,7 @@ class OSISAFMetadataNormalizer(unittest.TestCase):
         """None should be returned for absurd raw metadata"""
         attributes = {'absurd': 'absurd_meta_data'}
         for param in ['instrument', 'platform', 'time_coverage_start', 'time_coverage_end',
-                        'summary', 'provider', 'location_geometry', ]:
+                      'summary', 'provider', 'location_geometry', ]:
             instantiated_method = getattr(self.normalizer, 'get_' + param)
             self.assertIsNone(instantiated_method(attributes))
 
