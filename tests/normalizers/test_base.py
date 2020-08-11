@@ -41,6 +41,11 @@ class BaseMetadataNormalizerTestCase(unittest.TestCase):
         self.assertListEqual(
             normalizer._output_parameters_names, ['test_parameter'])
 
+    def test_both_none_argument(self):
+        """Test the instantiation of MetadataNormalizer with (None, None) as requested parameters"""
+        with self.assertRaises(ValueError):
+            normalizer = self.TestMetadataNormalizer(None, None)
+
     def test_first_in_chain_normalization(self):
         """
         Test simple normalization of an attribute, as if at the beginning of the normalizing chain.

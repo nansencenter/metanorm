@@ -20,13 +20,16 @@ class OSISAFMetadataNormalizer(unittest.TestCase):
         attributes = {'abstract': 'value_abs'}
         self.assertEqual('value_abs', self.normalizer.get_summary(attributes))
 
-    def test_instrument(self):
+    def test_instrument_1(self):
         """instrument from OSISAFMetadataNormalizer"""
         attributes = {'instrument_type': 'value_1'}
         # 'instrument_type' must be used in this normalizer
         self.assertEqual(self.normalizer.get_instrument(
             attributes)['Short_Name'], 'value_1')
 
+    def test_instrument_2(self):
+        """instrument from OSISAFMetadataNormalizer in the absence of 'instrument_type' and based
+        on 'product_name' """
         attributes = {'product_name': 'osi_saf_ice_conc'}
         self.assertEqual(
             self.normalizer.get_instrument(attributes),
@@ -38,6 +41,9 @@ class OSISAFMetadataNormalizer(unittest.TestCase):
                          ('Long_Name', '')])
         )
 
+    def test_instrument_3(self):
+        """instrument from OSISAFMetadataNormalizer in the absence of 'instrument_type' and based
+        on 'product_name' """
         attributes = {'product_name': 'osi_saf_ice_type'}
         self.assertEqual(
             self.normalizer.get_instrument(attributes),
@@ -48,6 +54,9 @@ class OSISAFMetadataNormalizer(unittest.TestCase):
                          ('Short_Name', ''),
                          ('Long_Name', '')])
         )
+    def test_instrument_3(self):
+        """instrument from OSISAFMetadataNormalizer in the absence of 'instrument_type' and based
+        on 'product_name' """
         attributes = {'product_name': 'osi_saf_ice_edge'}
         self.assertEqual(
             self.normalizer.get_instrument(attributes),
@@ -58,6 +67,10 @@ class OSISAFMetadataNormalizer(unittest.TestCase):
                          ('Short_Name', ''),
                          ('Long_Name', '')])
         )
+
+    def test_instrument_4(self):
+        """instrument from OSISAFMetadataNormalizer in the absence of 'instrument_type' and based
+        on 'product_name' """
         attributes = {'product_name': 'osi_saf_amsr2ice_conc'}
         self.assertEqual(
             self.normalizer.get_instrument(attributes),
@@ -68,6 +81,10 @@ class OSISAFMetadataNormalizer(unittest.TestCase):
                          ('Short_Name', 'AMSR2'),
                          ('Long_Name', 'Advanced Microwave Scanning Radiometer 2')])
         )
+
+    def test_instrument_4(self):
+        """instrument from OSISAFMetadataNormalizer in the absence of 'instrument_type' and based
+        on 'product_name' """
         attributes = {'product_name': 'osi_saf_lr_ice_drift'}
         self.assertEqual(
             self.normalizer.get_instrument(attributes),
@@ -78,6 +95,10 @@ class OSISAFMetadataNormalizer(unittest.TestCase):
                          ('Short_Name', ''),
                          ('Long_Name', '')])
         )
+
+    def test_instrument_5(self):
+        """instrument from OSISAFMetadataNormalizer in the absence of 'instrument_type' and based
+        on 'product_name' """
         attributes = {'product_name': 'osi_saf_mr_ice_drift'}
         self.assertEqual(
             self.normalizer.get_instrument(attributes),
@@ -88,6 +109,10 @@ class OSISAFMetadataNormalizer(unittest.TestCase):
                          ('Short_Name', 'AVHRR'),
                          ('Long_Name', 'Advanced Very High Resolution Radiometer')])
         )
+
+    def test_instrument_6(self):
+        """instrument from OSISAFMetadataNormalizer in the absence of 'instrument_type' and based
+        on 'product_name' """
         attributes = {'product_name': 'osi_saf_2'}
         self.assertEqual(
             self.normalizer.get_instrument(attributes),
@@ -98,22 +123,28 @@ class OSISAFMetadataNormalizer(unittest.TestCase):
                          ('Short_Name', 'Unknown'),
                          ('Long_Name', 'Unknown')])
         )
+
+    def test_instrument_without_any_information_in_raw_attributes(self):
+        """instrument from OSISAFMetadataNormalizer in the absence of 'instrument_type' and
+        and 'product_name'. It shall return None """
         attributes = {'test': 'test'}
         self.assertIsNone(self.normalizer.get_instrument(attributes))
 
-    def test_platform(self):
+    def test_platform_1(self):
         """platform from OSISAFMetadataNormalizer"""
         attributes = {'platform_name': 'value_1'}
         # 'instrument_type' must be used in this normalizer
         self.assertEqual(self.normalizer.get_platform(
             attributes)['Short_Name'], 'value_1')
 
+    def test_platform_without_any_information_in_raw_attributes(self):
+        """ in the absence of 'platform_name' value should be None"""
         attributes = {'activity_type': 'value_2'}
-        # in the absence of 'platform_name' value should be None
         self.assertIsNone(self.normalizer.get_instrument(attributes))
 
+    def test_platform_2(self):
+        """in the absence of 'platform_name' value should be UNKNOWN with GCMD template """
         attributes = {'product_name': 'osi_saf_2'}
-        # in the absence of 'platform_name' value should be UNKNOWN with GCMD template
         self.assertEqual(
             self.normalizer.get_platform(attributes),
             OrderedDict([('Category', 'Earth Observation Satellites'),
