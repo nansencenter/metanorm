@@ -82,6 +82,19 @@ class OSISAFMetadataNormalizer(unittest.TestCase):
                          ('Long_Name', 'Advanced Microwave Scanning Radiometer 2')])
         )
 
+    def test_instrument_lr_ice_drift(self):
+        """instrument from OSISAFMetadataNormalizer in the absence of 'instrument_type' and based
+        on 'product_name' """
+        attributes = {'product_name': 'osi_saf_lr_ice_drift'}
+        self.assertEqual(
+            self.normalizer.get_instrument(attributes),
+            OrderedDict([('Category', 'Earth Remote Sensing Instruments'),
+                         ('Class', ''),
+                         ('Type', ''),
+                         ('Subtype', ''),
+                         ('Short_Name', ''),
+                         ('Long_Name', '')])
+        )
     def test_instrument__mr_ice_drift(self):
         """instrument from OSISAFMetadataNormalizer in the absence of 'instrument_type' and based
         on 'product_name' """
