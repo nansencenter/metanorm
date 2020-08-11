@@ -20,14 +20,14 @@ class OSISAFMetadataNormalizer(unittest.TestCase):
         attributes = {'abstract': 'value_abs'}
         self.assertEqual('value_abs', self.normalizer.get_summary(attributes))
 
-    def test_instrument_1(self):
+    def test_instrument_from_instrument_type_raw_attribute(self):
         """instrument from OSISAFMetadataNormalizer"""
         attributes = {'instrument_type': 'value_1'}
         # 'instrument_type' must be used in this normalizer
         self.assertEqual(self.normalizer.get_instrument(
             attributes)['Short_Name'], 'value_1')
 
-    def test_instrument_2(self):
+    def test_instrument_ice_conc(self):
         """instrument from OSISAFMetadataNormalizer in the absence of 'instrument_type' and based
         on 'product_name' """
         attributes = {'product_name': 'osi_saf_ice_conc'}
@@ -41,7 +41,7 @@ class OSISAFMetadataNormalizer(unittest.TestCase):
                          ('Long_Name', '')])
         )
 
-    def test_instrument_3(self):
+    def test_instrument_ice_type(self):
         """instrument from OSISAFMetadataNormalizer in the absence of 'instrument_type' and based
         on 'product_name' """
         attributes = {'product_name': 'osi_saf_ice_type'}
@@ -54,7 +54,7 @@ class OSISAFMetadataNormalizer(unittest.TestCase):
                          ('Short_Name', ''),
                          ('Long_Name', '')])
         )
-    def test_instrument_3(self):
+    def test_instrument_ice_edge(self):
         """instrument from OSISAFMetadataNormalizer in the absence of 'instrument_type' and based
         on 'product_name' """
         attributes = {'product_name': 'osi_saf_ice_edge'}
@@ -68,7 +68,7 @@ class OSISAFMetadataNormalizer(unittest.TestCase):
                          ('Long_Name', '')])
         )
 
-    def test_instrument_4(self):
+    def test_instrument_amsr2ice_conc(self):
         """instrument from OSISAFMetadataNormalizer in the absence of 'instrument_type' and based
         on 'product_name' """
         attributes = {'product_name': 'osi_saf_amsr2ice_conc'}
@@ -82,21 +82,7 @@ class OSISAFMetadataNormalizer(unittest.TestCase):
                          ('Long_Name', 'Advanced Microwave Scanning Radiometer 2')])
         )
 
-    def test_instrument_4(self):
-        """instrument from OSISAFMetadataNormalizer in the absence of 'instrument_type' and based
-        on 'product_name' """
-        attributes = {'product_name': 'osi_saf_lr_ice_drift'}
-        self.assertEqual(
-            self.normalizer.get_instrument(attributes),
-            OrderedDict([('Category', 'Earth Remote Sensing Instruments'),
-                         ('Class', ''),
-                         ('Type', ''),
-                         ('Subtype', ''),
-                         ('Short_Name', ''),
-                         ('Long_Name', '')])
-        )
-
-    def test_instrument_5(self):
+    def test_instrument__mr_ice_drift(self):
         """instrument from OSISAFMetadataNormalizer in the absence of 'instrument_type' and based
         on 'product_name' """
         attributes = {'product_name': 'osi_saf_mr_ice_drift'}
@@ -110,9 +96,9 @@ class OSISAFMetadataNormalizer(unittest.TestCase):
                          ('Long_Name', 'Advanced Very High Resolution Radiometer')])
         )
 
-    def test_instrument_6(self):
+    def test_instrument_incorrect_product_of_osisaf_project(self):
         """instrument from OSISAFMetadataNormalizer in the absence of 'instrument_type' and based
-        on 'product_name' """
+        on 'product_name'. IF the name of product is not recognized, it shall return unknown """
         attributes = {'product_name': 'osi_saf_2'}
         self.assertEqual(
             self.normalizer.get_instrument(attributes),
@@ -130,7 +116,7 @@ class OSISAFMetadataNormalizer(unittest.TestCase):
         attributes = {'test': 'test'}
         self.assertIsNone(self.normalizer.get_instrument(attributes))
 
-    def test_platform_1(self):
+    def test_platform_based_on_platform_name_raw_attribute(self):
         """platform from OSISAFMetadataNormalizer"""
         attributes = {'platform_name': 'value_1'}
         # 'instrument_type' must be used in this normalizer
