@@ -2,9 +2,11 @@
 #pylint: disable=protected-access
 
 import unittest
+from collections import OrderedDict
 
 import metanorm.normalizers as normalizers
 from metanorm.errors import MetadataNormalizationError
+import metanorm.handlers as handlers
 
 
 class BaseMetadataNormalizerTestCase(unittest.TestCase):
@@ -35,8 +37,14 @@ class BaseMetadataNormalizerTestCase(unittest.TestCase):
 
     def test_instantiation(self):
         """Test the instantiation of a MetadataNormalizer"""
-        normalizer = self.TestMetadataNormalizer(['test_parameter'])
-        self.assertListEqual(normalizer._parameter_names, ['test_parameter'])
+        normalizer = self.TestMetadataNormalizer(['test_parameter'], [])
+        self.assertListEqual(
+            normalizer._output_parameters_names, ['test_parameter'])
+
+    def test_both_none_argument(self):
+        """Test the instantiation of MetadataNormalizer with (None, None) as requested parameters"""
+        with self.assertRaises(ValueError):
+            normalizer = self.TestMetadataNormalizer(None, None)
 
     def test_first_in_chain_normalization(self):
         """
@@ -47,7 +55,7 @@ class BaseMetadataNormalizerTestCase(unittest.TestCase):
         attributes = {'test_attribute': "test_attribute_value"}
         expected_result = {'test_parameter': "test_attribute_value"}
 
-        normalizer = self.TestMetadataNormalizer(parameter_names)
+        normalizer = self.TestMetadataNormalizer(parameter_names, [])
 
         self.assertDictEqual(normalizer.normalize(attributes), expected_result)
 
@@ -63,11 +71,85 @@ class BaseMetadataNormalizerTestCase(unittest.TestCase):
             'other_parameter': "other_attribute_value"
         }
 
-        normalizer_one = self.TestMetadataNormalizer(parameter_names)
-        normalizer_two = self.OtherTestMetadataNormalizer(parameter_names)
+        normalizer_one = self.TestMetadataNormalizer(parameter_names, [])
+        normalizer_two = self.OtherTestMetadataNormalizer(parameter_names, [])
         normalizer_one.next = normalizer_two
 
-        self.assertDictEqual(normalizer_one.normalize(attributes), expected_result)
+        self.assertDictEqual(normalizer_one.normalize(
+            attributes), expected_result)
+
+    def test_consistent_dataset_parameters_identification(self):
+        """Shall return consistent results for cumulative parameters
+        even if the ordering of normalizers are changed"""
+        handlers.MetadataHandler.NORMALIZERS = [
+            normalizers.NETCDFCFMetadataNormalizer,
+            normalizers.OSISAFMetadataNormalizer,
+            normalizers.SentinelOneIdentifierMetadataNormalizer,
+            normalizers.GeoSpatialDefaultMetadataNormalizer,
+
+        ]
+        handler = handlers.MetadataHandler(
+            ['platform'], ['dataset_parameters'])
+
+        n = handler._chain
+        result = n.normalize(
+            {'Identifier': 'S1A_EW_GRDM_1SDH_20150702T172954_20150702T173054_006635_008DA5_55D1',
+             'raw_dataset_parameters': ['sea_ice_y_displacement', 'sea_ice_x_displacement']})
+        self.assertEqual(len(result['dataset_parameters']), 3)
+        self.assertIn(OrderedDict([('standard_name', 'sea_ice_x_displacement'),
+                                   ('canonical_units', 'm'),
+                                   ('grib', ''),
+                                   ('amip', ''),
+                                   ('description', '"x" indicates a vector component along the grid x-axis, positive with increasing x. "Displacement" means the change in geospatial position of an object that has moved over time. If possible, the time interval over which the motion took place should be specified using a bounds variable for the time coordinate variable.  A displacement can be represented as a vector. Such a vector should however not be interpreted as describing a rectilinear, constant speed motion but merely as an indication that the start point of the vector is found at the tip of the vector after the time interval associated with the displacement variable.  A displacement does not prescribe a trajectory. Sea ice displacement can be defined as a two-dimensional vector, with no vertical component. An x displacement is calculated from the difference in the moving object\'s grid x coordinate between the start and end of the time interval associated with the displacement variable.')]), result['dataset_parameters'])
+
+        self.assertIn(OrderedDict([('standard_name', 'sea_ice_y_displacement'),
+                                   ('canonical_units', 'm'),
+                                   ('grib', ''),
+                                   ('amip', ''),
+                                   ('description', '"y" indicates a vector component along the grid y-axis, positive with increasing y. "Displacement" means the change in geospatial position of an object that has moved over time. If possible, the time interval over which the motion took place should be specified using a bounds variable for the time coordinate variable. A displacement can be represented as a vector. Such a vector should however not be interpreted as describing a rectilinear, constant speed motion but merely as an indication that the start point of the vector is found at the tip of the vector after the time interval associated with the displacement variable.  A displacement does not prescribe a trajectory. Sea ice displacement can be defined as a two-dimensional vector, with no vertical component. A y displacement is calculated from the difference in the moving object\'s grid y coordinate between the start and end of the time interval associated with the displacement variable.')]), result['dataset_parameters'])
+
+        self.assertIn(OrderedDict([
+            ('standard_name', 'surface_backwards_scattering_coefficient_of_radar_wave'),
+            ('canonical_units', '1'),
+            ('grib', ''),
+            ('amip', ''),
+            ('description', 'The scattering/absorption/attenuation coefficient is assumed to be an integral over all wavelengths, unless a coordinate of radiation_wavelength is included to specify the wavelength. Scattering of radiation is its deflection from its incident path without loss of energy. Backwards scattering refers to the sum of scattering into all backward angles i.e. scattering_angle exceeding pi/2 radians. A scattering_angle should not be specified with this quantity.')
+        ]), result['dataset_parameters'])
+
+        # Redefinition with another order of normalizers
+        handlers.NORMALIZERS = [
+            normalizers.SentinelOneIdentifierMetadataNormalizer,
+            normalizers.OSISAFMetadataNormalizer,
+            normalizers.NETCDFCFMetadataNormalizer,
+            normalizers.GeoSpatialDefaultMetadataNormalizer,
+        ]
+        handler = handlers.MetadataHandler(
+            ['platform'], ['dataset_parameters'])
+
+        n = handler._chain
+        result = n.normalize(
+            {'Identifier': 'S1A_EW_GRDM_1SDH_20150702T172954_20150702T173054_006635_008DA5_55D1',
+             'raw_dataset_parameters': ['sea_ice_y_displacement', 'sea_ice_x_displacement']})
+        self.assertEqual(len(result['dataset_parameters']), 3)
+        self.assertIn(OrderedDict([('standard_name', 'sea_ice_x_displacement'),
+                                   ('canonical_units', 'm'),
+                                   ('grib', ''),
+                                   ('amip', ''),
+                                   ('description', '"x" indicates a vector component along the grid x-axis, positive with increasing x. "Displacement" means the change in geospatial position of an object that has moved over time. If possible, the time interval over which the motion took place should be specified using a bounds variable for the time coordinate variable.  A displacement can be represented as a vector. Such a vector should however not be interpreted as describing a rectilinear, constant speed motion but merely as an indication that the start point of the vector is found at the tip of the vector after the time interval associated with the displacement variable.  A displacement does not prescribe a trajectory. Sea ice displacement can be defined as a two-dimensional vector, with no vertical component. An x displacement is calculated from the difference in the moving object\'s grid x coordinate between the start and end of the time interval associated with the displacement variable.')]), result['dataset_parameters'])
+
+        self.assertIn(OrderedDict([('standard_name', 'sea_ice_y_displacement'),
+                                   ('canonical_units', 'm'),
+                                   ('grib', ''),
+                                   ('amip', ''),
+                                   ('description', '"y" indicates a vector component along the grid y-axis, positive with increasing y. "Displacement" means the change in geospatial position of an object that has moved over time. If possible, the time interval over which the motion took place should be specified using a bounds variable for the time coordinate variable. A displacement can be represented as a vector. Such a vector should however not be interpreted as describing a rectilinear, constant speed motion but merely as an indication that the start point of the vector is found at the tip of the vector after the time interval associated with the displacement variable.  A displacement does not prescribe a trajectory. Sea ice displacement can be defined as a two-dimensional vector, with no vertical component. A y displacement is calculated from the difference in the moving object\'s grid y coordinate between the start and end of the time interval associated with the displacement variable.')]), result['dataset_parameters'])
+
+        self.assertIn(OrderedDict([
+            ('standard_name', 'surface_backwards_scattering_coefficient_of_radar_wave'),
+            ('canonical_units', '1'),
+            ('grib', ''),
+            ('amip', ''),
+            ('description', 'The scattering/absorption/attenuation coefficient is assumed to be an integral over all wavelengths, unless a coordinate of radiation_wavelength is included to specify the wavelength. Scattering of radiation is its deflection from its incident path without loss of energy. Backwards scattering refers to the sum of scattering into all backward angles i.e. scattering_angle exceeding pi/2 radians. A scattering_angle should not be specified with this quantity.')
+        ]), result['dataset_parameters'])
 
 
 class BaseDefaultMetadataNormalizerTestCase(unittest.TestCase):
@@ -104,20 +186,23 @@ class BaseDefaultMetadataNormalizerTestCase(unittest.TestCase):
             'test_parameter': "test_attribute_value",
         }
 
-        normalizer_one = self.TestMetadataNormalizer(parameter_names)
-        normalizer_two = self.TestDefaultMetadataNormalizer(parameter_names)
+        normalizer_one = self.TestMetadataNormalizer(parameter_names, [])
+        normalizer_two = self.TestDefaultMetadataNormalizer(
+            parameter_names, [])
         normalizer_one.next = normalizer_two
 
-        self.assertDictEqual(normalizer_one.normalize(attributes), expected_result)
+        self.assertDictEqual(normalizer_one.normalize(
+            attributes), expected_result)
 
     def test_normalize_parameter_without_existing_method(self):
         """When no method exists for a parameter, it should raise an exception"""
-        parameter_names = ['other_parameter']
+        output_parameter_names = ['other_parameter']
         attributes = {
             'test_attribute': "test_attribute_value",
         }
 
-        normalizer = self.TestDefaultMetadataNormalizer(parameter_names)
+        normalizer = self.TestDefaultMetadataNormalizer(
+            output_parameter_names, [])
 
         with self.assertRaises(MetadataNormalizationError):
             _ = normalizer.normalize(attributes)

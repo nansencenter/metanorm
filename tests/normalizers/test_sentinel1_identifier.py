@@ -24,7 +24,7 @@ class SentinelOneIdentifierMetadataNormalizerTestCase(unittest.TestCase):
             "dataset_parameters"
         ]
         self.normalizer = normalizers.sentinel1_identifier.SentinelOneIdentifierMetadataNormalizer(
-            DATASET_PARAMETER_NAMES)
+            DATASET_PARAMETER_NAMES, [])
     def tearDown(self):
         self.normalizer = None
 
@@ -42,9 +42,9 @@ class SentinelOneIdentifierMetadataNormalizerTestCase(unittest.TestCase):
         result_normalization = self.normalizer.normalize(
             {'Identifier': 'S1A_EW_GRDM_1SDH_20150702T172954_20150702T173054_006635_008DA5_55D1'})
         self.assertEqual(result_normalization['time_coverage_start'], datetime.datetime(
-            2015, 7, 2, 17, 29, 54,tzinfo=tzutc()))
+            2015, 7, 2, 17, 29, 54, tzinfo=tzutc()))
         self.assertEqual(result_normalization['time_coverage_end'], datetime.datetime(
-            2015, 7, 2, 17, 30, 54,tzinfo=tzutc()))
+            2015, 7, 2, 17, 30, 54, tzinfo=tzutc()))
 
     def test_platform_identification(self):
         """ Shall return the correct sentinel based on the filename """
@@ -110,12 +110,11 @@ class SentinelOneIdentifierMetadataNormalizerTestCase(unittest.TestCase):
             [
                 OrderedDict([
                     ('standard_name', 'surface_backwards_scattering_coefficient_of_radar_wave'),
-                    ('long_name', 'Normalized Radar Cross Section'),
-                    ('short_name', 'sigma0'),
-                    ('units', 'm/m'),
-                    ('minmax', '0 0.1'),
-                    ('colormap', 'gray')
-                    ])
+                    ('canonical_units', '1'),
+                    ('grib', ''),
+                    ('amip', ''),
+                    ('description', 'The scattering/absorption/attenuation coefficient is assumed to be an integral over all wavelengths, unless a coordinate of radiation_wavelength is included to specify the wavelength. Scattering of radiation is its deflection from its incident path without loss of energy. Backwards scattering refers to the sum of scattering into all backward angles i.e. scattering_angle exceeding pi/2 radians. A scattering_angle should not be specified with this quantity.')
+                ])
             ])
 
     def test_return_none_for_incorrect_raw_attribute(self):
@@ -128,8 +127,8 @@ class SentinelOneIdentifierMetadataNormalizerTestCase(unittest.TestCase):
     def test_return_proper_output_of_regex_based_on_different_raw_attribute_situation(self):
         """ Shall return None based on situation of specific character inside the Identifier attribute """
 
-
-        result_normalization = self.normalizer.match_identifier({'Identifier': 'S1A_EW_GRDM_1SDH_20150702T172954_20150702T173054_006635_008DA5_55D1'})
+        result_normalization = self.normalizer.match_identifier(
+            {'Identifier': 'S1A_EW_GRDM_1SDH_20150702T172954_20150702T173054_006635_008DA5_55D1'})
         self.assertEqual(result_normalization['type'], "GRD")
         self.assertEqual(result_normalization['resolution'], "M")
         self.assertEqual(result_normalization['mode'], "EW")
@@ -142,44 +141,46 @@ class SentinelOneIdentifierMetadataNormalizerTestCase(unittest.TestCase):
         self.assertEqual(result_normalization['time_coverage_start'], "20150702T172954")
         self.assertEqual(result_normalization['time_coverage_end'], "20150702T173054")
 
-        result_normalization = self.normalizer.match_identifier({'Identifier': 'S1A_EW____M_1SDH_20150702T172954_20150702T173054_006635_008DA5_55D1'})
+        result_normalization = self.normalizer.match_identifier(
+            {'Identifier': 'S1A_EW____M_1SDH_20150702T172954_20150702T173054_006635_008DA5_55D1'})
         self.assertEqual(result_normalization['type'], "___")
 
-        result_normalization = self.normalizer.match_identifier({'Identifier': 'S1A_EW_GRD__1SDH_20150702T172954_20150702T173054_006635_008DA5_55D1'})
+        result_normalization = self.normalizer.match_identifier(
+            {'Identifier': 'S1A_EW_GRD__1SDH_20150702T172954_20150702T173054_006635_008DA5_55D1'})
         self.assertEqual(result_normalization['resolution'], "_")
 
-
-        result_normalization = self.normalizer.match_identifier({'Identifier': 'S1A____GRD__1SDH_20150702T172954_20150702T173054_006635_008DA5_55D1'})
+        result_normalization = self.normalizer.match_identifier(
+            {'Identifier': 'S1A____GRD__1SDH_20150702T172954_20150702T173054_006635_008DA5_55D1'})
         self.assertEqual(result_normalization['mode'], "__")
 
-
-        result_normalization = self.normalizer.match_identifier({'Identifier': 'S1A_EW_GRDM_1SDH_20150702T172954_20150702T173054________008DA5_55D1'})
+        result_normalization = self.normalizer.match_identifier(
+            {'Identifier': 'S1A_EW_GRDM_1SDH_20150702T172954_20150702T173054________008DA5_55D1'})
         self.assertEqual(result_normalization['orbit'], "______")
 
-
-        result_normalization = self.normalizer.match_identifier({'Identifier': 'S1A_EW_GRDM_1SDH_20150702T172954_20150702T173054_006635________55D1'})
+        result_normalization = self.normalizer.match_identifier(
+            {'Identifier': 'S1A_EW_GRDM_1SDH_20150702T172954_20150702T173054_006635________55D1'})
         self.assertEqual(result_normalization['mission_id'], "______")
 
-
-        result_normalization = self.normalizer.match_identifier({'Identifier': 'S1A_EW_GRDM_1SDH_20150702T172954_20150702T173054_006635_008DA5_____'})
+        result_normalization = self.normalizer.match_identifier(
+            {'Identifier': 'S1A_EW_GRDM_1SDH_20150702T172954_20150702T173054_006635_008DA5_____'})
         self.assertEqual(result_normalization['product_id'], "____")
 
-
-        result_normalization = self.normalizer.match_identifier({'Identifier': 'S1A_EW_GRDM__SDH_20150702T172954_20150702T173054_006635_008DA5_55D1'})
+        result_normalization = self.normalizer.match_identifier(
+            {'Identifier': 'S1A_EW_GRDM__SDH_20150702T172954_20150702T173054_006635_008DA5_55D1'})
         self.assertEqual(result_normalization['processing_level'], "_")
 
-
-        result_normalization = self.normalizer.match_identifier({'Identifier': 'S1A_EW_GRDM_1_DH_20150702T172954_20150702T173054_006635_008DA5_55D1'})
+        result_normalization = self.normalizer.match_identifier(
+            {'Identifier': 'S1A_EW_GRDM_1_DH_20150702T172954_20150702T173054_006635_008DA5_55D1'})
         self.assertEqual(result_normalization['class'], "_")
 
-
-        result_normalization = self.normalizer.match_identifier({'Identifier': 'S1A_EW_GRDM_1S___20150702T172954_20150702T173054_006635_008DA5_55D1'})
+        result_normalization = self.normalizer.match_identifier(
+            {'Identifier': 'S1A_EW_GRDM_1S___20150702T172954_20150702T173054_006635_008DA5_55D1'})
         self.assertEqual(result_normalization['polarization'], "__")
 
-
-        result_normalization = self.normalizer.match_identifier({'Identifier': 'S1A_EW_GRDM_1S___________________20150702T173054_006635_008DA5_55D1'})
+        result_normalization = self.normalizer.match_identifier(
+            {'Identifier': 'S1A_EW_GRDM_1S___________________20150702T173054_006635_008DA5_55D1'})
         self.assertEqual(result_normalization['time_coverage_start'], "_______________")
 
-
-        result_normalization = self.normalizer.match_identifier({'Identifier': 'S1A_EW_GRDM_1SDH_20150702T172954_________________006635_008DA5_55D1'})
+        result_normalization = self.normalizer.match_identifier(
+            {'Identifier': 'S1A_EW_GRDM_1SDH_20150702T172954_________________006635_008DA5_55D1'})
         self.assertEqual(result_normalization['time_coverage_end'], "_______________")

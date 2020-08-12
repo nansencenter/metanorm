@@ -29,7 +29,7 @@ class GeoSpatialWellKnownMetadataNormalizerTestCase(unittest.TestCase):
              '-175.084000 -15.3505001))'),
             srid=4326)
 
-        normalizer = normalizers.GeoSpatialWellKnownMetadataNormalizer(['location_geometry'])
+        normalizer = normalizers.GeoSpatialWellKnownMetadataNormalizer(['location_geometry'], [])
         normalized_params = normalizer.normalize(attributes)
 
         self.assertIsInstance(normalized_params, dict)
@@ -38,7 +38,7 @@ class GeoSpatialWellKnownMetadataNormalizerTestCase(unittest.TestCase):
 
     def test_missing_location_attribute(self):
         """If the location attributes are not all present, an exception must be raised"""
-        normalizer = normalizers.GeoSpatialWellKnownMetadataNormalizer(['location_geometry'])
+        normalizer = normalizers.GeoSpatialWellKnownMetadataNormalizer(['location_geometry'], [])
         with self.assertRaises(errors.MetadataNormalizationError):
             _ = normalizer.normalize({})
 
@@ -55,11 +55,11 @@ class GeoSpatialWellKnownMetadataNormalizerTestCase(unittest.TestCase):
                 ('Long_Name', 'Visible-Infrared Imager-Radiometer Suite')
             ])
         }
-        normalizer = normalizers.GeoSpatialWellKnownMetadataNormalizer(['instrument'])
+        normalizer = normalizers.GeoSpatialWellKnownMetadataNormalizer(['instrument'], [])
         self.assertDictEqual(normalizer.normalize(attributes), expected_result)
 
     def test_missing_instrument_attribute(self):
         """If the 'sensor' attribute is not present, an exception must be raised"""
-        normalizer = normalizers.GeoSpatialWellKnownMetadataNormalizer(['instrument'])
+        normalizer = normalizers.GeoSpatialWellKnownMetadataNormalizer(['instrument'], [])
         with self.assertRaises(errors.MetadataNormalizationError):
             _ = normalizer.normalize({})

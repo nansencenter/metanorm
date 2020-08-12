@@ -20,13 +20,18 @@ class MetadataHandler():
     # THE LAST NORMALISER MUST INHERIT FROM BaseDefaultMetadataNormalizer
     NORMALIZERS = []
 
-    def __init__(self, parameter_names):
+    def __init__(self, output_parameter_names, output_cumulative_parameter_names):
         """Builds a chain of normalizers for the given parameter names"""
+        if not isinstance(self.NORMALIZERS[-1]([]), normalizers.base.BaseDefaultMetadataNormalizer):
+            raise ValueError(
+                "The last normalizer must inherit from 'BaseDefaultMetadataNormalizer'")
 
-        self._chain = last_normalizer = self.NORMALIZERS[0](parameter_names)
+        self._chain = last_normalizer = self.NORMALIZERS[0](
+            output_parameter_names, output_cumulative_parameter_names)
 
         for normalizer_class in self.NORMALIZERS[1:]:
-            current_normalizer = normalizer_class(parameter_names)
+            current_normalizer = normalizer_class(
+                output_parameter_names, output_cumulative_parameter_names)
             last_normalizer.next = current_normalizer
             last_normalizer = current_normalizer
 
@@ -38,9 +43,11 @@ class MetadataHandler():
 class GeospatialMetadataHandler(MetadataHandler):
     """Geospatial metadata handler"""
     NORMALIZERS = [
+        normalizers.NETCDFCFMetadataNormalizer,
         normalizers.SentinelSAFEMetadataNormalizer,
         normalizers.SentinelOneIdentifierMetadataNormalizer,
         normalizers.ACDDMetadataNormalizer,
+        normalizers.OSISAFMetadataNormalizer,
         normalizers.GeoSpatialWellKnownMetadataNormalizer,
         normalizers.GeoSpatialDefaultMetadataNormalizer,
     ]

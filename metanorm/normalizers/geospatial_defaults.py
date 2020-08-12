@@ -39,7 +39,3 @@ class GeoSpatialDefaultMetadataNormalizer(BaseDefaultMetadataNormalizer):
     def get_summary(self, raw_attributes):  # pylint: disable=unused-argument
         """Default summary"""
         return utils.UNKNOWN
-
-    def get_dataset_parameters(self, raw_attributes):  # pylint: disable=unused-argument
-        """Default dataset_parameters"""
-        return []

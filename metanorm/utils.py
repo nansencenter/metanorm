@@ -147,3 +147,22 @@ def geometry_from_wkt_string(wkt_string, srid=4326):
     EPSG:4326, i.e. WGS 84
     """
     return GEOSGeometry(wkt_string, srid=srid)
+
+def get_cf_or_wkv_standard_name(keyword):
+    """return the values of a dataset parameter in a standard way from the
+    standards that are defined in the pti package based on the keyword that has been passed to it.
+    For example, it returns something like:
+
+    'standard_name':'sea_ice_area_fraction'
+    'canonical_units':'1'
+    'grib':'91'
+    'amip':'sic'
+    'description':"X_area_fraction"
+
+    as the result_values.
+    """
+    try:
+        result_values = pti.get_cf_standard_name(keyword)
+    except IndexError:
+        result_values = pti.get_wkv_variable(keyword)
+    return result_values

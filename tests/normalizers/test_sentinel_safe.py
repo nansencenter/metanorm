@@ -13,7 +13,7 @@ class SentinelSAFEMetadataNormalizerTestCase(unittest.TestCase):
     """Tests for the ACDD attributes normalizer"""
 
     def setUp(self):
-        self.normalizer = normalizers.SentinelSAFEMetadataNormalizer([])
+        self.normalizer = normalizers.SentinelSAFEMetadataNormalizer([], [])
 
     def test_entry_title(self):
         """entry_title from SentinelSAFEMetadataNormalizer"""
