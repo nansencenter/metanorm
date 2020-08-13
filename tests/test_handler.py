@@ -45,7 +45,7 @@ class MetadataHandlerTestCase(unittest.TestCase):
 class GeospatialMetadataHandlerTestCase(unittest.TestCase):
     """Test the GeospatialMetadataHandler class"""
 
-    def test_GeoSpatialDefault_normalizer_be_last_in_chain(self):
+    def test_geospatialdefault_normalizer_be_last_in_chain(self):
         """It is mandatory to have 'GeoSpatialDefaultMetadataNormalizer' in the list of normalizers
         (the last one)."""
         handler = handlers.GeospatialMetadataHandler(
@@ -55,7 +55,7 @@ class GeospatialMetadataHandlerTestCase(unittest.TestCase):
             , handler.NORMALIZERS[-1]
             )
 
-    def test_GeoSpatialDefault_normalizer_is_lost_in_chain(self):
+    def test_geospatialdefault_normalizer_is_lost_in_chain(self):
         """ GeoSpatialDefaultMetadataNormalizer normalizer should never be removed from the list of
         normalizers (otherwise, ValueError must be raised). Below list of NORMALIZERS lacks it """
         class TestHandler(handlers.MetadataHandler):
@@ -79,8 +79,8 @@ class GeospatialMetadataHandlerTestCase(unittest.TestCase):
         while normalizer:
             self.assertIsInstance(normalizer, handler.NORMALIZERS[i])
             self.assertEqual(normalizer._output_parameters_names, ['test_output_parameter'])
-            self.assertEqual(normalizer._output_cumulative_parameters_names, [
-                             'test_cumulative_parameter'])
+            self.assertEqual(normalizer._output_cumulative_parameters_names,
+                             ['test_cumulative_parameter'])
             normalizer = normalizer.next
             i += 1
 
