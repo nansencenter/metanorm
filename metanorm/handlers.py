@@ -17,11 +17,16 @@ LOGGER = logging.getLogger(__name__)
 class MetadataHandler():
     """Base handler"""
     # This list should be ordered by decreasing priority, and
-    # THE LAST NORMALISER MUST INHERIT FROM BaseDefaultMetadataNormalizer
+    # THE LAST NORMALIZER MUST INHERIT FROM BaseDefaultMetadataNormalizer
     NORMALIZERS = []
 
-    def __init__(self, output_parameter_names, output_cumulative_parameter_names):
+    def __init__(self, output_parameter_names=None, output_cumulative_parameter_names=None):
         """Builds a chain of normalizers for the given parameter names"""
+        if output_parameter_names is None and output_cumulative_parameter_names is None:
+            raise ValueError((
+                "Either output_parameter_names or output_cumulative_parameter_names "
+                "should be specified"))
+
         if not isinstance(self.NORMALIZERS[-1]([]), normalizers.base.BaseDefaultMetadataNormalizer):
             raise ValueError(
                 "The last normalizer must inherit from 'BaseDefaultMetadataNormalizer'")

@@ -35,16 +35,37 @@ class BaseMetadataNormalizerTestCase(unittest.TestCase):
             """Basic attribute method"""
             return raw_attributes['other_attribute']
 
-    def test_instantiation(self):
-        """Test the instantiation of a MetadataNormalizer"""
-        normalizer = self.TestMetadataNormalizer(['test_parameter'], [])
-        self.assertListEqual(
-            normalizer._output_parameters_names, ['test_parameter'])
+    def test_instantiation_with_both_arguments(self):
+        """Test the instantiation of a MetadataNormalizer with both arguments specified"""
+        normalizer = self.TestMetadataNormalizer(['test_parameter'], ['test_cumulative_parameter'])
+        self.assertListEqual(normalizer._output_parameters_names, ['test_parameter'])
+        self.assertListEqual(normalizer._output_cumulative_parameters_names,
+                             ['test_cumulative_parameter'])
+
+    def test_instantiation_with_only_standard_parameters(self):
+        """
+        Test the instantiation of a MetadataNormalizer with only the
+        output_parameters_names argument specified
+        """
+        normalizer = self.TestMetadataNormalizer(['test_parameter'])
+        self.assertListEqual(normalizer._output_parameters_names, ['test_parameter'])
+        self.assertListEqual(normalizer._output_cumulative_parameters_names, [])
+
+    def test_instantiation_with_only_cumulative_parameters(self):
+        """
+        Test the instantiation of a MetadataNormalizer with only the
+        output_cumulative_parameters_names argument specified
+        """
+        normalizer = self.TestMetadataNormalizer(
+            output_cumulative_parameters_names=['test_cumulative_parameter'])
+        self.assertListEqual(normalizer._output_parameters_names, [])
+        self.assertListEqual(normalizer._output_cumulative_parameters_names,
+                             ['test_cumulative_parameter'])
 
     def test_both_none_argument(self):
         """Test the instantiation of MetadataNormalizer with (None, None) as requested parameters"""
         with self.assertRaises(ValueError):
-            normalizer = self.TestMetadataNormalizer(None, None)
+            self.TestMetadataNormalizer(None, None)
 
     def test_first_in_chain_normalization(self):
         """

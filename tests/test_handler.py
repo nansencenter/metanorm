@@ -8,6 +8,40 @@ import metanorm.handlers as handlers
 import metanorm.normalizers as normalizers
 
 
+class MetadataHandlerTestCase(unittest.TestCase):
+    """Test the base MetadataHandler class"""
+
+    def test_output_parameters_argument_only(self):
+        """
+        The constructor of MetadataHandler should accept being given only the
+        output_parameter_names argument
+        """
+        handler = handlers.MetadataHandler([])
+        self.assertIsInstance(handler, handlers.MetadataHandler)
+
+
+    def test_output_cumulative_parameters_argument_only(self):
+        """
+        The constructor of MetadataHandler should accept being given only the
+        output_cumulative_parameter_names argument
+        """
+        handler = handlers.MetadataHandler(output_cumulative_parameter_names=[])
+        self.assertIsInstance(handler, handlers.MetadataHandler)
+
+    def test_both_arguments(self):
+        """
+        The constructor of MetadataHandler should accept being given both output_parameter_names
+        and output_cumulative_parameter_names arguments
+        """
+        handler = handlers.MetadataHandler([], [])
+        self.assertIsInstance(handler, handlers.MetadataHandler)
+
+    def test_error_if_no_argument(self):
+        """An error should be raised if both arguments are None"""
+        with self.assertRaises(ValueError):
+            handlers.MetadataHandler()
+
+
 class GeospatialMetadataHandlerTestCase(unittest.TestCase):
     """Test the GeospatialMetadataHandler class"""
 
