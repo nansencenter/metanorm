@@ -16,15 +16,13 @@ class BaseMetadataNormalizer():
         output_parameter_names and output_cumulative_parameter_names should contain the lists of
         desired parameters names to extract.
         """
-        self._output_parameters_names = output_parameters_names
-        self._output_cumulative_parameters_names = output_cumulative_parameters_names
-        if (self._output_parameters_names is None
-            and self._output_cumulative_parameters_names is None):
+        if output_parameters_names is None and output_cumulative_parameters_names is None:
             raise ValueError((
                 "Either output_parameter_names or output_cumulative_parameter_names "
                 "must be specified"
             ))
-
+        self._output_parameters_names = output_parameters_names or []
+        self._output_cumulative_parameters_names = output_cumulative_parameters_names or []
         self._next = None
 
     @property
