@@ -43,6 +43,7 @@ class MetadataHandler():
 class GeospatialMetadataHandler(MetadataHandler):
     """Geospatial metadata handler"""
     NORMALIZERS = [
+        normalizers.FTPMetadataNormalizer,
         normalizers.NETCDFCFMetadataNormalizer,
         normalizers.SentinelSAFEMetadataNormalizer,
         normalizers.SentinelOneIdentifierMetadataNormalizer,
