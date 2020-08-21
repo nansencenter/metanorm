@@ -72,13 +72,13 @@ class FTPMetadataNormalizer(BaseMetadataNormalizer):
                 # 'd3d' cases are the average of three consequent days! so start day is yesterday!
                 # if condition is the search of 'd3d' in the filename
                 if 'd3d' in raw_attributes['ftp_add_and_file_name'].split('/')[-1]:
-                    return dateutil.parser.parse(extracted_date)+relativedelta(days=-1)
+                    return dateutil.parser.parse(extracted_date).replace(tzinfo=tzutc())+relativedelta(days=-1)
                 # for weekly average ones in the "weeks" folder
                 # if condition is the search of "weeks" folder in the FTP path
                 elif "weeks" in raw_attributes['ftp_add_and_file_name'].split('/'):
-                    return dateutil.parser.parse(extracted_date)+relativedelta(days=-3)
+                    return dateutil.parser.parse(extracted_date).replace(tzinfo=tzutc())+relativedelta(days=-3)
                 else:  # normal cases that are neither being 'd3d' nor inside "week"
-                    return dateutil.parser.parse(extracted_date)
+                    return dateutil.parser.parse(extracted_date).replace(tzinfo=tzutc())
 
             elif self.match_domain(raw_attributes) == 'ceda':
                 return dateutil.parser.parse("19820222T000000").replace(tzinfo=tzutc())
@@ -100,13 +100,13 @@ class FTPMetadataNormalizer(BaseMetadataNormalizer):
                 # 'd3d' cases are the average of three consequent days! so end day is tomorrow!
                 # if condition is the search of 'd3d' in the filename
                 if 'd3d' in raw_attributes['ftp_add_and_file_name'].split('/')[-1]:
-                    return dateutil.parser.parse(extracted_date)+relativedelta(days=+1)
+                    return dateutil.parser.parse(extracted_date).replace(tzinfo=tzutc())+relativedelta(days=+1)
                     # for weekly average ones in the "weeks" folder
                     # if condition is the search of "weeks" folder in the FTP path
                 elif "weeks" in raw_attributes['ftp_add_and_file_name'].split('/'):
-                    return dateutil.parser.parse(extracted_date)+relativedelta(days=+3)
+                    return dateutil.parser.parse(extracted_date).replace(tzinfo=tzutc())+relativedelta(days=+3)
                 else:  # normal cases that are neither being 'd3d' nor inside "week"
-                    return dateutil.parser.parse(extracted_date)
+                    return dateutil.parser.parse(extracted_date).replace(tzinfo=tzutc())
 
             elif self.match_domain(raw_attributes) == 'ceda':
                 return dateutil.parser.parse("20100222T000000").replace(tzinfo=tzutc())
