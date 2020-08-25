@@ -7,7 +7,7 @@ from datetime import datetime
 
 import dateutil.parser
 import pythesint as pti
-from dateutil.relativedelta import *
+from dateutil.relativedelta import relativedelta
 from dateutil.tz import tzutc
 from django.contrib.gis.geos.geometry import GEOSGeometry
 
@@ -41,18 +41,18 @@ class FTPMetadataNormalizer(BaseMetadataNormalizer):
             return None
 
     def get_platform(self, raw_attributes):
-        """DANGER!!! returns the suitable platform based on the filename """
-        platform_map = dict(ceda='dummy_platform', remss='dummy_platform2',
-                            jaxa='dummy_platform3')  # DANGER! values are absolutely FAKE, must be revised
+        """ return the corresponding platfrom based on specified ftp source """
+        platform_map = dict(ceda='Earth Observation Satellites', remss='GPM',
+                            jaxa='GCOM-W1')
         domain_str = self.match_domain(raw_attributes)
         if domain_str is None:
             return None
         return utils.get_gcmd_platform(platform_map[domain_str])
 
     def get_instrument(self, raw_attributes):
-        """DANGER!!!  returns the suitable instrument based on the filename """
-        instrument_map = dict(ceda='dummy_instrument', remss='dummy_instrument2',
-                              jaxa='dummy_instrument3')  # DANGER! values are absolutely FAKE, must be revised
+        """return the corresponding instrument based on specified ftp source """
+        instrument_map = dict(ceda='Imaging Spectrometers/Radiometers', remss='GMI',
+                              jaxa='AMSR2')
         domain_str = self.match_domain(raw_attributes)
         if domain_str is None:
             return None
@@ -61,9 +61,7 @@ class FTPMetadataNormalizer(BaseMetadataNormalizer):
     def get_time_coverage_start(self, raw_attributes):
         """ returns the suitable time_coverage_start based on the filename """
         if self.match_domain(raw_attributes):
-            if self.match_domain(raw_attributes) == 'nersc':
-                return None
-            elif self.match_domain(raw_attributes) == 'remss':
+            if self.match_domain(raw_attributes) == 'remss':
                 extracted_date = raw_attributes['ftp_add_and_file_name'].split(
                     '/')[-1].split('v')[0].split('_')[1]
                 if len(extracted_date) == 6 and extracted_date.startswith('2'):
@@ -81,7 +79,7 @@ class FTPMetadataNormalizer(BaseMetadataNormalizer):
                     return dateutil.parser.parse(extracted_date).replace(tzinfo=tzutc())
 
             elif self.match_domain(raw_attributes) == 'ceda':
-                return dateutil.parser.parse("19820222T000000").replace(tzinfo=tzutc())
+                return dateutil.parser.parse("19820101T000000").replace(tzinfo=tzutc())+relativedelta(days=+int(raw_attributes['ftp_add_and_file_name'].split('/')[-1][1:4]))
             elif self.match_domain(raw_attributes) == 'jaxa':
                 # time portion of the filename is extracted and then parsed with "dateutil.parser.parse"
                 return dateutil.parser.parse(raw_attributes['ftp_add_and_file_name'].split('/')[-1].split('_')[1]).replace(tzinfo=tzutc())
@@ -109,51 +107,63 @@ class FTPMetadataNormalizer(BaseMetadataNormalizer):
                     return dateutil.parser.parse(extracted_date).replace(tzinfo=tzutc())
 
             elif self.match_domain(raw_attributes) == 'ceda':
-                return dateutil.parser.parse("20100222T000000").replace(tzinfo=tzutc())
+                return dateutil.parser.parse("20100101T000000").replace(tzinfo=tzutc())+relativedelta(days=+int(raw_attributes['ftp_add_and_file_name'].split('/')[-1][1:4]))
+
             elif self.match_domain(raw_attributes) == 'jaxa':
                 # time portion of the filename is extracted and then parsed with "dateutil.parser.parse"
                 return self.get_time_coverage_start(raw_attributes)
                 # return dateutil.parser.parse(raw_attributes['ftp_add_and_file_name'].split('/')[-1].split('_')[1]).replace(tzinfo=tzutc())
 
     def get_provider(self, raw_attributes):
-        """ DANGER!!!!!  returns the suitable provider based on the filename """
-        provider_map = dict(ceda='dummy_provider', remss='dummy_provider2',
-                            jaxa='dummy_provider3')  # DANGER! values are absolutely FAKE, must be revised
+        """ returns the suitable provider based on the filename """
+        provider_map = dict(ceda='ESA/CCI', remss='NASA/GSFC/SED/ESD/LA/GPM',
+                            jaxa='JP/JAXA/EOC')
         provider_str = self.match_domain(raw_attributes)
         if provider_str is None:
             return None
-        # utils.get_gcmd_provider(provider_map[provider_str])
-        return utils.get_gcmd_provider(['ESA/EO'])
+        return utils.get_gcmd_provider(provider_map[provider_str])
 
     def get_dataset_parameters(self, raw_attributes):
         """ DANGER!!!!! return list with different parameter from wkv variable """
-        dsp_map = dict(ceda='dummy_parameter', remss='dummy_parameter2',
-                       jaxa='dummy_parameter3')  # DANGER! values are absolutely FAKE, must be revised
+        dsp_map = dict(ceda='sea_surface_temperature', remss='dummy_parameter2',
+                       jaxa='sea_surface_temperature')
         domain_str = self.match_domain(raw_attributes)
         if domain_str is None:
             return None
-        elif domain_str == 'nersc':
-            return [utils.get_gcmd_science_keyword(dsp_map[domain_str])]
+        elif domain_str == 'jaxa' or 'ceda':
+            return [utils.get_cf_standard_name(dsp_map[domain_str])]
         else:
             return []
 
     def get_location_geometry(self, raw_attributes):
-        """ DANGER!!!!! """
-        dsp_map = dict(ceda='dummy_parameter', remss='dummy_parameter2',
-                       jaxa='dummy_parameter3')  # DANGER! values are absolutely FAKE, must be revised
+        """ DANGER!!!!! jaxa remains"""
+
         domain_str = self.match_domain(raw_attributes)
         if domain_str is None:
             return None
-        elif domain_str == 'nersc':
-            return GEOSGeometry(('POLYGON((1 1, 1 2, 2 2, 2 1, 1 1))'), srid=4326)
+        elif domain_str == 'ceda' or 'remss':
+            return GEOSGeometry(('POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))'), srid=4326)
         else:
             return GEOSGeometry(('POLYGON((1 1, 1 2, 2 2, 2 1, 1 1))'), srid=4326)
 
     def get_entry_title(self, raw_attributes):
         """ returns the suitable provider based on the filename """
-        provider_map = dict(ceda='dummy_provider', remss='dummy_provider2',
-                            jaxa='dummy_provider3')  # DANGER! values are absolutely FAKE, must be revised
-        provider_str = self.match_domain(raw_attributes)
-        if provider_str is None:
+        title_map = dict(ceda='ESA SST CCI OSTIA L4 Climatology',
+         remss="""Atmosphere parameters from Global Precipitation Measurement Microwave Imager
+
+                Parameters:
+                pti.get_cf_standard_name('sea_surface_temperature')
+
+                Other standard names:
+                wind_speed
+
+                atmosphere_mass_content_of_water_vapor
+
+                atmosphere_mass_content_of_cloud_liquid_water
+
+                rainfall_rate""",
+                jaxa='AMSR2-L2 Sea Surface Temperature')
+        title_str = self.match_domain(raw_attributes)
+        if title_str is None:
             return None
-        return "234"  # utils.get_gcmd_provider(provider_map[provider_str])
+        return title_map[title_str]
