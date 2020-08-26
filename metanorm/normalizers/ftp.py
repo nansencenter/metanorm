@@ -11,9 +11,8 @@ from dateutil.relativedelta import relativedelta
 from dateutil.tz import tzutc
 from django.contrib.gis.geos.geometry import GEOSGeometry
 
-import metanorm.utils as utils
-
 from .base import BaseMetadataNormalizer
+
 
 LOGGER = logging.getLogger(__name__)
 LOGGER.addHandler(logging.NullHandler())
@@ -27,18 +26,16 @@ class FTPMetadataNormalizer(BaseMetadataNormalizer):
         """ Find the domain in raw_attributes and set "domain_name" variable.
               Return a string that determines which hardcoded values are being used
               in the following functions """
+        domain_name = None
         if set([self.metadata_name]).issubset(raw_attributes.keys()):
-            if raw_attributes['ftp_domain_name'] == 'ftp.nersc.no':
-                domain_name = 'nersc'
-            elif raw_attributes['ftp_domain_name'] == 'ftp.remss.com':
+            if raw_attributes['ftp_domain_name'] == 'ftp.remss.com':
                 domain_name = 'remss'
             elif raw_attributes['ftp_domain_name'] == 'anon-ftp.ceda.ac.uk':
                 domain_name = 'ceda'
             elif raw_attributes['ftp_domain_name'] == 'ftp.gportal.jaxa.jp':
                 domain_name = 'jaxa'
-            return domain_name
-        else:
-            return None
+        return domain_name
+
 
     def get_platform(self, raw_attributes):
         """ return the corresponding platfrom based on specified ftp source """
@@ -47,7 +44,7 @@ class FTPMetadataNormalizer(BaseMetadataNormalizer):
         domain_str = self.match_domain(raw_attributes)
         if domain_str is None:
             return None
-        return utils.get_gcmd_platform(platform_map[domain_str])
+        return pti.get_gcmd_platform(platform_map[domain_str])
 
     def get_instrument(self, raw_attributes):
         """return the corresponding instrument based on specified ftp source """
@@ -56,7 +53,7 @@ class FTPMetadataNormalizer(BaseMetadataNormalizer):
         domain_str = self.match_domain(raw_attributes)
         if domain_str is None:
             return None
-        return utils.get_gcmd_instrument(instrument_map[domain_str])
+        return pti.get_gcmd_instrument(instrument_map[domain_str])
 
     def get_time_coverage_start(self, raw_attributes):
         """ returns the suitable time_coverage_start based on the filename """
@@ -83,7 +80,8 @@ class FTPMetadataNormalizer(BaseMetadataNormalizer):
             elif self.match_domain(raw_attributes) == 'jaxa':
                 # time portion of the filename is extracted and then parsed with "dateutil.parser.parse"
                 return dateutil.parser.parse(raw_attributes['ftp_add_and_file_name'].split('/')[-1].split('_')[1]).replace(tzinfo=tzutc())
-
+        else:
+            return None
     def get_time_coverage_end(self, raw_attributes):
         """ returns the suitable time_coverage_end based on the filename """
         if self.match_domain(raw_attributes):
@@ -113,7 +111,8 @@ class FTPMetadataNormalizer(BaseMetadataNormalizer):
                 # time portion of the filename is extracted and then parsed with "dateutil.parser.parse"
                 return self.get_time_coverage_start(raw_attributes)
                 # return dateutil.parser.parse(raw_attributes['ftp_add_and_file_name'].split('/')[-1].split('_')[1]).replace(tzinfo=tzutc())
-
+        else:
+            return None
     def get_provider(self, raw_attributes):
         """ returns the suitable provider based on the filename """
         provider_map = dict(ceda='ESA/CCI', remss='NASA/GSFC/SED/ESD/LA/GPM',
@@ -121,19 +120,19 @@ class FTPMetadataNormalizer(BaseMetadataNormalizer):
         provider_str = self.match_domain(raw_attributes)
         if provider_str is None:
             return None
-        return utils.get_gcmd_provider(provider_map[provider_str])
+        return pti.get_gcmd_provider(provider_map[provider_str])
 
     def get_dataset_parameters(self, raw_attributes):
         """ DANGER!!!!! return list with different parameter from wkv variable """
-        dsp_map = dict(ceda='sea_surface_temperature', remss='dummy_parameter2',
-                       jaxa='sea_surface_temperature')
+        dsp_map = dict(ceda=['sea_surface_temperature'],
+                       jaxa=['sea_surface_temperature'],
+                       remss=['wind_speed', 'atmosphere_mass_content_of_water_vapor',
+                              'atmosphere_mass_content_of_cloud_liquid_water', 'rainfall_rate'],)
         domain_str = self.match_domain(raw_attributes)
         if domain_str is None:
-            return None
-        elif domain_str == 'jaxa' or 'ceda':
-            return [utils.get_cf_standard_name(dsp_map[domain_str])]
-        else:
             return []
+        else:
+            return [pti.get_cf_standard_name(paramter) for paramter in dsp_map[domain_str]]
 
     def get_location_geometry(self, raw_attributes):
         """ DANGER!!!!! jaxa remains"""
@@ -149,20 +148,8 @@ class FTPMetadataNormalizer(BaseMetadataNormalizer):
     def get_entry_title(self, raw_attributes):
         """ returns the suitable provider based on the filename """
         title_map = dict(ceda='ESA SST CCI OSTIA L4 Climatology',
-         remss="""Atmosphere parameters from Global Precipitation Measurement Microwave Imager
-
-                Parameters:
-                pti.get_cf_standard_name('sea_surface_temperature')
-
-                Other standard names:
-                wind_speed
-
-                atmosphere_mass_content_of_water_vapor
-
-                atmosphere_mass_content_of_cloud_liquid_water
-
-                rainfall_rate""",
-                jaxa='AMSR2-L2 Sea Surface Temperature')
+                         remss="""Atmosphere parameters from Global Precipitation Measurement Microwave Imager""",
+                         jaxa='AMSR2-L2 Sea Surface Temperature')
         title_str = self.match_domain(raw_attributes)
         if title_str is None:
             return None
