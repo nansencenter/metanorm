@@ -4,7 +4,7 @@ import calendar
 import logging
 import re
 from datetime import datetime
-
+import re
 import dateutil.parser
 import pythesint as pti
 from dateutil.relativedelta import relativedelta
@@ -36,15 +36,22 @@ class FTPMetadataNormalizer(BaseMetadataNormalizer):
                 domain_name = 'jaxa'
         return domain_name
 
-
     def get_platform(self, raw_attributes):
         """ return the corresponding platfrom based on specified ftp source """
-        platform_map = dict(ceda='Earth Observation Satellites', remss='GPM',
-                            jaxa='GCOM-W1')
+        dict_for_get_gcmd_platform = {"sst": 'Earth Observation Satellites',
+                                      "gmi": 'GPM',
+                                      "GCOM-W1": 'GCOM-W1'}
         domain_str = self.match_domain(raw_attributes)
         if domain_str is None:
             return None
-        return pti.get_gcmd_platform(platform_map[domain_str])
+        # Since the addressing is different in the various ftp resources, below dictionary is used
+        # to find the correct part of the path based on each ftp addressing criteria.
+        domain_map = dict(ceda=r'sst',
+                           remss=r'gmi',
+                           jaxa=r'GCOM-W1')
+        pattern = re.compile(domain_map[domain_str])
+        key_dict = pattern.findall(str(raw_attributes['ftp_add_and_file_name'].split('/')))[0]
+        return pti.get_gcmd_platform(dict_for_get_gcmd_platform[key_dict])
 
     def get_instrument(self, raw_attributes):
         """return the corresponding instrument based on specified ftp source """
@@ -82,6 +89,7 @@ class FTPMetadataNormalizer(BaseMetadataNormalizer):
                 return dateutil.parser.parse(raw_attributes['ftp_add_and_file_name'].split('/')[-1].split('_')[1]).replace(tzinfo=tzutc())
         else:
             return None
+
     def get_time_coverage_end(self, raw_attributes):
         """ returns the suitable time_coverage_end based on the filename """
         if self.match_domain(raw_attributes):
@@ -113,6 +121,7 @@ class FTPMetadataNormalizer(BaseMetadataNormalizer):
                 # return dateutil.parser.parse(raw_attributes['ftp_add_and_file_name'].split('/')[-1].split('_')[1]).replace(tzinfo=tzutc())
         else:
             return None
+
     def get_provider(self, raw_attributes):
         """ returns the suitable provider based on the filename """
         provider_map = dict(ceda='ESA/CCI', remss='NASA/GSFC/SED/ESD/LA/GPM',

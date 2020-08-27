@@ -133,7 +133,7 @@ class FTPMetadataNormalizerTestCase(unittest.TestCase):
 
     def test_platform_jaxa(self):
         """platform from FTPMetadataNormalizer """
-        attributes = {'ftp_domain_name': 'ftp.gportal.jaxa.jp', 'ftp_add_and_file_name': ''}
+        attributes = {'ftp_domain_name': 'ftp.gportal.jaxa.jp', 'ftp_add_and_file_name': 'test/GCOM-W1'}
         self.assertEqual(
             self.normalizer.get_platform(attributes),
             OrderedDict([('Category', 'Earth Observation Satellites'),
@@ -144,7 +144,7 @@ class FTPMetadataNormalizerTestCase(unittest.TestCase):
 
     def test_platform_remss(self):
         """platform from FTPMetadataNormalizer """
-        attributes = {'ftp_domain_name': 'ftp.remss.com', 'ftp_add_and_file_name': ''}
+        attributes = {'ftp_domain_name': 'ftp.remss.com', 'ftp_add_and_file_name': 'gmi/test'}
         self.assertEqual(
             self.normalizer.get_platform(attributes),
             OrderedDict([('Category', 'Earth Observation Satellites'),
@@ -155,7 +155,7 @@ class FTPMetadataNormalizerTestCase(unittest.TestCase):
 
     def test_platform_ceda(self):
         """platform from FTPMetadataNormalizer """
-        attributes = {'ftp_domain_name': 'anon-ftp.ceda.ac.uk', 'ftp_add_and_file_name': ''}
+        attributes = {'ftp_domain_name': 'anon-ftp.ceda.ac.uk', 'ftp_add_and_file_name': 'sst'}
         self.assertEqual(
             self.normalizer.get_platform(attributes),
             OrderedDict([('Category', 'Earth Observation Satellites'),
@@ -281,5 +281,5 @@ class FTPMetadataNormalizerTestCase(unittest.TestCase):
         and [] for the cumulative ones """
         for function_name in dir(self.normalizer):
             if function_name.startswith('get_'):
-                self.assertTrue(self.normalizer.__getattribute__(function_name)({'ftp_domain_name': 'test_ftp_resource', 'ftp_add_and_file_name': 'GW1AM2_xxxxx_134D_L2SGSSTLB3300300.h5'}) == []
-                                or self.normalizer.__getattribute__(function_name)({'ftp_domain_name': 'test_ftp_resource', 'ftp_add_and_file_name': 'GW1AM2_xxxxx_134D_L2SGSSTLB3300300.h5'}) is None)
+                self.assertTrue(self.normalizer.__getattribute__(function_name)({'ftp_domain_name': 'test_ftp_resource', 'ftp_add_and_file_name': ''}) == []
+                                or self.normalizer.__getattribute__(function_name)({'ftp_domain_name': 'test_ftp_resource', 'ftp_add_and_file_name': ''}) is None)
