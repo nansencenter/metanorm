@@ -94,7 +94,7 @@ class FTPMetadataNormalizerTestCase(unittest.TestCase):
 
     def test_instrument_jaxa(self):
         """instrument from FTPMetadataNormalizer """
-        attributes = {'ftp_domain_name': 'ftp.gportal.jaxa.jp', 'ftp_add_and_file_name': ''}
+        attributes = {'ftp_domain_name': 'ftp.gportal.jaxa.jp', 'ftp_add_and_file_name': '/standard/GCOM-W/GCOM-W.AMSR2/L2.SST/3/2012/07/'}
         self.assertEqual(
             self.normalizer.get_instrument(attributes),
             OrderedDict([('Category', 'Earth Remote Sensing Instruments'),
@@ -107,7 +107,7 @@ class FTPMetadataNormalizerTestCase(unittest.TestCase):
 
     def test_instrument_remss(self):
         """instrument from FTPMetadataNormalizer """
-        attributes = {'ftp_domain_name': 'ftp.remss.com', 'ftp_add_and_file_name': ''}
+        attributes = {'ftp_domain_name': 'ftp.remss.com', 'ftp_add_and_file_name': 'ftp://ftp.remss.com/gmi/bmaps_v08.2/y2014/m06/'}
         self.assertEqual(
             self.normalizer.get_instrument(attributes),
             OrderedDict([('Category', 'Earth Remote Sensing Instruments'),
@@ -120,7 +120,7 @@ class FTPMetadataNormalizerTestCase(unittest.TestCase):
 
     def test_instrument_ceda(self):
         """instrument from FTPMetadataNormalizer """
-        attributes = {'ftp_domain_name': 'anon-ftp.ceda.ac.uk', 'ftp_add_and_file_name': ''}
+        attributes = {'ftp_domain_name': 'anon-ftp.ceda.ac.uk', 'ftp_add_and_file_name': 'neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1/D365-ESACCI-L4_GHRSST-SSTdepth-OSTIA-GLOB_CDR2.1-v02.0-fv01.0.nc'}
         self.assertEqual(
             self.normalizer.get_instrument(attributes),
             OrderedDict([('Category', 'Earth Remote Sensing Instruments'),
@@ -133,7 +133,7 @@ class FTPMetadataNormalizerTestCase(unittest.TestCase):
 
     def test_platform_jaxa(self):
         """platform from FTPMetadataNormalizer """
-        attributes = {'ftp_domain_name': 'ftp.gportal.jaxa.jp', 'ftp_add_and_file_name': 'test/GCOM-W1'}
+        attributes = {'ftp_domain_name': 'ftp.gportal.jaxa.jp', 'ftp_add_and_file_name': '/standard/GCOM-W/GCOM-W.AMSR2/L2.SST/3/2012/07/'}
         self.assertEqual(
             self.normalizer.get_platform(attributes),
             OrderedDict([('Category', 'Earth Observation Satellites'),
@@ -144,7 +144,7 @@ class FTPMetadataNormalizerTestCase(unittest.TestCase):
 
     def test_platform_remss(self):
         """platform from FTPMetadataNormalizer """
-        attributes = {'ftp_domain_name': 'ftp.remss.com', 'ftp_add_and_file_name': 'gmi/test'}
+        attributes = {'ftp_domain_name': 'ftp.remss.com', 'ftp_add_and_file_name': 'ftp://ftp.remss.com/gmi/bmaps_v08.2/y2014/m06/'}
         self.assertEqual(
             self.normalizer.get_platform(attributes),
             OrderedDict([('Category', 'Earth Observation Satellites'),
@@ -155,7 +155,7 @@ class FTPMetadataNormalizerTestCase(unittest.TestCase):
 
     def test_platform_ceda(self):
         """platform from FTPMetadataNormalizer """
-        attributes = {'ftp_domain_name': 'anon-ftp.ceda.ac.uk', 'ftp_add_and_file_name': 'sst'}
+        attributes = {'ftp_domain_name': 'anon-ftp.ceda.ac.uk', 'ftp_add_and_file_name': 'neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1/'}
         self.assertEqual(
             self.normalizer.get_platform(attributes),
             OrderedDict([('Category', 'Earth Observation Satellites'),
@@ -208,7 +208,7 @@ class FTPMetadataNormalizerTestCase(unittest.TestCase):
 
     def test_dataset_parameters_jaxa(self):
         """dataset_parameters from FTPMetadataNormalizer """
-        attributes = {'ftp_domain_name': 'ftp.gportal.jaxa.jp', 'ftp_add_and_file_name': ''}
+        attributes = {'ftp_domain_name': 'ftp.gportal.jaxa.jp', 'ftp_add_and_file_name': '/standard/GCOM-W/GCOM-W.AMSR2/L2.SST/3/2012/07/'}
         self.assertEqual(
             self.normalizer.get_dataset_parameters(attributes),
             [OrderedDict([('standard_name', 'sea_surface_temperature'),
@@ -220,7 +220,7 @@ class FTPMetadataNormalizerTestCase(unittest.TestCase):
 
     def test_dataset_parameters_remss(self):
         """dataset_parameters from FTPMetadataNormalizer """
-        attributes = {'ftp_domain_name': 'ftp.remss.com', 'ftp_add_and_file_name': ''}
+        attributes = {'ftp_domain_name': 'ftp.remss.com', 'ftp_add_and_file_name': 'ftp://ftp.remss.com/gmi/bmaps_v08.2/y2014/m06/'}
         self.assertEqual(
             self.normalizer.get_dataset_parameters(attributes),
             [OrderedDict([('standard_name', 'wind_speed'),
@@ -248,7 +248,7 @@ class FTPMetadataNormalizerTestCase(unittest.TestCase):
 
     def test_dataset_parameters_ceda(self):
         """dataset_parameters from FTPMetadataNormalizer """
-        attributes = {'ftp_domain_name': 'anon-ftp.ceda.ac.uk', 'ftp_add_and_file_name': ''}
+        attributes = {'ftp_domain_name': 'anon-ftp.ceda.ac.uk', 'ftp_add_and_file_name': 'neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1/'}
         self.assertEqual(
             self.normalizer.get_dataset_parameters(attributes),
             [OrderedDict([('standard_name', 'sea_surface_temperature'),

@@ -3,8 +3,6 @@
 import calendar
 import logging
 import re
-from datetime import datetime
-import re
 import dateutil.parser
 import pythesint as pti
 from dateutil.relativedelta import relativedelta
@@ -21,6 +19,14 @@ LOGGER.addHandler(logging.NullHandler())
 class FTPMetadataNormalizer(BaseMetadataNormalizer):
     """ Normalizer for hardcoding information for the ftp-derived cases """
     metadata_name = 'ftp_domain_name'
+    # Since the addressing is different in the various ftp resources, below dictionary is used
+    # to find the correct part of the path based on each ftp addressing criteria.
+    # This dictionary contains all the folder names regardless of their hierarchy
+    # in the very fto source. A regext with "compile" and "findall" is used to find the proper name
+    # form it.
+    domain_map = dict(ceda=r'esacci|aerosol|biomass|cloud|esacci_terms_and_conditions\.txt|fire|ghg|glaciers|ice_sheets_antarctica|ice_sheets_greenland|lakes|land_cover|ocean_colour|ozone|permafrost|sea_ice|sea_level|sea_state|sea_surface_salinity|snow|soil_moisture|sst',
+                      remss=r'amsr2|amsre|amsrj|ascat|ccmp|gmi|msu|nscat|qscat|seawinds|smap|ssmi|sst|support|TC-winds|tc_wakes|tmi|vapor|water_cycle|web\.config|welcome\.txt|wind|windsat',
+                      jaxa=r'JERS-1|ADEOS-2|MOS-1b|SLATS|CIRC|MOS-1|AQUA|GCOM-C|GCOM-W|GSMaP|ADEOS|GPM|GPMConstellation|TRMM|TRMM_GPMFormat|GCOM-W\.AMSR2|L3\.PRC_10|L3\.SIC_10|L2\.TPW|L3\.TPW_25|L3\.CLW_10|L3\.SSW_10|L3\.TB36GHz_25|L3\.TB6GHz_10|L2\.SIC|L3\.TB89GHz_25|L2\.SSW|L3\.TB36GHz_10|L2\.PRC|L3\.SND_25|L3\.SMC_10|L3\.TB23GHz_10|L2\.SMC|L3\.TB6GHz_25|L3\.CLW_25|L3\.TB7GHz_10|L1B|L3\.SSW_25|L2\.CLW|L3\.SMC_25|L3\.SND_10|L3\.SST_25|L3\.PRC_25|L3\.TB10GHz_10|L3\.TB7GHz_25|L2\.SST|L3\.SIC_25|L3\.TB18GHz_10|L3\.SST_10|L3\.TB89GHz_10|L1R|L3\.TB23GHz_25|L3\.TB18GHz_25|L3\.TPW_10|L2\.SND|L3\.TB10GHz_25')
 
     def match_domain(self, raw_attributes):
         """ Find the domain in raw_attributes and set "domain_name" variable.
@@ -36,31 +42,37 @@ class FTPMetadataNormalizer(BaseMetadataNormalizer):
                 domain_name = 'jaxa'
         return domain_name
 
+    def dictionary_key_finder(self, raw_attributes, domain_str, associated_dictionary):
+        """
+        Find the correct from the string of 'folder and file name' that are present in the
+        associated_dictionary. The associated_dictionary varies based on different "get_" functions.
+        """
+        pattern = re.compile(self.domain_map[domain_str])
+        return [x for x in pattern.findall(str(raw_attributes['ftp_add_and_file_name'].split('/'))) if x in associated_dictionary.keys()][0]
+
     def get_platform(self, raw_attributes):
         """ return the corresponding platfrom based on specified ftp source """
-        dict_for_get_gcmd_platform = {"sst": 'Earth Observation Satellites',
-                                      "gmi": 'GPM',
-                                      "GCOM-W1": 'GCOM-W1'}
+        dict_for_get_gcmd_platform = {"esacci": 'Earth Observation Satellites',  # ceda
+                                      "gmi": 'GPM',  # remss
+                                      "GCOM-W": 'GCOM-W1'}  # jaxa
         domain_str = self.match_domain(raw_attributes)
         if domain_str is None:
             return None
-        # Since the addressing is different in the various ftp resources, below dictionary is used
-        # to find the correct part of the path based on each ftp addressing criteria.
-        domain_map = dict(ceda=r'sst',
-                           remss=r'gmi',
-                           jaxa=r'GCOM-W1')
-        pattern = re.compile(domain_map[domain_str])
-        key_dict = pattern.findall(str(raw_attributes['ftp_add_and_file_name'].split('/')))[0]
-        return pti.get_gcmd_platform(dict_for_get_gcmd_platform[key_dict])
+        dictionary_key = self.dictionary_key_finder(
+            raw_attributes, domain_str, dict_for_get_gcmd_platform)
+        return pti.get_gcmd_platform(dict_for_get_gcmd_platform[dictionary_key])
 
     def get_instrument(self, raw_attributes):
         """return the corresponding instrument based on specified ftp source """
-        instrument_map = dict(ceda='Imaging Spectrometers/Radiometers', remss='GMI',
-                              jaxa='AMSR2')
+        dict_for_get_gcmd_instrument = {"esacci": 'Imaging Spectrometers/Radiometers',  # ceda
+                                        "gmi": 'GMI',  # remss
+                                        "GCOM-W": 'AMSR2'}  # jaxa
         domain_str = self.match_domain(raw_attributes)
         if domain_str is None:
             return None
-        return pti.get_gcmd_instrument(instrument_map[domain_str])
+        dictionary_key = self.dictionary_key_finder(
+            raw_attributes, domain_str, dict_for_get_gcmd_instrument)
+        return pti.get_gcmd_instrument(dict_for_get_gcmd_instrument[dictionary_key])
 
     def get_time_coverage_start(self, raw_attributes):
         """ returns the suitable time_coverage_start based on the filename """
@@ -133,15 +145,17 @@ class FTPMetadataNormalizer(BaseMetadataNormalizer):
 
     def get_dataset_parameters(self, raw_attributes):
         """ DANGER!!!!! return list with different parameter from wkv variable """
-        dsp_map = dict(ceda=['sea_surface_temperature'],
-                       jaxa=['sea_surface_temperature'],
-                       remss=['wind_speed', 'atmosphere_mass_content_of_water_vapor',
-                              'atmosphere_mass_content_of_cloud_liquid_water', 'rainfall_rate'],)
+        dict_for_get_cf_standard_name = {"sst": ['sea_surface_temperature'],
+                                         "L2.SST": ['sea_surface_temperature'],
+                                         "gmi": ['wind_speed', 'atmosphere_mass_content_of_water_vapor',
+                                                 'atmosphere_mass_content_of_cloud_liquid_water', 'rainfall_rate'], }
         domain_str = self.match_domain(raw_attributes)
         if domain_str is None:
             return []
         else:
-            return [pti.get_cf_standard_name(paramter) for paramter in dsp_map[domain_str]]
+            dictionary_key = self.dictionary_key_finder(
+                raw_attributes, domain_str, dict_for_get_cf_standard_name)
+            return [pti.get_cf_standard_name(cf_parameter) for cf_parameter in dict_for_get_cf_standard_name[dictionary_key]]
 
     def get_location_geometry(self, raw_attributes):
         """ DANGER!!!!! jaxa remains"""
@@ -157,7 +171,7 @@ class FTPMetadataNormalizer(BaseMetadataNormalizer):
     def get_entry_title(self, raw_attributes):
         """ returns the suitable provider based on the filename """
         title_map = dict(ceda='ESA SST CCI OSTIA L4 Climatology',
-                         remss="""Atmosphere parameters from Global Precipitation Measurement Microwave Imager""",
+                         remss='Atmosphere parameters from Global Precipitation Measurement Microwave Imager',
                          jaxa='AMSR2-L2 Sea Surface Temperature')
         title_str = self.match_domain(raw_attributes)
         if title_str is None:
