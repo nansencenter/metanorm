@@ -18,72 +18,31 @@ LOGGER.addHandler(logging.NullHandler())
 
 class FTPMetadataNormalizer(BaseMetadataNormalizer):
     """ Normalizer for hardcoding information for the ftp-derived cases """
-    # Since the addressing is different in the various ftp resources, below dictionary is used
-    # to find the correct part of the path based on each ftp addressing criteria.
-    # This dictionary contains all the folder names regardless of their hierarchy
-    # in the very fto source. A regext with "compile" and "findall" is used to find the proper name
-    # form it.
-    domain_map = {"anon-ftp.ceda.ac.uk": re.compile(r"""esacci|aerosol|biomass|cloud|fire|ghg|
-                  glaciers|ice_sheets_antarctica|ice_sheets_greenland|lakes|land_cover|ocean_colour|
-                  ozone|permafrost|sea_ice|sea_level|sea_state|sea_surface_salinity|snow|
-                  soil_moisture|sst""", re.VERBOSE),
-                  "ftp.remss.com": re.compile(r"""amsr2|amsre|amsrj|ascat|ccmp|gmi|msu|nscat|qscat|
-                  seawinds|smap|ssmi|sst|support|TC-winds|tc_wakes|tmi|vapor|water_cycle|
-                  web\.config|welcome\.txt|wind|windsat""", re.VERBOSE),
-                  "ftp.gportal.jaxa.jp": re.compile(r"""JERS-1|ADEOS-2|MOS-1b|SLATS|CIRC|MOS-1|AQUA|
-                  GCOM-C|GCOM-W|GSMaP|ADEOS|GPM|GPMConstellation|TRMM|TRMM_GPMFormat|GCOM-W\.AMSR2|
-                  L3\.PRC_10|L3\.SIC_10|L2\.TPW|L3\.TPW_25|L3\.CLW_10|L3\.SSW_10|L3\.TB36GHz_25|
-                  L3\.TB6GHz_10|L2\.SIC|L3\.TB89GHz_25|L2\.SSW|L3\.TB36GHz_10|L2\.PRC|L3\.SND_25|
-                  L3\.SMC_10|L3\.TB23GHz_10|L2\.SMC|L3\.TB6GHz_25|L3\.CLW_25|L3\.TB7GHz_10|L1B|
-                  L3\.SSW_25|L2\.CLW|L3\.SMC_25|L3\.SND_10|L3\.SST_25|L3\.PRC_25|L3\.TB10GHz_10|
-                  L3\.TB7GHz_25|L2\.SST|L3\.SIC_25|L3\.TB18GHz_10|L3\.SST_10|L3\.TB89GHz_10|L1R|
-                  L3\.TB23GHz_25|L3\.TB18GHz_25|L3\.TPW_10|L2\.SND|L3\.TB10GHz_25""", re.VERBOSE)}
+    domain_set = {"anon-ftp.ceda.ac.uk", "ftp.remss.com", "ftp.gportal.jaxa.jp"}
 
     def match_domain(self, raw_attributes):
-        """ Find the domain in raw_attributes and set "domain_name" variable.
-              Return a string that determines which hardcoded values are being used
-              in the following functions """
-        metadata_name = 'ftp_domain_name'
-        if set([metadata_name]).issubset(raw_attributes.keys()):
-            if raw_attributes['ftp_domain_name'] in self.domain_map.keys():
+        """ Find the domain in raw_attributes  """
+        if set(['ftp_domain_name']).issubset(raw_attributes.keys()):
+            if raw_attributes['ftp_domain_name'] in self.domain_set:
                 return raw_attributes['ftp_domain_name']
-
-    def dictionary_key_finder(self, raw_attributes, associated_dictionary):
-        """
-        Find the correct part from the string of 'folder and file name' that are present in the
-        associated_dictionary. The associated_dictionary varies based on different "get_" functions.
-        """
-        pattern = self.domain_map[raw_attributes['ftp_domain_name']]  # , re.VERBOSE)
-        return [x for x in pattern.findall(str(raw_attributes['ftp_add_and_file_name'].split('/'))) if x in associated_dictionary.keys()][0]
 
     def get_platform(self, raw_attributes):
         """ return the corresponding platfrom based on specified ftp source """
-        dict_for_get_gcmd_platform = {"esacci": 'Earth Observation Satellites',  # ceda
-                                      "gmi": 'GPM',  # remss
-                                      "GCOM-W": 'GCOM-W1'}  # jaxa
-        match_result = self.match_domain(raw_attributes)
-        if match_result is None:
-            return match_result
-        dictionary_key = self.dictionary_key_finder(raw_attributes, dict_for_get_gcmd_platform)
-        return pti.get_gcmd_platform(dict_for_get_gcmd_platform[dictionary_key])
+        platform_on_ftp = {"ftp://ftp.remss.com/gmi": 'GPM',
+                           "ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1": 'Earth Observation Satellites',
+                           "ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2": 'GCOM-W1'}  # jaxa
+        for ftp_base_dir in platform_on_ftp.keys():
+            if ftp_base_dir in 'ftp://'+raw_attributes['ftp_domain_name'].rstrip('/')+'/'+raw_attributes['ftp_add_and_file_name'].strip('/'):
+                return pti.get_gcmd_platform(platform_on_ftp[ftp_base_dir])
 
     def get_instrument(self, raw_attributes):
         """return the corresponding instrument based on specified ftp source """
-        # dict_for_get_gcmd_instrument = {"esacci": 'Imaging Spectrometers/Radiometers',  # ceda
-        #                                "gmi": 'GMI',  # remss
-        #                                "GCOM-W": 'AMSR2'}  # jaxa
-        #match_result = self.match_domain(raw_attributes)
-        # if match_result is None:
-        #    return match_result
-        #dictionary_key = self.dictionary_key_finder(raw_attributes, dict_for_get_gcmd_instrument)
-        # return pti.get_gcmd_instrument(dict_for_get_gcmd_instrument[dictionary_key])
-        instrument_on_ftp = {
-            'ftp://ftp.remss.com/gmi/': 'gmi',
-            'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2': 'AMSR2',
-            'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1':'Imaging Spectrometers/Radiometers'
-        }
+        instrument_on_ftp = {'ftp://ftp.remss.com/gmi': 'GMI',
+                             'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2': 'AMSR2',
+                             'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1': 'Imaging Spectrometers/Radiometers',
+                             }
         for ftp_base_dir in instrument_on_ftp.keys():
-            if ftp_base_dir in 'ftp://'+raw_attributes['ftp_domain_name'].rstrip('/')+'/'+raw_attributes['ftp_add_and_file_name'].lstrip('/'):
+            if ftp_base_dir in 'ftp://'+raw_attributes['ftp_domain_name'].rstrip('/')+'/'+raw_attributes['ftp_add_and_file_name'].strip('/'):
                 return pti.get_gcmd_instrument(instrument_on_ftp[ftp_base_dir])
 
     def get_time_coverage_start(self, raw_attributes):
@@ -160,17 +119,17 @@ class FTPMetadataNormalizer(BaseMetadataNormalizer):
 
     def get_dataset_parameters(self, raw_attributes):
         """ DANGER!!!!! return list with different parameter from wkv variable """
-        dict_for_get_cf_standard_name = {"sst": ['sea_surface_temperature'],
-                                         "L2.SST": ['sea_surface_temperature'],
-                                         "gmi": ['wind_speed', 'atmosphere_mass_content_of_water_vapor',
-                                                 'atmosphere_mass_content_of_cloud_liquid_water', 'rainfall_rate'], }
+        dsp_on_ftp = {'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1': ['sea_surface_temperature'],
+                      'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2': ['sea_surface_temperature'],
+                      "ftp://ftp.remss.com/gmi/": ['wind_speed', 'atmosphere_mass_content_of_water_vapor',
+                                                   'atmosphere_mass_content_of_cloud_liquid_water', 'rainfall_rate'], }
         match_result = self.match_domain(raw_attributes)
         if match_result is None:
             return []
         else:
-            dictionary_key = self.dictionary_key_finder(
-                raw_attributes,  dict_for_get_cf_standard_name)
-            return [pti.get_cf_standard_name(cf_parameter) for cf_parameter in dict_for_get_cf_standard_name[dictionary_key]]
+            for ftp_base_dir in dsp_on_ftp.keys():
+                if ftp_base_dir in 'ftp://'+raw_attributes['ftp_domain_name'].rstrip('/')+'/'+raw_attributes['ftp_add_and_file_name'].strip('/'):
+                    return [pti.get_cf_standard_name(cf_parameter) for cf_parameter in dsp_on_ftp[ftp_base_dir]]
 
     def get_location_geometry(self, raw_attributes):
         """ DANGER!!!!! jaxa remains"""

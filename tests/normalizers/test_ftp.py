@@ -144,7 +144,7 @@ class FTPMetadataNormalizerTestCase(unittest.TestCase):
 
     def test_platform_remss(self):
         """platform from FTPMetadataNormalizer """
-        attributes = {'ftp_domain_name': 'ftp.remss.com', 'ftp_add_and_file_name': 'ftp://ftp.remss.com/gmi/bmaps_v08.2/y2014/m06/'}
+        attributes = {'ftp_domain_name': 'ftp.remss.com', 'ftp_add_and_file_name': '/gmi/bmaps_v08.2/y2014/m06/'}
         self.assertEqual(
             self.normalizer.get_platform(attributes),
             OrderedDict([('Category', 'Earth Observation Satellites'),
