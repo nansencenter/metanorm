@@ -18,83 +18,75 @@ class FTPMetadataNormalizerTestCase(unittest.TestCase):
         """shall return the propert starting time for hardcoded normalizer """
         self.assertEqual(
             self.normalizer.get_time_coverage_start(
-                {'ftp_domain_name': 'ftp.remss.com',
-                 'ftp_add_and_file_name': 'gmi/bmaps_v08.2/y2014/m06/f35_201406v8.2.gz'}),
+                {'url':'ftp://ftp.remss.com/gmi/bmaps_v08.2/y2014/m06/f35_201406v8.2.gz'}),
             datetime(year=2014, month=6, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_start_remss_week_file(self):
         """shall return the propert starting time for hardcoded normalizer """
         self.assertEqual(
             self.normalizer.get_time_coverage_start(
-                {'ftp_domain_name': 'ftp.remss.com',
-                 'ftp_add_and_file_name': 'gmi/bmaps_v08.2/weeks/f35_20140610v8.2.gz'}),
+                {'url':'ftp://ftp.remss.com/gmi/bmaps_v08.2/weeks/f35_20140610v8.2.gz'}),
             datetime(year=2014, month=6, day=7, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_start_remss_3d3_file(self):
         """shall return the propert starting time for hardcoded normalizer """
         self.assertEqual(
-            self.normalizer.get_time_coverage_start(
-                {'ftp_domain_name': 'ftp.remss.com',
-                 'ftp_add_and_file_name': 'gmi/bmaps_v08.2/y2014/m06/f35_20140630v8.2_d3d.gz'}),
+            self.normalizer.get_time_coverage_start({'url':'ftp://ftp.remss.com/gmi/bmaps_v08.2/y2014/m06/f35_20140630v8.2_d3d.gz'}),
             datetime(year=2014, month=6, day=29, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_start_ceda(self):
         """shall return the propert starting time for hardcoded normalizer """
         self.assertEqual(
-            self.normalizer.get_time_coverage_start({'ftp_domain_name': 'anon-ftp.ceda.ac.uk',
-                                                     'ftp_add_and_file_name': 'neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1/D365-ESACCI-L4_GHRSST-SSTdepth-OSTIA-GLOB_CDR2.1-v02.0-fv01.0.nc'}),
+            self.normalizer.get_time_coverage_start({'url':'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1/D365-ESACCI-L4_GHRSST-SSTdepth-OSTIA-GLOB_CDR2.1-v02.0-fv01.0.nc'}),
+            #self.normalizer.get_time_coverage_start({'ftp_domain_name': 'anon-ftp.ceda.ac.uk',
+            #                                         'ftp_add_and_file_name': 'neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1/D365-ESACCI-L4_GHRSST-SSTdepth-OSTIA-GLOB_CDR2.1-v02.0-fv01.0.nc'}),
             datetime(year=1983, month=1, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_start_jaxa(self):
         """shall return the propert starting time for hardcoded normalizer """
         self.assertEqual(
             self.normalizer.get_time_coverage_start(
-                {'ftp_domain_name': 'ftp.gportal.jaxa.jp',
-                 'ftp_add_and_file_name': 'GW1AM2_201207031905_134D_L2SGSSTLB3300300.h5'}),
+                {'url':'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L2.SST/3/2012/07/GW1AM2_201207031905_134D_L2SGSSTLB3300300.h5'}),
+                #{'ftp_domain_name': 'ftp.gportal.jaxa.jp',
+                # 'ftp_add_and_file_name': 'GW1AM2_201207031905_134D_L2SGSSTLB3300300.h5'}),
             datetime(year=2012, month=7, day=3, hour=19, minute=5, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_end_remss_single_day_file(self):
         """shall return the propert end time for hardcoded normalizer """
         self.assertEqual(
-            self.normalizer.get_time_coverage_end(
-                {'ftp_domain_name': 'ftp.remss.com',
-                 'ftp_add_and_file_name': 'gmi/bmaps_v08.2/y2014/m06/f35_201406v8.2.gz'}),
+            self.normalizer.get_time_coverage_end({'url':'ftp://ftp.remss.com/gmi/bmaps_v08.2/y2014/m06/f35_201406v8.2.gz'}),
             datetime(year=2014, month=6, day=30, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_end_remss_week_file(self):
         """shall return the propert end time for hardcoded normalizer """
         self.assertEqual(
-            self.normalizer.get_time_coverage_end(
-                {'ftp_domain_name': 'ftp.remss.com',
-                 'ftp_add_and_file_name': 'gmi/bmaps_v08.2/weeks/f35_20140610v8.2.gz'}),
+            self.normalizer.get_time_coverage_end({'url':'ftp://ftp.remss.com/gmi/bmaps_v08.2/weeks/f35_20140610v8.2.gz'}),
             datetime(year=2014, month=6, day=13, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_end_remss_3d3_file(self):
         """shall return the propert end time for hardcoded normalizer """
         self.assertEqual(
-            self.normalizer.get_time_coverage_end(
-                {'ftp_domain_name': 'ftp.remss.com',
-                 'ftp_add_and_file_name': 'gmi/bmaps_v08.2/y2014/m06/f35_20140620v8.2_d3d.gz'}),
+            self.normalizer.get_time_coverage_end({'url':'ftp://ftp.remss.com/gmi/bmaps_v08.2/y2014/m06/f35_20140620v8.2_d3d.gz'}),
             datetime(year=2014, month=6, day=21, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_end_ceda(self):
         """shall return the propert end time for hardcoded normalizer """
         self.assertEqual(
-            self.normalizer.get_time_coverage_end({'ftp_domain_name': 'anon-ftp.ceda.ac.uk',
-                                                   'ftp_add_and_file_name': 'neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1/D365-ESACCI-L4_GHRSST-SSTdepth-OSTIA-GLOB_CDR2.1-v02.0-fv01.0.nc'}),
+            self.normalizer.get_time_coverage_end({'url':'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1/D365-ESACCI-L4_GHRSST-SSTdepth-OSTIA-GLOB_CDR2.1-v02.0-fv01.0.nc'}),
+            #self.normalizer.get_time_coverage_end({'ftp_domain_name': 'anon-ftp.ceda.ac.uk',
+            #                                       'ftp_add_and_file_name': 'neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1/D365-ESACCI-L4_GHRSST-SSTdepth-OSTIA-GLOB_CDR2.1-v02.0-fv01.0.nc'}),
             datetime(year=2011, month=1, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_end_jaxa(self):
         """shall return the propert end time for hardcoded normalizer """
         self.assertEqual(
             self.normalizer.get_time_coverage_end(
-                {'ftp_domain_name': 'ftp.gportal.jaxa.jp',
-                 'ftp_add_and_file_name': 'GW1AM2_201207031905_134D_L2SGSSTLB3300300.h5'}),
+                {'url':'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L2.SST/3/2012/07/GW1AM2_201207031905_134D_L2SGSSTLB3300300.h5'}),
             datetime(year=2012, month=7, day=3, hour=19, minute=5, second=0, tzinfo=tzutc()))
 
     def test_instrument_jaxa(self):
         """instrument from FTPMetadataNormalizer """
-        attributes = {'ftp_domain_name': 'ftp.gportal.jaxa.jp', 'ftp_add_and_file_name': '/standard/GCOM-W/GCOM-W.AMSR2/L2.SST/3/2012/07/'}
+        attributes = {'url':'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L2.SST/3/2012/07/GW1AM2_201207031905_134D_L2SGSSTLB3300300.h5'}
         self.assertEqual(
             self.normalizer.get_instrument(attributes),
             OrderedDict([('Category', 'Earth Remote Sensing Instruments'),
@@ -107,7 +99,7 @@ class FTPMetadataNormalizerTestCase(unittest.TestCase):
 
     def test_instrument_remss(self):
         """instrument from FTPMetadataNormalizer """
-        attributes = {'ftp_domain_name': 'ftp.remss.com', 'ftp_add_and_file_name': 'ftp://ftp.remss.com/gmi/bmaps_v08.2/y2014/m06/'}
+        attributes = {'url':'ftp://ftp.remss.com/gmi/bmaps_v08.2/y2014/m06/'}
         self.assertEqual(
             self.normalizer.get_instrument(attributes),
             OrderedDict([('Category', 'Earth Remote Sensing Instruments'),
@@ -120,7 +112,7 @@ class FTPMetadataNormalizerTestCase(unittest.TestCase):
 
     def test_instrument_ceda(self):
         """instrument from FTPMetadataNormalizer """
-        attributes = {'ftp_domain_name': 'anon-ftp.ceda.ac.uk', 'ftp_add_and_file_name': 'neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1/D365-ESACCI-L4_GHRSST-SSTdepth-OSTIA-GLOB_CDR2.1-v02.0-fv01.0.nc'}
+        attributes = {'url': 'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1/D365-ESACCI-L4_GHRSST-SSTdepth-OSTIA-GLOB_CDR2.1-v02.0-fv01.0.nc'}
         self.assertEqual(
             self.normalizer.get_instrument(attributes),
             OrderedDict([('Category', 'Earth Remote Sensing Instruments'),
@@ -133,7 +125,7 @@ class FTPMetadataNormalizerTestCase(unittest.TestCase):
 
     def test_platform_jaxa(self):
         """platform from FTPMetadataNormalizer """
-        attributes = {'ftp_domain_name': 'ftp.gportal.jaxa.jp', 'ftp_add_and_file_name': '/standard/GCOM-W/GCOM-W.AMSR2/L2.SST/3/2012/07/'}
+        attributes = {'url':'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L2.SST/3/2012/07/GW1AM2_201207031905_134D_L2SGSSTLB3300300.h5'}
         self.assertEqual(
             self.normalizer.get_platform(attributes),
             OrderedDict([('Category', 'Earth Observation Satellites'),
@@ -144,7 +136,7 @@ class FTPMetadataNormalizerTestCase(unittest.TestCase):
 
     def test_platform_remss(self):
         """platform from FTPMetadataNormalizer """
-        attributes = {'ftp_domain_name': 'ftp.remss.com', 'ftp_add_and_file_name': '/gmi/bmaps_v08.2/y2014/m06/'}
+        attributes = {'url':'ftp://ftp.remss.com/gmi/bmaps_v08.2/y2014/m06/'}
         self.assertEqual(
             self.normalizer.get_platform(attributes),
             OrderedDict([('Category', 'Earth Observation Satellites'),
@@ -155,7 +147,8 @@ class FTPMetadataNormalizerTestCase(unittest.TestCase):
 
     def test_platform_ceda(self):
         """platform from FTPMetadataNormalizer """
-        attributes = {'ftp_domain_name': 'anon-ftp.ceda.ac.uk', 'ftp_add_and_file_name': 'neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1/'}
+        attributes = {'url': 'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1/D365-ESACCI-L4_GHRSST-SSTdepth-OSTIA-GLOB_CDR2.1-v02.0-fv01.0.nc'}
+        #attributes = {'ftp_domain_name': 'anon-ftp.ceda.ac.uk', 'ftp_add_and_file_name': 'neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1/'}
         self.assertEqual(
             self.normalizer.get_platform(attributes),
             OrderedDict([('Category', 'Earth Observation Satellites'),
@@ -166,7 +159,7 @@ class FTPMetadataNormalizerTestCase(unittest.TestCase):
 
     def test_provider_jaxa(self):
         """provider from FTPMetadataNormalizer """
-        attributes = {'ftp_domain_name': 'ftp.gportal.jaxa.jp', 'ftp_add_and_file_name': ''}
+        attributes = {'url':'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L2.SST/3/2012/07/GW1AM2_201207031905_134D_L2SGSSTLB3300300.h5'}
         self.assertEqual(
             self.normalizer.get_provider(attributes),
             OrderedDict([('Bucket_Level0', 'GOVERNMENT AGENCIES-NON-US'),
@@ -180,7 +173,7 @@ class FTPMetadataNormalizerTestCase(unittest.TestCase):
 
     def test_provider_remss(self):
         """provider from FTPMetadataNormalizer """
-        attributes = {'ftp_domain_name': 'ftp.remss.com', 'ftp_add_and_file_name': ''}
+        attributes = {'url':'ftp://ftp.remss.com/gmi/bmaps_v08.2/y2014/m06/'}
         self.assertEqual(
             self.normalizer.get_provider(attributes),
             OrderedDict([('Bucket_Level0', 'GOVERNMENT AGENCIES-U.S. FEDERAL AGENCIES'),
@@ -194,7 +187,7 @@ class FTPMetadataNormalizerTestCase(unittest.TestCase):
 
     def test_provider_ceda(self):
         """provider from FTPMetadataNormalizer """
-        attributes = {'ftp_domain_name': 'anon-ftp.ceda.ac.uk', 'ftp_add_and_file_name': ''}
+        attributes = {'url': 'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1/D365-ESACCI-L4_GHRSST-SSTdepth-OSTIA-GLOB_CDR2.1-v02.0-fv01.0.nc'}
         self.assertEqual(
             self.normalizer.get_provider(attributes),
             OrderedDict([('Bucket_Level0', 'MULTINATIONAL ORGANIZATIONS'),
@@ -208,7 +201,8 @@ class FTPMetadataNormalizerTestCase(unittest.TestCase):
 
     def test_dataset_parameters_jaxa(self):
         """dataset_parameters from FTPMetadataNormalizer """
-        attributes = {'ftp_domain_name': 'ftp.gportal.jaxa.jp', 'ftp_add_and_file_name': '/standard/GCOM-W/GCOM-W.AMSR2/L2.SST/3/2012/07/'}
+        #attributes = {'ftp_domain_name': 'ftp.gportal.jaxa.jp', 'ftp_add_and_file_name': '/standard/GCOM-W/GCOM-W.AMSR2/L2.SST/3/2012/07/'}
+        attributes = {'url': 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L2.SST/3/2012/07/GW1AM2_201207031905_134D_L2SGSSTLB3300300.h5'}
         self.assertEqual(
             self.normalizer.get_dataset_parameters(attributes),
             [OrderedDict([('standard_name', 'sea_surface_temperature'),
@@ -220,7 +214,7 @@ class FTPMetadataNormalizerTestCase(unittest.TestCase):
 
     def test_dataset_parameters_remss(self):
         """dataset_parameters from FTPMetadataNormalizer """
-        attributes = {'ftp_domain_name': 'ftp.remss.com', 'ftp_add_and_file_name': 'ftp://ftp.remss.com/gmi/bmaps_v08.2/y2014/m06/'}
+        attributes = {'url':'ftp://ftp.remss.com/gmi/bmaps_v08.2/y2014/m06/'}
         self.assertEqual(
             self.normalizer.get_dataset_parameters(attributes),
             [OrderedDict([('standard_name', 'wind_speed'),
@@ -248,7 +242,7 @@ class FTPMetadataNormalizerTestCase(unittest.TestCase):
 
     def test_dataset_parameters_ceda(self):
         """dataset_parameters from FTPMetadataNormalizer """
-        attributes = {'ftp_domain_name': 'anon-ftp.ceda.ac.uk', 'ftp_add_and_file_name': 'neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1/'}
+        attributes = {'url': 'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1/D365-ESACCI-L4_GHRSST-SSTdepth-OSTIA-GLOB_CDR2.1-v02.0-fv01.0.nc'}
         self.assertEqual(
             self.normalizer.get_dataset_parameters(attributes),
             [OrderedDict([('standard_name', 'sea_surface_temperature'),
@@ -260,19 +254,19 @@ class FTPMetadataNormalizerTestCase(unittest.TestCase):
 
     def test_entry_title_jaxa(self):
         """entry_title from FTPMetadataNormalizer """
-        attributes = {'ftp_domain_name': 'ftp.gportal.jaxa.jp', 'ftp_add_and_file_name': ''}
+        attributes = {'url':'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L2.SST/3/2012/07/GW1AM2_201207031905_134D_L2SGSSTLB3300300.h5'}
         self.assertEqual(
             self.normalizer.get_entry_title(attributes), 'AMSR2-L2 Sea Surface Temperature')
 
     def test_entry_title_remss(self):
         """entry_title from FTPMetadataNormalizer """
-        attributes = {'ftp_domain_name': 'ftp.remss.com', 'ftp_add_and_file_name': ''}
+        attributes = {'url':'ftp://ftp.remss.com/gmi/bmaps_v08.2/y2014/m06/'}
         self.assertEqual(self.normalizer.get_entry_title(attributes),
                          'Atmosphere parameters from Global Precipitation Measurement Microwave Imager')
 
     def test_entry_title_ceda(self):
         """entry_title from FTPMetadataNormalizer """
-        attributes = {'ftp_domain_name': 'anon-ftp.ceda.ac.uk', 'ftp_add_and_file_name': ''}
+        attributes = {'url':'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1/D365-ESACCI-L4_GHRSST-SSTdepth-OSTIA-GLOB_CDR2.1-v02.0-fv01.0.nc'}
         self.assertEqual(self.normalizer.get_entry_title(
             attributes), 'ESA SST CCI OSTIA L4 Climatology')
 
@@ -281,5 +275,5 @@ class FTPMetadataNormalizerTestCase(unittest.TestCase):
         and [] for the cumulative ones """
         for function_name in dir(self.normalizer):
             if function_name.startswith('get_'):
-                self.assertTrue(self.normalizer.__getattribute__(function_name)({'ftp_domain_name': 'test_ftp_resource', 'ftp_add_and_file_name': ''}) == []
-                                or self.normalizer.__getattribute__(function_name)({'ftp_domain_name': 'test_ftp_resource', 'ftp_add_and_file_name': ''}) is None)
+                self.assertTrue(self.normalizer.__getattribute__(function_name)({'url': 'ftp://test/'}) == []
+                                or self.normalizer.__getattribute__(function_name)({'url': 'ftp://test/'}) is None)
