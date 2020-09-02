@@ -303,3 +303,17 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         self.assertIsNone(self.normalizer.get_time_coverage_end({'url': 'ftp://test/'}))
         self.assertIsNone(self.normalizer.get_time_coverage_start({'url': 'ftp://test/'}))
         self.assertIsNone(self.normalizer.get_location_geometry({'url': 'ftp://test/'}))
+
+    def test_none_when_lacking_url_in_raw_attributes(self):
+        """shall return None in the case of no 'url' field in the raw_attribute dictionary
+        and [] for the cumulative ones.
+        This test is for asserting the correct behavior of this normalizer inside
+        the chain of normalizer in order not to intract with other type of raw_attributes """
+        self.assertEqual([], self.normalizer.get_dataset_parameters({'none-url': 'ftp://test/'}))
+        self.assertIsNone(self.normalizer.get_entry_title({'none-url': 'ftp://test/'}))
+        self.assertIsNone(self.normalizer.get_instrument({'none-url': 'ftp://test/'}))
+        self.assertIsNone(self.normalizer.get_platform({'none-url': 'ftp://test/'}))
+        self.assertIsNone(self.normalizer.get_provider({'none-url': 'ftp://test/'}))
+        self.assertIsNone(self.normalizer.get_time_coverage_end({'none-url': 'ftp://test/'}))
+        self.assertIsNone(self.normalizer.get_time_coverage_start({'none-url': 'ftp://test/'}))
+        self.assertIsNone(self.normalizer.get_location_geometry({'none-url': 'ftp://test/'}))
