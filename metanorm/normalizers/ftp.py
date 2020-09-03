@@ -137,6 +137,4 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
             title_map = {'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1': 'ESA SST CCI OSTIA L4 Climatology',
                          "ftp://ftp.remss.com/gmi/": 'Atmosphere parameters from Global Precipitation Measurement Microwave Imager',
                          "ftp://ftp.gportal.jaxa.jp/standard": 'AMSR2-L2 Sea Surface Temperature'}
-            for url in title_map.keys():
-                if raw_attributes['url'].startswith(url):
-                    return title_map[url]
+            return self.get_matching_value(urls_geometry, raw_attributes, str)
