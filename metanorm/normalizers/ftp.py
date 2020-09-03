@@ -115,7 +115,9 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
         """ DANGER!!!!! return list with different parameter from wkv variable """
         if 'url' in raw_attributes:
             urls_dsp = {'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1': ['sea_surface_temperature'],
-                        'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2': ['sea_surface_temperature'],
+                        'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L2.SST': ['sea_surface_temperature'],
+                        'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_10': ['sea_surface_temperature'],
+                        'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25': ['sea_surface_temperature'],
                         "ftp://ftp.remss.com/gmi/": ['wind_speed', 'atmosphere_mass_content_of_water_vapor',
                                                      'atmosphere_mass_content_of_cloud_liquid_water', 'rainfall_rate'], }
             for url in urls_dsp.keys():
