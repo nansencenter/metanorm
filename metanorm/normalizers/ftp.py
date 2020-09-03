@@ -20,13 +20,12 @@ LOGGER.addHandler(logging.NullHandler())
 class URLMetadataNormalizer(BaseMetadataNormalizer):
     """ Normalizer for hardcoding information based on URLS """
 
-    def looper(self, associated_dict, raw_attributes_url, pti_function_name):
-        """looper is a helper function. It loops through the keys of "associated_dict" for finding
-        the corresponding value based on 'url' and 'pti_function_name' method of pti"""
-        for url in associated_dict.keys():
-            if raw_attributes_url.startswith(url):
-                return pti.__getattribute__(pti_function_name)(associated_dict[url])
-
+    def get_matching_value(self, associated_dict, raw_attributes, url_function):
+        """ Loop through <associated_dict> and get matching value using appropriate function """
+        if 'url ' in raw_attributes:
+            for url in associated_dict.keys():
+                if raw_attributes['url'].startswith(url):
+                    return url_function(associated_dict[url])
     def get_platform(self, raw_attributes):
         """ return the corresponding platfrom based on specified ftp source """
         if 'url' in raw_attributes:
