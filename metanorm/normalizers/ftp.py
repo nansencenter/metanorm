@@ -128,7 +128,7 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
     def get_location_geometry(self, raw_attributes):
         """ DANGER!!!!! jaxa remains(others must be checked!)"""
         if 'url' in raw_attributes:
-            urls_geometry = {'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1': GEOSGeometry(('POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))'), srid=4326),
+            urls_geometry = {'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/': GEOSGeometry(('POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))'), srid=4326),
                              'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2': GEOSGeometry(('POLYGON((1 1, 1 2, 2 2, 2 1, 1 1))'), srid=4326),
                              "ftp://ftp.remss.com/gmi/": GEOSGeometry(('POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))'), srid=4326)}
             return self.get_matching_value(urls_geometry, raw_attributes, GEOSGeometry)
