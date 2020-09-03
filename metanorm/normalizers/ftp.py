@@ -41,7 +41,7 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
             urls_instruments = {
                 'ftp://ftp.remss.com/gmi': 'GMI',
                 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2': 'AMSR2',
-                'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1':
+                'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/':
                 'Imaging Spectrometers/Radiometers',
             }
             return self.looper(urls_instruments, raw_attributes['url'], "get_gcmd_instrument")
