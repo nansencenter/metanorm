@@ -28,7 +28,6 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
                     return url_function(associated_dict[url])
     def get_platform(self, raw_attributes):
         """ return the corresponding platfrom based on specified ftp source """
-        if 'url' in raw_attributes:
             urls_platforms = {
             "ftp://ftp.remss.com/gmi": 'GPM',
             "ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1":
