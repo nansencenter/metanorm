@@ -30,7 +30,7 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
         """ return the corresponding platfrom based on specified ftp source """
             urls_platforms = {
             "ftp://ftp.remss.com/gmi": 'GPM',
-            "ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1":
+            "ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/":
             'Earth Observation Satellites',
             "ftp://ftp.gportal.jaxa.jp/standard/GCOM-W": 'GCOM-W1'}
             return self.looper(urls_platforms, raw_attributes['url'], "get_gcmd_platform")
