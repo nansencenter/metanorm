@@ -53,7 +53,7 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         """shall return the propert starting time for hardcoded normalizer """
         self.assertEqual(
             self.normalizer.get_time_coverage_start(
-                {'url': 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L2.SST/3/2012/07/GW1AM2_201207031905_134D_L2SGSSTLB3300300.h5'}),
+                {'url': 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25/3/2012/07/GW1AM2_201207031905_134D_L2SGSSTLB3300300.h5'}),
             datetime(year=2012, month=7, day=3, hour=19, minute=5, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_end_remss_single_day_file(self):
@@ -95,13 +95,13 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         """shall return the propert end time for hardcoded normalizer """
         self.assertEqual(
             self.normalizer.get_time_coverage_end(
-                {'url': 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L2.SST/3/2012/07/GW1AM2_201207031905_134D_L2SGSSTLB3300300.h5'}),
+                {'url': 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25/3/2012/07/GW1AM2_201207031905_134D_L2SGSSTLB3300300.h5'}),
             datetime(year=2012, month=7, day=3, hour=19, minute=5, second=0, tzinfo=tzutc()))
 
     def test_instrument_jaxa(self):
         """instrument from URLMetadataNormalizer """
         attributes = {
-            'url': 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L2.SST/3/2012/07/GW1AM2_201207031905_134D_L2SGSSTLB3300300.h5'}
+            'url': 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25/3/2012/07/GW1AM2_201207031905_134D_L2SGSSTLB3300300.h5'}
         self.assertEqual(
             self.normalizer.get_instrument(attributes),
             OrderedDict([('Category', 'Earth Remote Sensing Instruments'),
@@ -142,7 +142,7 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
     def test_platform_jaxa(self):
         """platform from URLMetadataNormalizer """
         attributes = {
-            'url': 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L2.SST/3/2012/07/GW1AM2_201207031905_134D_L2SGSSTLB3300300.h5'}
+            'url': 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25/3/2012/07/GW1AM2_201207031905_134D_L2SGSSTLB3300300.h5'}
         self.assertEqual(
             self.normalizer.get_platform(attributes),
             OrderedDict([('Category', 'Earth Observation Satellites'),
@@ -177,7 +177,7 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
     def test_provider_jaxa(self):
         """provider from URLMetadataNormalizer """
         attributes = {
-            'url': 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L2.SST/3/2012/07/GW1AM2_201207031905_134D_L2SGSSTLB3300300.h5'}
+            'url': 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25/3/2012/07/GW1AM2_201207031905_134D_L2SGSSTLB3300300.h5'}
         self.assertEqual(
             self.normalizer.get_provider(attributes),
             OrderedDict([('Bucket_Level0', 'GOVERNMENT AGENCIES-NON-US'),
@@ -221,7 +221,7 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
     def test_dataset_parameters_jaxa(self):
         """dataset_parameters from URLMetadataNormalizer """
         attributes = {
-            'url': 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L2.SST/3/2012/07/GW1AM2_201207031905_134D_L2SGSSTLB3300300.h5'}
+            'url': 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25/3/2012/07/GW1AM2_201207031905_134D_L2SGSSTLB3300300.h5'}
         self.assertEqual(
             self.normalizer.get_dataset_parameters(attributes),
             [OrderedDict([('standard_name', 'sea_surface_temperature'),
@@ -275,7 +275,7 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
     def test_entry_title_jaxa(self):
         """entry_title from URLMetadataNormalizer """
         attributes = {
-            'url': 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L2.SST/3/2012/07/GW1AM2_201207031905_134D_L2SGSSTLB3300300.h5'}
+            'url': 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25/3/2012/07/GW1AM2_201207031905_134D_L2SGSSTLB3300300.h5'}
         self.assertEqual(
             self.normalizer.get_entry_title(attributes), 'AMSR2-L2 Sea Surface Temperature')
 
