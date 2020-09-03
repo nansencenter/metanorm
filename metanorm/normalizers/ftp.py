@@ -19,7 +19,7 @@ LOGGER.addHandler(logging.NullHandler())
 class URLMetadataNormalizer(BaseMetadataNormalizer):
     """ Normalizer for hardcoding information based on URLS """
 
-    def get_matching_value(self, associated_dict, raw_attributes_url, url_function):
+    def find_matching_value(self, associated_dict, raw_attributes_url, url_function):
         """ Loop through <associated_dict> and get the matching value using appropriate function """
         for url in associated_dict.keys():
             if raw_attributes_url.startswith(url):
@@ -33,7 +33,7 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
                 "ftp://ftp.remss.com/gmi": 'GPM',
                 "ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/": 'Earth Observation Satellites',
                 "ftp://ftp.gportal.jaxa.jp/standard/GCOM-W": 'GCOM-W1'}
-            return self.get_matching_value(urls_platforms, raw_attributes['url'], pti.get_gcmd_platform)
+            return self.find_matching_value(urls_platforms, raw_attributes['url'], pti.get_gcmd_platform)
 
     def get_instrument(self, raw_attributes):
         """return the corresponding instrument based on specified ftp source """
@@ -44,7 +44,7 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
                 'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/':
                 'Imaging Spectrometers/Radiometers',
             }
-            return self.get_matching_value(urls_instruments, raw_attributes['url'], pti.get_gcmd_instrument)
+            return self.find_matching_value(urls_instruments, raw_attributes['url'], pti.get_gcmd_instrument)
 
     def time_extractor(self, time_text):
         """ time_extractor is a helper function. It extractors the time from file name """
@@ -76,7 +76,7 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
                 # or "_")
                 "ftp://ftp.gportal.jaxa.jp": file_name.split('_')[1] if '_' in file_name else None
             }
-            extracted_date = self.get_matching_value(
+            extracted_date = self.find_matching_value(
                 url_time_start, raw_attributes['url'], self.time_extractor)
             # further modification of "extracted time" based on other semantics of parts of the path
             if raw_attributes['url'].startswith('ftp://ftp.remss.com'):
@@ -107,7 +107,7 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
                 'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1': "20100101",
                 "ftp://ftp.gportal.jaxa.jp": file_name.split('_')[1] if '_' in file_name else None,
             }
-            extracted_date = self.get_matching_value(
+            extracted_date = self.find_matching_value(
                 url_time_end, raw_attributes['url'], self.time_extractor)
             # further modification of "extracted time" based on other semantics of parts of the path
             if raw_attributes['url'].startswith('ftp://ftp.remss.com'):
@@ -139,7 +139,7 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
                 'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1': 'ESA/CCI',
                 "ftp://ftp.remss.com/gmi/": 'NASA/GSFC/SED/ESD/LA/GPM',
                 "ftp://ftp.gportal.jaxa.jp/standard": 'JP/JAXA/EOC'}
-            return self.get_matching_value(urls_provider, raw_attributes['url'], pti.get_gcmd_provider)
+            return self.find_matching_value(urls_provider, raw_attributes['url'], pti.get_gcmd_provider)
 
     def get_dataset_parameters(self, raw_attributes):
         """ DANGER!!!!! return list with different parameter from wkv variable """
@@ -170,7 +170,7 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
                                  ('POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))'),
                              "ftp://ftp.remss.com/gmi/":
                              ('POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))')}
-            return self.get_matching_value(urls_geometry, raw_attributes['url'], GEOSGeometry)
+            return self.find_matching_value(urls_geometry, raw_attributes['url'], GEOSGeometry)
 
     def get_entry_title(self, raw_attributes):
         """ returns the suitable provider based on the filename """
@@ -179,4 +179,4 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
                 'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1': 'ESA SST CCI OSTIA L4 Climatology',
                 "ftp://ftp.remss.com/gmi/": 'Atmosphere parameters from Global Precipitation Measurement Microwave Imager',
                 "ftp://ftp.gportal.jaxa.jp/standard": 'AMSR2-L2 Sea Surface Temperature'}
-            return self.get_matching_value(urls_title, raw_attributes['url'], str)
+            return self.find_matching_value(urls_title, raw_attributes['url'], str)
