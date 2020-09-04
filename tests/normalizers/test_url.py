@@ -1,4 +1,4 @@
-"""Tests for the FTP normalizer of some ftp resources"""
+"""Tests for the URL normalizer """
 import unittest
 from collections import OrderedDict
 from datetime import datetime
@@ -9,7 +9,7 @@ import metanorm.normalizers as normalizers
 
 
 class URLMetadataNormalizerTestCase(unittest.TestCase):
-    """Tests for the FTP normalizer"""
+    """Tests for the URL normalizer"""
     @classmethod
     def setUpClass(cls):
         cls.normalizer = normalizers.URLMetadataNormalizer([], [])
@@ -304,7 +304,7 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         self.assertIsNone(self.normalizer.get_time_coverage_start({'url': 'ftp://test/'}))
         self.assertIsNone(self.normalizer.get_location_geometry({'url': 'ftp://test/'}))
 
-    def test_none_when_lacking_url_in_raw_attributes(self):
+    def test_for_delivering_none_when_lacking_url_in_raw_attributes(self):
         """shall return None in the case of no 'url' field in the raw_attribute dictionary
         and [] for the cumulative ones.
         This test is for asserting the correct behavior of this normalizer inside
