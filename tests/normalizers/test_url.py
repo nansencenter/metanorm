@@ -53,8 +53,15 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         """shall return the propert starting time for hardcoded normalizer """
         self.assertEqual(
             self.normalizer.get_time_coverage_start(
-                {'url': 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25/3/2012/07/GW1AM2_201207031905_134D_L2SGSSTLB3300300.h5'}),
-            datetime(year=2012, month=7, day=3, hour=19, minute=5, second=0, tzinfo=tzutc()))
+                {'url': 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25/3/2012/07/GW1AM2_20120702_01D_EQOD_L3SGSSTLB3300300.h5'}),
+            datetime(year=2012, month=7, day=2, hour=0, minute=0, second=0, tzinfo=tzutc()))
+
+    def test_time_coverage_start_jaxa_month_file(self):
+        """shall return the propert starting time for hardcoded normalizer """
+        self.assertEqual(
+            self.normalizer.get_time_coverage_start(
+                {'url': 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25/3/2013/07/GW1AM2_20130700_01M_EQMA_L3SGSSTLB3300300.h5'}),
+            datetime(year=2013, month=7, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_end_remss_single_day_file(self):
         """shall return the propert end time for hardcoded normalizer """
@@ -91,12 +98,19 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
                 {'url': 'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1/D365-ESACCI-L4_GHRSST-SSTdepth-OSTIA-GLOB_CDR2.1-v02.0-fv01.0.nc'}),
             datetime(year=2011, month=1, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
-    def test_time_coverage_end_jaxa(self):
+    def test_time_coverage_end_jaxa_single_day_file(self):
         """shall return the propert end time for hardcoded normalizer """
         self.assertEqual(
             self.normalizer.get_time_coverage_end(
-                {'url': 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25/3/2012/07/GW1AM2_201207031905_134D_L2SGSSTLB3300300.h5'}),
-            datetime(year=2012, month=7, day=3, hour=19, minute=5, second=0, tzinfo=tzutc()))
+                {'url': 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25/3/2015/04/GW1AM2_20150401_01D_EQOD_L3SGSSTLB3300300.h5'}),
+            datetime(year=2015, month=4, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
+
+    def test_time_coverage_end_jaxa_month_file(self):
+        """shall return the propert end time for hardcoded normalizer """
+        self.assertEqual(
+            self.normalizer.get_time_coverage_end(
+                {'url': 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25/3/2015/04/GW1AM2_20150400_01M_EQMD_L3SGSSTLB3300300.h5'}),
+            datetime(year=2015, month=4, day=30, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
     def test_instrument_jaxa(self):
         """instrument from URLMetadataNormalizer """

@@ -60,13 +60,38 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
                 ['wind_speed', 'atmosphere_mass_content_of_water_vapor',
                  'atmosphere_mass_content_of_cloud_liquid_water', 'rainfall_rate'], }
 
-    def find_matching_value(self, associated_dict, raw_attributes, desired_function):
+    @staticmethod
+    def find_matching_value(associated_dict, raw_attributes, desired_function):
         """ Loop through <associated_dict> and get the matching value using appropriate function """
         if 'url' in raw_attributes:
             for url in associated_dict.keys():
                 if raw_attributes['url'].startswith(url):
                     return desired_function(associated_dict[url])
         return None
+
+    @staticmethod
+    def time_extractor(time_text):
+        """ time_extractor is a helper function. It extractors the time from file name """
+        # tuple of all formats for usage of "strptime" function of datetime
+        # Order of this tuple matters! so the more generic formats must be in the end of tuple
+        strp_format = (
+            "f35_%Y%m%dv8.2_d3d.gz",
+            "f35_%Y%m%dv8.2.gz",
+            "f35_%Y%mv8.2.gz",
+            # for normal daily files of jaxa GCOM-W.AMSR2 folder
+            "GW1AM2_%Y%m%d",
+            # for month files of jaxa GCOM-W.AMSR2 (MUST below the one for daily files)
+            "GW1AM2_%Y%m%H",
+            "%Y%m%d%H%M",
+            "%Y%m%d",
+        )
+        for _format in strp_format:
+            try:
+                extracted_date = datetime.strptime(time_text, _format).replace(tzinfo=tzutc())
+            except ValueError:
+                continue  # if the format is incorrect, then try another format for "strptime"
+            else:
+                return extracted_date
 
     def get_platform(self, raw_attributes):
         """ return the corresponding platfrom based on specified ftp source """
@@ -76,21 +101,10 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
         """return the corresponding instrument based on specified ftp source """
         return self.find_matching_value(self.urls_instruments, raw_attributes, pti.get_gcmd_instrument)
 
-    def time_extractor(self, time_text):
-        """ time_extractor is a helper function. It extractors the time from file name """
-        # tuple of all formats for usage of "strptime" function of datetime
-        strp_format = ("f35_%Y%m%dv8.2_d3d.gz",
-                       "f35_%Y%m%dv8.2.gz",
-                       "f35_%Y%mv8.2.gz",
-                       "%Y%m%d",
-                       "%Y%m%d%H%M",)
-        for _format in strp_format:
-            try:
-                extracted_date = datetime.strptime(time_text, _format).replace(tzinfo=tzutc())
-            except ValueError:
-                continue  # if the format is incorrect, then try another format for "strptime"
-            else:
-                return extracted_date
+    @staticmethod
+    def length_of_month(extracted_date):
+        """ length of the month that 'extracted_date' has been found in it """
+        return relativedelta(days=calendar.monthrange(extracted_date.year, extracted_date.month)[1]-1)
 
     def get_time_coverage_start(self, raw_attributes):
         """ returns the suitable time_coverage_start based on the filename """
@@ -103,7 +117,8 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
             url_time_start = {
                 'ftp://ftp.remss.com': file_name,
                 'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1': "19820101",
-                "ftp://ftp.gportal.jaxa.jp": file_name.split('_')[1] if '_' in file_name else None
+                "ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2":
+                file_name.split('_')[0]+'_'+file_name.split('_')[1] if '_' in file_name else None
             }
             extracted_date = self.find_matching_value(
                 url_time_start, raw_attributes, self.time_extractor)
@@ -137,7 +152,8 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
             url_time_end = {
                 'ftp://ftp.remss.com': file_name,
                 'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1': "20100101",
-                "ftp://ftp.gportal.jaxa.jp": file_name.split('_')[1] if '_' in file_name else None,
+                "ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2":
+                file_name.split('_')[0]+'_'+file_name.split('_')[1] if '_' in file_name else None,
             }
             extracted_date = self.find_matching_value(
                 url_time_end, raw_attributes, self.time_extractor)
@@ -158,13 +174,15 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
                     return extracted_date+relativedelta(days=+3)
                 elif re.search("^f35_......v8\.2\.gz$", file_name):
                     # file is a month file.So,the end time must be the end of month.
-                    # python "strptime" always gives the first day. SO the length of month in that
+                    # python "strptime" always gives the first day. So the length of month in that
                     # year is added.
-                    return extracted_date + relativedelta(
-                        days=calendar.monthrange(extracted_date.year, extracted_date.month)[1]-1)
+                    return extracted_date + self.length_of_month(extracted_date)
             elif raw_attributes['url'].startswith('ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1'):
                 # the constant date is corrected based on the few letter at the beginning of file name
                 return extracted_date+relativedelta(days=+int(file_name[1:4]))
+            elif raw_attributes['url'].startswith('ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2'):
+                if file_name.split('_')[1].endswith('00'):  # it is a month file
+                    return extracted_date + self.length_of_month(extracted_date)
             return extracted_date
 
     def get_provider(self, raw_attributes):
