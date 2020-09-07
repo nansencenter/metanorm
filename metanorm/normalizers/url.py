@@ -70,8 +70,8 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
         return None
 
     @staticmethod
-    def time_extractor(time_text):
-        """ time_extractor is a helper function. It extractors the time from file name """
+    def extract_time(time_text):
+        """ Extract time from file name """
         # tuple of all formats for usage of "strptime" function of datetime
         # Order of this tuple matters! so the more generic formats must be in the end of tuple
         strp_format = (
