@@ -93,6 +93,11 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
             else:
                 return extracted_date
 
+    @staticmethod
+    def length_of_month(extracted_date):
+        """ length of the month that 'extracted_date' has been found in it """
+        return relativedelta(days=calendar.monthrange(extracted_date.year, extracted_date.month)[1]-1)
+
     def get_platform(self, raw_attributes):
         """ return the corresponding platfrom based on specified ftp source """
         return self.find_matching_value(self.urls_platforms, raw_attributes, pti.get_gcmd_platform)
@@ -101,27 +106,28 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
         """return the corresponding instrument based on specified ftp source """
         return self.find_matching_value(self.urls_instruments, raw_attributes, pti.get_gcmd_instrument)
 
-    @staticmethod
-    def length_of_month(extracted_date):
-        """ length of the month that 'extracted_date' has been found in it """
-        return relativedelta(days=calendar.monthrange(extracted_date.year, extracted_date.month)[1]-1)
-
     def get_time_coverage_start(self, raw_attributes):
-        """ returns the suitable time_coverage_start based on the filename """
+        return self.find_time_coverage(raw_attributes, start=True)
+
+    def get_time_coverage_end(self, raw_attributes):
+        return self.find_time_coverage(raw_attributes, start=False)
+
+    @staticmethod
+    def find_time_coverage(raw_attributes, start):
         if 'url' in raw_attributes:
             url_path_and_file_name = urlparse(raw_attributes['url']).path
             file_name = url_path_and_file_name.split('/')[-1]
             # proper splitting or modification of filename is done by this dictionary(url_time_start)
-            # in order to be ready for sending into "self.time_extractor".
+            # in order to be ready for sending into "self.extract_time".
             # Sometimes there is constant value needed for this calculation instead of filename
-            url_time_start = {
+            url_time_ = {
                 'ftp://ftp.remss.com': file_name,
-                'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1': "19820101",
+                'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1': "19820101" if start else "20100101",
                 "ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2":
                 file_name.split('_')[0]+'_'+file_name.split('_')[1] if '_' in file_name else None
             }
-            extracted_date = self.find_matching_value(
-                url_time_start, raw_attributes, self.time_extractor)
+            extracted_date = URLMetadataNormalizer.find_matching_value(
+                url_time_, raw_attributes, URLMetadataNormalizer.extract_time)
             if not extracted_date:
                 return None
             ########################################################################################
@@ -130,59 +136,26 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
                 # 'd3d' cases are the average of three consequent days! so start day is yesterday!
                 # if condition is the search of 'd3d' in the filename
                 if 'd3d' in file_name:
-                    extracted_date = extracted_date+relativedelta(days=-1)
+                    d = -1 if start else 1
+                    extracted_date = extracted_date+relativedelta(days=d)
                 # for weekly average ones in the "weeks" folder
                 # if condition is the search of "weeks" folder in the FTP path
                 elif "weeks" in url_path_and_file_name.split('/'):
-                    extracted_date = extracted_date+relativedelta(days=-3)
-                return extracted_date
-            elif raw_attributes['url'].startswith('ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1'):
-                # the constant date is corrected based on the few letter at the beginning of file name
-                return extracted_date+relativedelta(days=+int(file_name[1:4]))
-            return extracted_date
-
-    def get_time_coverage_end(self, raw_attributes):
-        """ returns the suitable time_coverage_end based on the filename """
-        if 'url' in raw_attributes:
-            url_path_and_file_name = urlparse(raw_attributes['url']).path
-            file_name = url_path_and_file_name.split('/')[-1]
-            # proper splitting or modification of filename is done by this dictionary(url_time_end)
-            # in order to be ready for sending into "self.time_extractor".
-            # Sometimes there is constant value needed for this calculation instead of filename
-            url_time_end = {
-                'ftp://ftp.remss.com': file_name,
-                'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1': "20100101",
-                "ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2":
-                file_name.split('_')[0]+'_'+file_name.split('_')[1] if '_' in file_name else None,
-            }
-            extracted_date = self.find_matching_value(
-                url_time_end, raw_attributes, self.time_extractor)
-            if not extracted_date:
-                return None
-            ########################################################################################
-            # further modification of "extracted time" based on other semantics of parts of the path
-            if raw_attributes['url'].startswith('ftp://ftp.remss.com'):
-                # 'd3d' cases are the average of three consequent days!
-                # if condition is the search of 'd3d' in the filename
-                if 'd3d' in file_name:
-                    # end time is one day after start day
-                    return extracted_date+relativedelta(days=+1)
-                # for weekly average ones in the "weeks" folder
-                # if condition is the search of "weeks" folder in the FTP path
-                elif "weeks" in url_path_and_file_name.split('/'):
-                    # end time is three days after start day
-                    return extracted_date+relativedelta(days=+3)
+                    d = -3 if start else 3
+                    extracted_date = extracted_date+relativedelta(days=d)
                 elif re.search("^f35_......v8\.2\.gz$", file_name):
                     # file is a month file.So,the end time must be the end of month.
                     # python "strptime" always gives the first day. So the length of month in that
                     # year is added.
-                    return extracted_date + self.length_of_month(extracted_date)
+                    extracted_date = extracted_date if start else \
+                            extracted_date + URLMetadataNormalizer.length_of_month(extracted_date)
             elif raw_attributes['url'].startswith('ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1'):
                 # the constant date is corrected based on the few letter at the beginning of file name
                 return extracted_date+relativedelta(days=+int(file_name[1:4]))
             elif raw_attributes['url'].startswith('ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2'):
                 if file_name.split('_')[1].endswith('00'):  # it is a month file
-                    return extracted_date + self.length_of_month(extracted_date)
+                    extracted_date = extracted_date if start else \
+                            extracted_date + URLMetadataNormalizer.length_of_month(extracted_date)
             return extracted_date
 
     def get_provider(self, raw_attributes):
@@ -193,10 +166,10 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
     def create_parameter_list(parameters):
         """ Convert list with standard names into list with Pythesing dicts """
         return [pti.get_cf_standard_name(cf_parameter) for cf_parameter in parameters]
-        
+
     def get_dataset_parameters(self, raw_attributes):
         """ return list with different parameter(s) from cf_standard_name """
-        return self.find_matching_value(self.urls_provider, raw_attributes, self.create_parameter_list)
+        return self.find_matching_value(self.urls_dsp, raw_attributes, self.create_parameter_list) or []
 
     def get_location_geometry(self, raw_attributes):
         """ returns the suitable location geometry based on the filename """
