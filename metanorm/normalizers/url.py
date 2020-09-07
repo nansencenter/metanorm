@@ -189,13 +189,14 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
         """ returns the suitable provider based on the filename """
         return self.find_matching_value(self.urls_provider, raw_attributes, pti.get_gcmd_provider)
 
+    @staticmethod
+    def create_parameter_list(parameters):
+        """ Convert list with standard names into list with Pythesing dicts """
+        return [pti.get_cf_standard_name(cf_parameter) for cf_parameter in parameters]
+        
     def get_dataset_parameters(self, raw_attributes):
         """ return list with different parameter(s) from cf_standard_name """
-        if 'url' in raw_attributes:
-            for url in self.urls_dsp.keys():
-                if raw_attributes['url'].startswith(url):
-                    return [pti.get_cf_standard_name(cf_parameter) for cf_parameter in self.urls_dsp[url]]
-        return []
+        return self.find_matching_value(self.urls_provider, raw_attributes, self.create_parameter_list)
 
     def get_location_geometry(self, raw_attributes):
         """ returns the suitable location geometry based on the filename """
