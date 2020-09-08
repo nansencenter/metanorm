@@ -98,21 +98,20 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
     @staticmethod
     def length_of_month(extracted_date):
         """ length of the month that 'extracted_date' has been found in it """
-        return \
-            relativedelta(days=calendar.monthrange(
+        return relativedelta(days=calendar.monthrange(
                 extracted_date.year, extracted_date.month)[1] - 1)
 
     def get_platform(self, raw_attributes):
         """ return the corresponding platfrom based on specified ftp source """
-        founded_values = self.find_matching_value(self.urls_platforms, raw_attributes,)
-        if founded_values:
-            return pti.get_gcmd_platform(founded_values)
+        found_value = self.find_matching_value(self.urls_platforms, raw_attributes)
+        if found_value:
+            return pti.get_gcmd_platform(found_value)
 
     def get_instrument(self, raw_attributes):
         """return the corresponding instrument based on specified ftp source """
-        founded_values = self.find_matching_value(self.urls_instruments, raw_attributes,)
-        if founded_values:
-            return pti.get_gcmd_instrument(founded_values)
+        found_value = self.find_matching_value(self.urls_instruments, raw_attributes)
+        if found_value:
+            return pti.get_gcmd_instrument(found_value)
 
     def get_time_coverage_start(self, raw_attributes):
         return self.find_time_coverage(raw_attributes, start=True)
@@ -141,7 +140,7 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
                 file_name_splitted[0] + '_' + file_name_splitted[1] if file_name_splitted else None
             }
             extracted_date = self.extract_time(self.find_matching_value(
-                url_time, raw_attributes, ))
+                url_time, raw_attributes))
             if not extracted_date:
                 return None
             ########################################################################################
@@ -174,9 +173,9 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
 
     def get_provider(self, raw_attributes):
         """ returns the suitable provider based on the filename """
-        founded_values = self.find_matching_value(self.urls_provider, raw_attributes, )
-        if founded_values:
-            return pti.get_gcmd_provider(founded_values)
+        found_value = self.find_matching_value(self.urls_provider, raw_attributes)
+        if found_value:
+            return pti.get_gcmd_provider(found_value)
 
     @staticmethod
     def create_parameter_list(parameters):
@@ -186,16 +185,15 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
 
     def get_dataset_parameters(self, raw_attributes):
         """ return list with different parameter(s) from cf_standard_name """
-        return \
-            self.create_parameter_list(self.find_matching_value(
-                self.urls_dsp, raw_attributes, )) or []
+        return self.create_parameter_list(self.find_matching_value(
+                self.urls_dsp, raw_attributes)) or []
 
     def get_location_geometry(self, raw_attributes):
         """ returns the suitable location geometry based on the filename """
-        founded_values = self.find_matching_value(self.urls_geometry, raw_attributes, )
-        if founded_values:
-            return GEOSGeometry(founded_values)
+        found_value = self.find_matching_value(self.urls_geometry, raw_attributes)
+        if found_value:
+            return GEOSGeometry(found_value)
 
     def get_entry_title(self, raw_attributes):
         """ returns the suitable provider based on the filename """
-        return self.find_matching_value(self.urls_title, raw_attributes, )
+        return self.find_matching_value(self.urls_title, raw_attributes)
