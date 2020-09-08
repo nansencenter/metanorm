@@ -61,17 +61,19 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
                  'atmosphere_mass_content_of_cloud_liquid_water', 'rainfall_rate'], }
 
     @staticmethod
-    def find_matching_value(associated_dict, raw_attributes, desired_function):
+    def find_matching_value(associated_dict, raw_attributes):
         """ Loop through <associated_dict> and get the matching value using appropriate function """
         if 'url' in raw_attributes:
             for url in associated_dict.keys():
                 if raw_attributes['url'].startswith(url):
-                    return desired_function(associated_dict[url])
+                    return associated_dict[url]
         return None
 
     @staticmethod
     def extract_time(time_text):
         """ Extract time from file name """
+        if not time_text:
+            return None
         # tuple of all formats for usage of "strptime" function of datetime
         # Order of this tuple matters! so the more generic formats must be in the end of tuple
         strp_format = (
@@ -96,15 +98,21 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
     @staticmethod
     def length_of_month(extracted_date):
         """ length of the month that 'extracted_date' has been found in it """
-        return relativedelta(days=calendar.monthrange(extracted_date.year, extracted_date.month)[1] - 1)
+        return \
+            relativedelta(days=calendar.monthrange(
+                extracted_date.year, extracted_date.month)[1] - 1)
 
     def get_platform(self, raw_attributes):
         """ return the corresponding platfrom based on specified ftp source """
-        return self.find_matching_value(self.urls_platforms, raw_attributes, pti.get_gcmd_platform)
+        founded_values = self.find_matching_value(self.urls_platforms, raw_attributes,)
+        if founded_values:
+            return pti.get_gcmd_platform(founded_values)
 
     def get_instrument(self, raw_attributes):
         """return the corresponding instrument based on specified ftp source """
-        return self.find_matching_value(self.urls_instruments, raw_attributes, pti.get_gcmd_instrument)
+        founded_values = self.find_matching_value(self.urls_instruments, raw_attributes,)
+        if founded_values:
+            return pti.get_gcmd_instrument(founded_values)
 
     def get_time_coverage_start(self, raw_attributes):
         return self.find_time_coverage(raw_attributes, start=True)
@@ -112,15 +120,15 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
     def get_time_coverage_end(self, raw_attributes):
         return self.find_time_coverage(raw_attributes, start=False)
 
-
     def find_time_coverage(self, raw_attributes, start):
+        """find out the time based on the filename and them some modification based on path """
         if 'url' in raw_attributes:
             url_path_and_file_name = urlparse(raw_attributes['url']).path
             file_name = url_path_and_file_name.split('/')[-1]
             url_path_and_file_name_splitted = url_path_and_file_name.split('/')
-            file_name_splitted=None
+            file_name_splitted = None
             if '_' in file_name:
-                file_name_splitted=file_name.split('_')
+                file_name_splitted = file_name.split('_')
             # proper splitting or modification of filename is done by this dictionary(url_time)
             # in order to be ready for sending into "self.extract_time".
             # Sometimes there is constant value needed for this calculation instead of filename
@@ -128,10 +136,10 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
                 'ftp://ftp.remss.com': file_name,
                 'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1': "19820101" if start else "20100101",
                 "ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2":
-                file_name_splitted[0] + '_' +file_name_splitted[1] if file_name_splitted else None
+                file_name_splitted[0] + '_' + file_name_splitted[1] if file_name_splitted else None
             }
-            extracted_date = self.find_matching_value(
-                url_time, raw_attributes, self.extract_time)
+            extracted_date = self.extract_time(self.find_matching_value(
+                url_time, raw_attributes, ))
             if not extracted_date:
                 return None
             ########################################################################################
@@ -152,33 +160,40 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
                     # python "strptime" always gives the first day. So the length of month in that
                     # year is added.
                     extracted_date = extracted_date if start else \
-                            extracted_date + self.length_of_month(extracted_date)
+                        extracted_date + self.length_of_month(extracted_date)
             elif raw_attributes['url'].startswith('ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1'):
                 # the constant date is corrected based on the few letter at the beginning of file name
                 extracted_date += relativedelta(days=int(file_name[1:4]) - 1)
             elif raw_attributes['url'].startswith('ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2'):
                 if file_name_splitted[1].endswith('00'):  # it is a month file
                     extracted_date = extracted_date if start else \
-                            extracted_date + self.length_of_month(extracted_date)
+                        extracted_date + self.length_of_month(extracted_date)
             return extracted_date
 
     def get_provider(self, raw_attributes):
         """ returns the suitable provider based on the filename """
-        return self.find_matching_value(self.urls_provider, raw_attributes, pti.get_gcmd_provider)
+        founded_values = self.find_matching_value(self.urls_provider, raw_attributes, )
+        if founded_values:
+            return pti.get_gcmd_provider(founded_values)
 
     @staticmethod
     def create_parameter_list(parameters):
         """ Convert list with standard names into list with Pythesing dicts """
-        return [pti.get_cf_standard_name(cf_parameter) for cf_parameter in parameters]
+        if parameters:
+            return [pti.get_cf_standard_name(cf_parameter) for cf_parameter in parameters]
 
     def get_dataset_parameters(self, raw_attributes):
         """ return list with different parameter(s) from cf_standard_name """
-        return self.find_matching_value(self.urls_dsp, raw_attributes, self.create_parameter_list) or []
+        return \
+            self.create_parameter_list(self.find_matching_value(
+                self.urls_dsp, raw_attributes, )) or []
 
     def get_location_geometry(self, raw_attributes):
         """ returns the suitable location geometry based on the filename """
-        return self.find_matching_value(self.urls_geometry, raw_attributes, GEOSGeometry)
+        founded_values = self.find_matching_value(self.urls_geometry, raw_attributes, )
+        if founded_values:
+            return GEOSGeometry(founded_values)
 
     def get_entry_title(self, raw_attributes):
         """ returns the suitable provider based on the filename """
-        return self.find_matching_value(self.urls_title, raw_attributes, str)
+        return self.find_matching_value(self.urls_title, raw_attributes, )
