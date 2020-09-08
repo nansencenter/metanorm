@@ -62,7 +62,7 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
 
     @staticmethod
     def find_matching_value(associated_dict, raw_attributes):
-        """ Loop through <associated_dict> and get the matching value using appropriate function """
+        """ Loop through <associated_dict> and get the matching value  """
         if 'url' in raw_attributes:
             for url in associated_dict.keys():
                 if raw_attributes['url'].startswith(url):
