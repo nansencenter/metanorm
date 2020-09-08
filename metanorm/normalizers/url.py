@@ -152,10 +152,11 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
             elif raw_attributes['url'].startswith('ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1'):
                 # the constant date is corrected based on the few letter at the beginning of file name
                 return extracted_date+relativedelta(days=+int(file_name[1:4]))
-            elif raw_attributes['url'].startswith('ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2'):
-                if file_name.split('_')[1].endswith('00'):  # it is a month file
-                    extracted_date = extracted_date if start else \
-                            extracted_date + URLMetadataNormalizer.length_of_month(extracted_date)
+            elif (
+                raw_attributes['url'].startswith('ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2'):
+                and file_name.split('_')[1].endswith('00'):  # it is a month file
+                and start):
+                extracted_date += URLMetadataNormalizer.length_of_month(extracted_date)
             return extracted_date
 
     def get_provider(self, raw_attributes):
