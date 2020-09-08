@@ -121,7 +121,9 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
         return self.find_time_coverage(raw_attributes, start=False)
 
     def find_time_coverage(self, raw_attributes, start):
-        """find out the time based on the filename and them some modification based on path """
+        """find out the time based on the filename and them some modification based on path.
+        'start' is a flag that indicates whether it is a "start time usage" of function or "start
+        time usage" of it.start=True is for find the "time_coverage_start". """
         if 'url' in raw_attributes:
             url_path_and_file_name = urlparse(raw_attributes['url']).path
             file_name = url_path_and_file_name.split('/')[-1]
