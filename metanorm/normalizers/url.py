@@ -120,14 +120,14 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
             # proper splitting or modification of filename is done by this dictionary(url_time_start)
             # in order to be ready for sending into "self.extract_time".
             # Sometimes there is constant value needed for this calculation instead of filename
-            url_time_ = {
+            url_time = {
                 'ftp://ftp.remss.com': file_name,
                 'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1': "19820101" if start else "20100101",
                 "ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2":
-                file_name.split('_')[0]+'_'+file_name.split('_')[1] if '_' in file_name else None
+                file_name.split('_')[0] + '_' +file_name.split('_')[1] if '_' in file_name else None
             }
             extracted_date = URLMetadataNormalizer.find_matching_value(
-                url_time_, raw_attributes, URLMetadataNormalizer.extract_time)
+                url_time, raw_attributes, URLMetadataNormalizer.extract_time)
             if not extracted_date:
                 return None
             ########################################################################################
@@ -137,7 +137,7 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
                 # if condition is the search of 'd3d' in the filename
                 if 'd3d' in file_name:
                     d = -1 if start else 1
-                    extracted_date = extracted_date+relativedelta(days=d)
+                    extracted_date = extracted_date + relativedelta(days=d)
                 # for weekly average ones in the "weeks" folder
                 # if condition is the search of "weeks" folder in the FTP path
                 elif "weeks" in url_path_and_file_name.split('/'):
@@ -151,12 +151,11 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
                             extracted_date + URLMetadataNormalizer.length_of_month(extracted_date)
             elif raw_attributes['url'].startswith('ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1'):
                 # the constant date is corrected based on the few letter at the beginning of file name
-                return extracted_date+relativedelta(days=+int(file_name[1:4]))
-            elif (
-                raw_attributes['url'].startswith('ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2'):
-                and file_name.split('_')[1].endswith('00'):  # it is a month file
-                and start):
-                extracted_date += URLMetadataNormalizer.length_of_month(extracted_date)
+                extracted_date += relativedelta(days=int(file_name[1:4])-1)
+            elif raw_attributes['url'].startswith('ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2'):
+                if file_name.split('_')[1].endswith('00'):  # it is a month file
+                    extracted_date = extracted_date if start else \
+                            extracted_date + URLMetadataNormalizer.length_of_month(extracted_date)
             return extracted_date
 
     def get_provider(self, raw_attributes):

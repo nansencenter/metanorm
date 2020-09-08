@@ -47,7 +47,7 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         self.assertEqual(
             self.normalizer.get_time_coverage_start(
                 {'url': 'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1/D365-ESACCI-L4_GHRSST-SSTdepth-OSTIA-GLOB_CDR2.1-v02.0-fv01.0.nc'}),
-            datetime(year=1983, month=1, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
+            datetime(year=1982, month=12, day=31, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_start_jaxa(self):
         """shall return the propert starting time for hardcoded normalizer """
@@ -96,7 +96,7 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         self.assertEqual(
             self.normalizer.get_time_coverage_end(
                 {'url': 'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1/D365-ESACCI-L4_GHRSST-SSTdepth-OSTIA-GLOB_CDR2.1-v02.0-fv01.0.nc'}),
-            datetime(year=2011, month=1, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
+            datetime(year=2010, month=12, day=31, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_end_jaxa_single_day_file(self):
         """shall return the propert end time for hardcoded normalizer """
