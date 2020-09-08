@@ -142,7 +142,7 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
                 # if condition is the search of "weeks" folder in the FTP path
                 elif "weeks" in url_path_and_file_name.split('/'):
                     d = -3 if start else 3
-                    extracted_date = extracted_date+relativedelta(days=d)
+                    extracted_date = extracted_date + relativedelta(days=d)
                 elif re.search("^f35_......v8\.2\.gz$", file_name):
                     # file is a month file.So,the end time must be the end of month.
                     # python "strptime" always gives the first day. So the length of month in that
