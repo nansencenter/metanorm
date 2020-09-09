@@ -10,7 +10,7 @@ class GeoSpatialWellKnownMetadataNormalizer(BaseMetadataNormalizer):
     """Takes care of well-known attributes, which are non-standard but widely used"""
 
     def get_location_geometry(self, raw_attributes):
-        """Returns a GEOSGeometry object corresponding to the location of the dataset"""
+        """Returns a WKT object corresponding to the location of the dataset"""
         if set(['northernmost_latitude', 'southernmost_latitude',
                 'easternmost_longitude', 'westernmost_longitude']).issubset(raw_attributes.keys()):
 
