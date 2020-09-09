@@ -118,3 +118,19 @@ class Radarsat2CSVNormalizerTests(unittest.TestCase):
         self.assertEqual(
             self.normalizer.get_entry_title(self.metadata),
             'rsat2_20200716_N7370W13656 HH HV ScanSAR Wide A (W1 W2 W3 S7)')
+
+    def test_normalize_wrong_metadata(self):
+        """ all get_ functions shall return None """
+        wrong_meta = {'some': 'metadata'}
+        self.assertEqual(self.normalizer.get_time_coverage_start(wrong_meta), None)
+        self.assertEqual(self.normalizer.get_time_coverage_end(wrong_meta), None)
+        self.assertEqual(self.normalizer.get_platform(wrong_meta), None)
+        self.assertEqual(self.normalizer.get_entry_title(wrong_meta), None)
+        self.assertEqual(self.normalizer.get_dataset_parameters(wrong_meta), [])
+        self.assertEqual(self.normalizer.get_entry_id(wrong_meta), None)
+        self.assertEqual(self.normalizer.get_iso_topic_category(wrong_meta), None)
+        self.assertEqual(self.normalizer.get_gcmd_location(wrong_meta), None)
+        self.assertEqual(self.normalizer.get_location_geometry(wrong_meta), None)
+        self.assertEqual(self.normalizer.get_provider(wrong_meta), None)
+        self.assertEqual(self.normalizer.get_instrument(wrong_meta), None)
+
