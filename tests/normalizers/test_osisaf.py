@@ -4,7 +4,6 @@ from collections import OrderedDict
 
 import dateutil
 from dateutil.tz import tzutc
-from django.contrib.gis.geos.geometry import GEOSGeometry
 import metanorm.normalizers as normalizers
 
 
@@ -174,14 +173,12 @@ class OSISAFMetadataNormalizer(unittest.TestCase):
             'easternmost_longitude': "-142.755005",
             'westernmost_longitude': "-175.084000"
         }
-        expected_geometry = GEOSGeometry(
-            ('POLYGON((' +
+        expected_geometry = ('POLYGON((' +
              '-175.084000 -15.3505001,' +
              '-142.755005 -15.3505001,' +
              '-142.755005 9.47472000,' +
              '-175.084000 9.47472000,' +
-             '-175.084000 -15.3505001))'),
-            srid=4326)
+             '-175.084000 -15.3505001))')
         normalizer = normalizers.OSISAFMetadataNormalizer(
             ['location_geometry'], [])
         normalized_params = normalizer.normalize(attributes)
