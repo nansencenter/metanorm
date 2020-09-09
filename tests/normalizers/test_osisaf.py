@@ -184,8 +184,7 @@ class OSISAFMetadataNormalizer(unittest.TestCase):
         normalized_params = normalizer.normalize(attributes)
         self.assertIsInstance(normalized_params, dict)
         self.assertTrue('location_geometry' in normalized_params)
-        self.assertTrue(
-            normalized_params['location_geometry'].equals(expected_geometry))
+        self.assertEqual(normalized_params['location_geometry'], expected_geometry)
 
     def test_provider(self):
         """provider information from OSISAFMetadataNormalizer """

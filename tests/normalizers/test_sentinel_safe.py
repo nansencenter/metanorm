@@ -258,7 +258,7 @@ class SentinelSAFEMetadataNormalizerTestCase(unittest.TestCase):
              '-38.97 55.12,' +
              '-29.04 61.31)))')
 
-        self.assertTrue(self.normalizer.get_location_geometry(attributes).equals(expected_geometry))
+        self.assertEqual(self.normalizer.get_location_geometry(attributes), expected_geometry)
 
     def test_location_geometry_missing_attribute(self):
         """Parameter method must return None if the attribute is missing"""

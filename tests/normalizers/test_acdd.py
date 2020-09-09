@@ -193,7 +193,9 @@ class ACDDMetadataNormalizerTestCase(unittest.TestCase):
         }
         expected_geometry = 'POLYGON((0 5,80 5,80 10,0 10,0 5))'
 
-        self.assertTrue(self.normalizer.get_location_geometry(attributes).equals(expected_geometry))
+        self.assertEqual(
+            self.normalizer.get_location_geometry(attributes),
+            expected_geometry)
 
     def test_wkt_bounds_location_geometry(self):
         """location_geometry from ACDDMetadataNormalizer"""
@@ -208,9 +210,10 @@ class ACDDMetadataNormalizerTestCase(unittest.TestCase):
                 '-29.04 61.31))'),
             'geospatial_bounds_crs': 'EPSG:4326'
         }
-        expected_geometry = 'POLYGON((-29.04 61.31,-18.32 59.66,-20.25 51.06,-38.97 55.12,-29.04 61.31))'
+        expected_geometry = (
+        'SRID=4326;POLYGON((-29.04 61.31,-18.32 59.66,-20.25 51.06,-38.97 55.12,-29.04 61.31))')
 
-        self.assertTrue(self.normalizer.get_location_geometry(attributes).equals(expected_geometry))
+        self.assertEqual(self.normalizer.get_location_geometry(attributes), expected_geometry)
 
     def test_location_geometry_missing_attribute(self):
         """Parameter method must return None if the attribute is missing"""
