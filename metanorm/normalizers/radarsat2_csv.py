@@ -29,8 +29,10 @@ class Radarsat2CSVMetadataNormalizer(BaseMetadataNormalizer):
                 raw_attributes['Date'], '%Y-%m-%d %H:%M:%S GMT').replace(tzinfo=tzutc())
 
     def get_time_coverage_end(self, raw_attributes):
-        """ return end data from start date and add 5 minutes"""
-        return self.get_time_coverage_start(raw_attributes) + dt.timedelta(minutes=5)
+        """ return end data from start date and add 5 minutes """
+        time_coverage_start = self.get_time_coverage_start(raw_attributes)
+        if time_coverage_start:
+            return time_coverage_start + dt.timedelta(minutes=5)
 
     def get_platform(self, raw_attributes):
         """ return Radrasat-2 platform """
