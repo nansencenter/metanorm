@@ -4,7 +4,6 @@ from collections import OrderedDict
 from datetime import datetime
 
 from dateutil.tz import tzutc
-from django.contrib.gis.geos.geometry import GEOSGeometry
 
 import metanorm.normalizers as normalizers
 
@@ -192,14 +191,7 @@ class ACDDMetadataNormalizerTestCase(unittest.TestCase):
             'geospatial_lon_max': "80",
             'geospatial_lon_min': "0"
         }
-        expected_geometry = GEOSGeometry(
-            ('POLYGON((' +
-             '0 5,' +
-             '80 5,' +
-             '80 10,' +
-             '0 10,' +
-             '0 5))'),
-            srid=4326)
+        expected_geometry = 'POLYGON((0 5,80 5,80 10,0 10,0 5))'
 
         self.assertTrue(self.normalizer.get_location_geometry(attributes).equals(expected_geometry))
 
@@ -216,14 +208,7 @@ class ACDDMetadataNormalizerTestCase(unittest.TestCase):
                 '-29.04 61.31))'),
             'geospatial_bounds_crs': 'EPSG:4326'
         }
-        expected_geometry = GEOSGeometry(
-            ('POLYGON((' +
-             '-29.04 61.31,' +
-             '-18.32 59.66,' +
-             '-20.25 51.06,' +
-             '-38.97 55.12,' +
-             '-29.04 61.31))'),
-            srid=4326)
+        expected_geometry = 'POLYGON((-29.04 61.31,-18.32 59.66,-20.25 51.06,-38.97 55.12,-29.04 61.31))'
 
         self.assertTrue(self.normalizer.get_location_geometry(attributes).equals(expected_geometry))
 
