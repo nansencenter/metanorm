@@ -59,7 +59,7 @@ class ACDDMetadataNormalizer(BaseMetadataNormalizer):
             return None
 
     def get_location_geometry(self, raw_attributes):
-        """Returns a GEOSGeometry object corresponding to the location of the dataset"""
+        """Returns a WKT string corresponding to the location of the dataset"""
 
         if set(['geospatial_lat_max', 'geospatial_lat_min',
                 'geospatial_lon_max', 'geospatial_lon_min']).issubset(raw_attributes.keys()):
@@ -70,12 +70,13 @@ class ACDDMetadataNormalizer(BaseMetadataNormalizer):
                 raw_attributes['geospatial_lon_max'],
                 raw_attributes['geospatial_lon_min']
             )
-            return utils.geometry_from_wkt_string(polygon)
+            return polygon
         elif set(['geospatial_bounds']).issubset(raw_attributes.keys()):
-            srid = '4326'
+            srid = ''
             if 'geospatial_bounds_crs' in raw_attributes:
                 srid = raw_attributes['geospatial_bounds_crs'].split(':')[1]
-            return utils.geometry_from_wkt_string(raw_attributes['geospatial_bounds'], srid)
+                srid = f'SRID={srid};'
+            return srid + raw_attributes['geospatial_bounds']
         else:
             return None
 
