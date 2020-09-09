@@ -30,7 +30,7 @@ class GeoSpatialWellKnownMetadataNormalizerTestCase(unittest.TestCase):
 
         self.assertIsInstance(normalized_params, dict)
         self.assertTrue('location_geometry' in normalized_params)
-        self.assertTrue(normalized_params['location_geometry'].equals(expected_geometry))
+        self.assertEqual(normalized_params['location_geometry'], expected_geometry)
 
     def test_missing_location_attribute(self):
         """If the location attributes are not all present, an exception must be raised"""
