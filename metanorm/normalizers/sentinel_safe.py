@@ -74,11 +74,10 @@ class SentinelSAFEMetadataNormalizer(BaseMetadataNormalizer):
             return None
 
     def get_location_geometry(self, raw_attributes):
-        """Returns a GEOSGeometry object corresponding to the location of the dataset"""
+        """Returns a WKT string corresponding to the location of the dataset"""
 
         if set(['JTS footprint']).issubset(raw_attributes.keys()):
-            srid = '4326'
-            return utils.geometry_from_wkt_string(raw_attributes['JTS footprint'], srid)
+            return raw_attributes['JTS footprint']
         else:
             return None
 
