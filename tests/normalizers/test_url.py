@@ -4,7 +4,7 @@ from collections import OrderedDict
 from datetime import datetime
 
 from dateutil.tz import tzutc
-
+from django.contrib.gis.geos.geometry import GEOSGeometry
 import metanorm.normalizers as normalizers
 
 
@@ -305,6 +305,36 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
             'url': 'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1/D365-ESACCI-L4_GHRSST-SSTdepth-OSTIA-GLOB_CDR2.1-v02.0-fv01.0.nc'}
         self.assertEqual(self.normalizer.get_entry_title(
             attributes), 'ESA SST CCI OSTIA L4 Climatology')
+
+    def test_geometry_jaxa_the_first_type_of_sst(self):
+        """geometry from URLMetadataNormalizer """
+        attributes = {
+            'url': 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_10/3/2012/07/GW1AM2_201207031905_134D_L2SGSSTLB3300300.h5'}
+        self.assertEqual(
+            self.normalizer.get_location_geometry(attributes),
+            GEOSGeometry(('POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))')))
+
+    def test_geometry_jaxa_the_second_type_of_sst(self):
+        """geometry from URLMetadataNormalizer """
+        attributes = {
+            'url': 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25/3/2012/07/GW1AM2_201207031905_134D_L2SGSSTLB3300300.h5'}
+        self.assertEqual(
+            self.normalizer.get_location_geometry(attributes),
+            GEOSGeometry(('POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))')))
+
+    def test_geometry_remss(self):
+        """geometry from URLMetadataNormalizer """
+        attributes = {'url': 'ftp://ftp.remss.com/gmi/bmaps_v08.2/y2014/m06/'}
+        self.assertEqual(
+            self.normalizer.get_location_geometry(attributes),
+            GEOSGeometry(('POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))')))
+    def test_geometry_ceda(self):
+        """geometry from URLMetadataNormalizer """
+        attributes = {
+            'url': 'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1/D365-ESACCI-L4_GHRSST-SSTdepth-OSTIA-GLOB_CDR2.1-v02.0-fv01.0.nc'}
+        self.assertEqual(
+            self.normalizer.get_location_geometry(attributes),
+            GEOSGeometry(('POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))')))
 
     def test_none_for_incorrect_ftp_resource(self):
         """shall return None in the case of incorrect ftp resource (incorrect 'ftp_domain_name')
