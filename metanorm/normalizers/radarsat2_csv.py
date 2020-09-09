@@ -1,4 +1,4 @@
-"""Normalizer for the interpretation of file name convention"""
+"""Normalizer metadat from CSV file from Radarsat2 facility"""
 
 import datetime as dt
 import logging

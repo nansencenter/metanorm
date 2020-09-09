@@ -1,4 +1,4 @@
-"""Tests for the well known metadata normalizer"""
+"""Tests for the Radarsat2CSVNormalizerTests normalizer"""
 from collections import OrderedDict
 import datetime as dt
 import unittest
