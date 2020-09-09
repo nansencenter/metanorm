@@ -2,8 +2,6 @@
 
 from collections import OrderedDict
 
-from django.contrib.gis.geos import GEOSGeometry
-
 import pythesint as pti
 
 
@@ -140,13 +138,6 @@ def wkt_polygon_from_wgs84_limits(north, south, east, west):
     """
     return f"POLYGON(({west} {south},{east} {south},{east} {north},{west} {north},{west} {south}))"
 
-
-def geometry_from_wkt_string(wkt_string, srid=4326):
-    """
-    Generates a GEOSGeometry object form a WKT string. The default coordinates reference system is
-    EPSG:4326, i.e. WGS 84
-    """
-    return GEOSGeometry(wkt_string, srid=srid)
 
 def get_cf_or_wkv_standard_name(keyword):
     """return the values of a dataset parameter in a standard way from the
