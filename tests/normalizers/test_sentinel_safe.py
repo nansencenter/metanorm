@@ -4,7 +4,6 @@ from collections import OrderedDict
 from datetime import datetime
 
 from dateutil.tz import tzutc
-from django.contrib.gis.geos.geometry import GEOSGeometry
 
 import metanorm.normalizers as normalizers
 
@@ -252,14 +251,12 @@ class SentinelSAFEMetadataNormalizerTestCase(unittest.TestCase):
                 '-29.04 61.31)))'),
             'geospatial_bounds_crs': 'EPSG:4326'
         }
-        expected_geometry = GEOSGeometry(
-            ('MULTIPOLYGON(((' +
+        expected_geometry = ('MULTIPOLYGON(((' +
              '-29.04 61.31,' +
              '-18.32 59.66,' +
              '-20.25 51.06,' +
              '-38.97 55.12,' +
-             '-29.04 61.31)))'),
-            srid=4326)
+             '-29.04 61.31)))')
 
         self.assertTrue(self.normalizer.get_location_geometry(attributes).equals(expected_geometry))
 
