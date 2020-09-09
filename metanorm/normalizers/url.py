@@ -9,7 +9,6 @@ from urllib.parse import urlparse
 import pythesint as pti
 from dateutil.relativedelta import relativedelta
 from dateutil.tz import tzutc
-from django.contrib.gis.geos.geometry import GEOSGeometry
 
 from .base import BaseMetadataNormalizer
 
@@ -190,9 +189,7 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
 
     def get_location_geometry(self, raw_attributes):
         """ returns the suitable location geometry based on the filename """
-        found_value = self.find_matching_value(self.urls_geometry, raw_attributes)
-        if found_value:
-            return GEOSGeometry(found_value)
+        return self.find_matching_value(self.urls_geometry, raw_attributes)
 
     def get_entry_title(self, raw_attributes):
         """ returns the suitable provider based on the filename """
