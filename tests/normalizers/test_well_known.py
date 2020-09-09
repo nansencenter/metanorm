@@ -3,8 +3,6 @@
 import unittest
 from collections import OrderedDict
 
-from django.contrib.gis.geos.geometry import GEOSGeometry
-
 import metanorm.errors as errors
 import metanorm.normalizers as normalizers
 
@@ -20,14 +18,12 @@ class GeoSpatialWellKnownMetadataNormalizerTestCase(unittest.TestCase):
             'easternmost_longitude': "-142.755005",
             'westernmost_longitude': "-175.084000"
         }
-        expected_geometry = GEOSGeometry(
-            ('POLYGON((' +
+        expected_geometry = ('POLYGON((' +
              '-175.084000 -15.3505001,' +
              '-142.755005 -15.3505001,' +
              '-142.755005 9.47472000,' +
              '-175.084000 9.47472000,' +
-             '-175.084000 -15.3505001))'),
-            srid=4326)
+             '-175.084000 -15.3505001))')
 
         normalizer = normalizers.GeoSpatialWellKnownMetadataNormalizer(['location_geometry'], [])
         normalized_params = normalizer.normalize(attributes)
