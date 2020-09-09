@@ -96,7 +96,7 @@ class OSISAFMetadataNormalizer(BaseMetadataNormalizer):
         """Returns a GEOSGeometry object corresponding to the location of the dataset"""
         if set(['northernsmost_latitude', 'southernmost_latitude',
                 'easternmost_longitude', 'westernmost_longitude']).issubset(raw_attributes.keys()):
-            polygon = utils.wkt_polygon_from_wgs84_limits(
+            return utils.wkt_polygon_from_wgs84_limits(
                 # notice the difference between "northernSmost_latitude"
                 #                           and "northernmost_latitude" of default normalizer
                 raw_attributes['northernsmost_latitude'],
@@ -104,6 +104,5 @@ class OSISAFMetadataNormalizer(BaseMetadataNormalizer):
                 raw_attributes['easternmost_longitude'],
                 raw_attributes['westernmost_longitude']
             )
-            return utils.geometry_from_wkt_string(polygon)
         else:
             return None
