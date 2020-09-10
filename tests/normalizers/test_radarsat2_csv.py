@@ -11,19 +11,34 @@ class Radarsat2CSVNormalizerTests(unittest.TestCase):
     """Tests for the well known attributes normalizer"""
 
     def setUp(self):
-        names = ('Result Number,Satellite,Date,Beam Mode,Polarization,Type,Image Id,'+
-        'Image Info,Metadata,Reason,Sensor Mode,Orbit Direction,Order Key,SIP Size (MB),'+
-        'Service UUID,Footprint,Look Orientation,Band,Title,Options,Absolute Orbit,Orderable')
-        values = ('1,RADARSAT-2,2020-07-16 02:14:27 GMT,ScanSAR Wide A (W1 W2 W3 S7),HH HV,SGF,'+
-        '831163,"{""headers"":[""Product Type"" ""LUT Applied"" ""Sampled Pixel Spacing '+
-        '(Panchromatic)"" ""Product Format"" ""Geodetic Terrain Height""] ""relatedProducts"":'+
-        '[{""values"":[""SGF"" ""Ice"" ""100.0"" ""GeoTIFF"" ""0.00186""]}] ""collectionID"":"'+
-        '"Radarsat2"" ""imageID"":""7337877""}",dummy value,,ScanSAR Wide,Ascending,'+
-        'RS2_OK121511_PK1076349_DK1021326_SCWA_20200716_021427_HH_HV_SGF,84,'+
-        'SERVICE-RSAT2_001-000000000000000000,-146.008396 73.905427 -143.459486 72.212173 '+
-        '-127.936480 73.451549 -128.875274 75.249738 -146.008396 73.905427 ,Right,C,'+
-        'rsat2_20200716_N7370W13656,,65706,TRUE')
-        self.metadata = {i:j for (i,j) in zip(names.split(','), values.split(','))}
+        self.metadata = {
+            'Result Number': '1',
+            'Satellite': 'RADARSAT-2',
+            'Date': '2020-07-16 02:14:27 GMT',
+            'Beam Mode': 'ScanSAR Wide A (W1 W2 W3 S7)',
+            'Polarization': 'HH HV',
+            'Type': 'SGF',
+            'Image Id': '831163',
+            'Image Info': ('"{""headers"":[""Product Type"" ""LUT Applied"" ""Sampled Pixel ' +
+            'Spacing (Panchromatic)"" ""Product Format"" ""Geodetic Terrain Height""] ""' +
+            'relatedProducts"":[{""values"":[""SGF"" ""Ice"" ""100.0"" ""GeoTIFF"" ""0.00186""' +
+            ']}] ""collectionID"":""Radarsat2"" ""imageID"":""7337877""}"'),
+            'Metadata': 'dummy value',
+            'Reason': '',
+            'Sensor Mode': 'ScanSAR Wide',
+            'Orbit Direction': 'Ascending',
+            'Order Key': 'RS2_OK121511_PK1076349_DK1021326_SCWA_20200716_021427_HH_HV_SGF',
+            'SIP Size (MB)': '84',
+            'Service UUID': 'SERVICE-RSAT2_001-000000000000000000',
+            'Footprint': ('-146.008396 73.905427 -143.459486 72.212173 -127.936480 73.451549'+
+            ' -128.875274 75.249738 -146.008396 73.905427 '),
+            'Look Orientation': 'Right',
+            'Band': 'C',
+            'Title': 'rsat2_20200716_N7370W13656',
+            'Options': '',
+            'Absolute Orbit': '65706',
+            'Orderable': 'TRUE'}
+
         self.normalizer = normalizers.Radarsat2CSVMetadataNormalizer([], [])
 
     def test_metadata_split(self):
@@ -109,9 +124,15 @@ class Radarsat2CSVNormalizerTests(unittest.TestCase):
 
     def test_get_parameters(self):
         """ shall return sigma0 wkv """
-        self.assertEqual(
-            self.normalizer.get_dataset_parameters(self.metadata)[0]['standard_name'],
-            'surface_backwards_scattering_coefficient_of_radar_wave')
+        self.assertCountEqual(
+            self.normalizer.get_dataset_parameters(self.metadata),
+            [OrderedDict([('standard_name',
+              'surface_backwards_scattering_coefficient_of_radar_wave'),
+             ('long_name', 'Normalized Radar Cross Section'),
+             ('short_name', 'sigma0'),
+             ('units', 'm/m'),
+             ('minmax', '0 0.1'),
+             ('colormap', 'gray')])])
 
     def test_get_entry_title(self):
         """ shall return title composed of several fields """
