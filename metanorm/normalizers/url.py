@@ -50,6 +50,12 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
         "ftp://ftp.remss.com/gmi/": 'Atmosphere parameters from Global Precipitation Measurement Microwave Imager',
         "ftp://ftp.gportal.jaxa.jp/standard": 'AMSR2-L2 Sea Surface Temperature'}
 
+    urls_entry_id = {"https://thredds.met.no/thredds/catalog/osisaf/",
+                     "https://opendap.jpl.nasa.gov/opendap/",
+                     "ftp://ftp.remss.com/",
+                     "ftp://ftp.gportal.jaxa.jp",
+                     "ftp://anon-ftp.ceda.ac.uk/"
+                     }
     urls_dsp = {'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/': ['sea_surface_temperature'],
                 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L2.SST':
                 ['sea_surface_temperature'],
@@ -100,9 +106,7 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
     def length_of_month(extracted_date):
         """ length of the month that 'extracted_date' has been found in it """
         return relativedelta(days=calendar.monthrange(
-                extracted_date.year, extracted_date.month)[1] - 1)
-
-
+            extracted_date.year, extracted_date.month)[1] - 1)
 
     def get_platform(self, raw_attributes):
         """ return the corresponding platfrom based on specified ftp source """
@@ -189,7 +193,7 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
     def get_dataset_parameters(self, raw_attributes):
         """ return list with different parameter(s) from cf_standard_name """
         return self.create_parameter_list(self.find_matching_value(
-                self.urls_dsp, raw_attributes)) or []
+            self.urls_dsp, raw_attributes)) or []
 
     def get_location_geometry(self, raw_attributes):
         """ returns the suitable location geometry based on the filename """
@@ -202,6 +206,6 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
     def get_entry_id(self, raw_attributes):
         """ returns the suitable entry_id based on the filename """
         if 'url' in raw_attributes:
-            if any(raw_attributes['url'].startswith(key) for key in self.urls_title.keys()):
+            if any(raw_attributes['url'].startswith(url_start) for url_start in self.urls_entry_id):
                 file_name = os.path.splitext(os.path.basename(raw_attributes['url']))[0]
                 return file_name if file_name else None
