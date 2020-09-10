@@ -88,3 +88,10 @@ class SentinelSAFEMetadataNormalizer(BaseMetadataNormalizer):
             if 'scihub.copernicus.eu' in raw_attributes['url']:
                 provider = utils.get_gcmd_provider(['ESA/EO'])
         return provider
+
+    def get_entry_id(self, raw_attributes):
+        """Returns a entry_id for scihub copernicus cases"""
+        if set(['url']).issubset(raw_attributes.keys()):
+            if 'scihub.copernicus.eu' in raw_attributes['url']:
+                entry_id = raw_attributes['Identifier']
+                return entry_id if entry_id else None

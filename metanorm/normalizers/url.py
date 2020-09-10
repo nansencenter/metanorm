@@ -2,13 +2,15 @@
 
 import calendar
 import logging
+import os
 import re
 from datetime import datetime
 from urllib.parse import urlparse
 
-import pythesint as pti
 from dateutil.relativedelta import relativedelta
 from dateutil.tz import tzutc
+
+import pythesint as pti
 
 from .base import BaseMetadataNormalizer
 
@@ -99,6 +101,8 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
         """ length of the month that 'extracted_date' has been found in it """
         return relativedelta(days=calendar.monthrange(
                 extracted_date.year, extracted_date.month)[1] - 1)
+
+
 
     def get_platform(self, raw_attributes):
         """ return the corresponding platfrom based on specified ftp source """
@@ -192,5 +196,12 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
         return self.find_matching_value(self.urls_geometry, raw_attributes)
 
     def get_entry_title(self, raw_attributes):
-        """ returns the suitable provider based on the filename """
+        """ returns the suitable entry_title based on the filename """
         return self.find_matching_value(self.urls_title, raw_attributes)
+
+    def get_entry_id(self, raw_attributes):
+        """ returns the suitable entry_id based on the filename """
+        if 'url' in raw_attributes:
+            if any(raw_attributes['url'].startswith(key) for key in self.urls_title.keys()):
+                file_name = os.path.splitext(os.path.basename(raw_attributes['url']))[0]
+                return file_name if file_name else None
