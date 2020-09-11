@@ -325,6 +325,21 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         self.assertEqual(self.normalizer.get_entry_id(
             attributes), 'D365-ESACCI-L4_GHRSST-SSTdepth-OSTIA-GLOB_CDR2.1-v02.0-fv01.0')
 
+
+    def test_entry_id_for_osisaf_ingester(self):
+        """entry_id from URLMetadataNormalizer for osisaf project """
+        attributes = {
+            'url': "https://thredds.met.no/thredds/catalog/osisaf/Some/path/to/file/filename.bb"}
+        self.assertEqual(self.normalizer.get_entry_id(
+            attributes), 'filename')
+
+    def test_entry_id_for_podaac_ingester(self):
+        """entry_id from URLMetadataNormalizer for PODAAC metadata"""
+        attributes = {
+            'url': "https://opendap.jpl.nasa.gov/opendap/Some/path/to/file/filename.bb"}
+        self.assertEqual(self.normalizer.get_entry_id(
+            attributes), 'filename')
+
     def test_geometry_jaxa_the_first_type_of_sst(self):
         """geometry from URLMetadataNormalizer """
         attributes = {
