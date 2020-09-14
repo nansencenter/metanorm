@@ -292,7 +292,7 @@ class SentinelSAFEMetadataNormalizerTestCase(unittest.TestCase):
         """entry_id from sentinelSafeMetadataNormalizer """
         attributes = {
             'url': "https://scihub.copernicus.eu/apihub/odata/v1/Products('1a4ff15b-1504-4d94-8675-e12c06b02858')/$value",
-            'Identifier':'finename_value'}
+            'Identifier': 'finename_value'}
         self.assertEqual(self.normalizer.get_entry_id(
             attributes), 'finename_value')
 

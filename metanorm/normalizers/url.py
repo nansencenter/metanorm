@@ -2,15 +2,15 @@
 
 import calendar
 import logging
+import ntpath
 import os
 import re
 from datetime import datetime
 from urllib.parse import urlparse
 
+import pythesint as pti
 from dateutil.relativedelta import relativedelta
 from dateutil.tz import tzutc
-
-import pythesint as pti
 
 from .base import BaseMetadataNormalizer
 
@@ -205,7 +205,11 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
 
     def get_entry_id(self, raw_attributes):
         """ returns the suitable entry_id based on the filename """
+        file_name = None
         if 'url' in raw_attributes:
             if any(raw_attributes['url'].startswith(url_start) for url_start in self.urls_entry_id):
-                file_name = os.path.splitext(os.path.basename(raw_attributes['url']))[0]
-                return file_name if file_name else None
+                file_name = os.path.splitext(os.path.basename(raw_attributes['url']))[0] or \
+                    ntpath.split(ntpath.basename(raw_attributes['url']))[0] # for windows users
+                extension_set={'.nc','.h5'}
+                file_name = [file_name.strip(ext) for ext in extension_set][-1]
+        return file_name

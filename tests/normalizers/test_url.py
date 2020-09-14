@@ -329,14 +329,14 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
     def test_entry_id_for_osisaf_ingester(self):
         """entry_id from URLMetadataNormalizer for osisaf project """
         attributes = {
-            'url': "https://thredds.met.no/thredds/catalog/osisaf/Some/path/to/file/filename.bb"}
+            'url': "https://thredds.met.no/thredds/catalog/osisaf/Some/path/to/file/filename.nc.dods"}
         self.assertEqual(self.normalizer.get_entry_id(
             attributes), 'filename')
 
     def test_entry_id_for_podaac_ingester(self):
         """entry_id from URLMetadataNormalizer for PODAAC metadata"""
         attributes = {
-            'url': "https://opendap.jpl.nasa.gov/opendap/Some/path/to/file/filename.bb"}
+            'url': "https://opendap.jpl.nasa.gov/opendap/Some/path/to/file/filename.nc"}
         self.assertEqual(self.normalizer.get_entry_id(
             attributes), 'filename')
 
