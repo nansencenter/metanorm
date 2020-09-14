@@ -211,5 +211,6 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
                 file_name = os.path.splitext(os.path.basename(raw_attributes['url']))[0] or \
                     ntpath.split(ntpath.basename(raw_attributes['url']))[0] # for windows users
                 extension_set={'.nc','.h5'}
-                file_name = [file_name.strip(ext) for ext in extension_set][-1]
+                for ext in extension_set: # removing the extensions
+                    file_name = file_name.replace(ext, '')
         return file_name
