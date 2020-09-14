@@ -50,11 +50,11 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
         "ftp://ftp.remss.com/gmi/": 'Atmosphere parameters from Global Precipitation Measurement Microwave Imager',
         "ftp://ftp.gportal.jaxa.jp/standard": 'AMSR2-L2 Sea Surface Temperature'}
 
-    urls_entry_id = {"https://thredds.met.no/thredds/catalog/osisaf/",
-                     "https://opendap.jpl.nasa.gov/opendap/",
-                     "ftp://ftp.remss.com/",
-                     "ftp://ftp.gportal.jaxa.jp",
-                     "ftp://anon-ftp.ceda.ac.uk/"
+    urls_entry_id = {"https://thredds.met.no/thredds/catalog/osisaf/met.no/ice":lambda x: re.findall(r"^ice_.{39}",x),
+                     "https://opendap.jpl.nasa.gov/opendap/":lambda x: re.findall(r"\d{14}.{62}",x),
+                     "ftp://ftp.remss.com/":lambda x: re.findall(r"f35_.{16}|f35_.{12}|f35_.{10}",x),
+                     "ftp://ftp.gportal.jaxa.jp":lambda x: re.findall(r".{6}_.{34}",x),
+                     "ftp://anon-ftp.ceda.ac.uk/":lambda x: re.findall(r"D\d{3}-.{56}",x)
                      }
     urls_dsp = {'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/': ['sea_surface_temperature'],
                 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L2.SST':
@@ -207,10 +207,7 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
         """ returns the suitable entry_id based on the filename """
         file_name = None
         if 'url' in raw_attributes:
-            if any(raw_attributes['url'].startswith(url_start) for url_start in self.urls_entry_id):
-                file_name = os.path.splitext(os.path.basename(raw_attributes['url']))[0] or \
-                    ntpath.split(ntpath.basename(raw_attributes['url']))[0] # for windows users
-                extension_set={'.nc','.h5'}
-                for ext in extension_set: # removing the extensions
-                    file_name = file_name.replace(ext, '')
+            for url_start in self.urls_entry_id.keys():
+                if raw_attributes['url'].startswith(url_start):
+                    file_name = self.urls_entry_id[url_start](os.path.basename(raw_attributes['url']))[0]
         return file_name

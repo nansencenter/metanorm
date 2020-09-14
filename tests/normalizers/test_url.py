@@ -329,16 +329,16 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
     def test_entry_id_for_osisaf_ingester(self):
         """entry_id from URLMetadataNormalizer for osisaf project """
         attributes = {
-            'url': "https://thredds.met.no/thredds/catalog/osisaf/Some/path/to/file/filename.nc.dods"}
+            'url': "https://thredds.met.no/thredds/catalog/osisaf/met.no/ice/Some/path/to/file/ice_type_sh_polstere-100_multi_201609261200.nc.dods"}
         self.assertEqual(self.normalizer.get_entry_id(
-            attributes), 'filename')
+            attributes), 'ice_type_sh_polstere-100_multi_201609261200')
 
     def test_entry_id_for_podaac_ingester(self):
         """entry_id from URLMetadataNormalizer for PODAAC metadata"""
         attributes = {
-            'url': "https://opendap.jpl.nasa.gov/opendap/Some/path/to/file/filename.nc"}
+            'url': "https://opendap.jpl.nasa.gov/opendap/Some/path/to/file/20180110000000-OSPO-L2P_GHRSST-SSTsubskin-VIIRS_NPP-ACSPO_V2.61-v02.0-fv01.0.nc"}
         self.assertEqual(self.normalizer.get_entry_id(
-            attributes), 'filename')
+            attributes), '20180110000000-OSPO-L2P_GHRSST-SSTsubskin-VIIRS_NPP-ACSPO_V2.61-v02.0-fv01.0')
 
     def test_geometry_jaxa_the_first_type_of_sst(self):
         """geometry from URLMetadataNormalizer """
