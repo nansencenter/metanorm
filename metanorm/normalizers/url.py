@@ -48,13 +48,19 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
     urls_title = {
         'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1': 'ESA SST CCI OSTIA L4 Climatology',
         "ftp://ftp.remss.com/gmi/": 'Atmosphere parameters from Global Precipitation Measurement Microwave Imager',
-        "ftp://ftp.gportal.jaxa.jp/standard": 'AMSR2-L2 Sea Surface Temperature'}
+        "ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L2.SST/": 'AMSR2-L2 Sea Surface Temperature',
+        "ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_10/": 'AMSR2-L2 Sea Surface Temperature',
+        "ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25/": 'AMSR2-L2 Sea Surface Temperature'
+        }
 
-    urls_entry_id = {"https://thredds.met.no/thredds/catalog/osisaf/met.no/ice":lambda x: re.findall(r"^ice_.{39}",x),
-                     "https://opendap.jpl.nasa.gov/opendap/":lambda x: re.findall(r"\d{14}.{62}",x),
-                     "ftp://ftp.remss.com/":lambda x: re.findall(r"f35_.{16}|f35_.{12}|f35_.{10}",x),
-                     "ftp://ftp.gportal.jaxa.jp":lambda x: re.findall(r".{6}_.{34}",x),
-                     "ftp://anon-ftp.ceda.ac.uk/":lambda x: re.findall(r"D\d{3}-.{56}",x)
+    urls_entry_id = {"https://thredds.met.no/thredds/catalog/osisaf/met.no/ice":
+                     re.compile(r"^ice_.{39}"),
+                     "https://opendap.jpl.nasa.gov/opendap/": re.compile(r"^\d{14}.{62}"),
+                     "ftp://ftp.remss.com/gmi": re.compile(r"^f35_.{16}|f35_.{12}|f35_.{10}"),
+                     "ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/":
+                     re.compile(r"^.{6}_.{34}"),
+                     "ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/":
+                     re.compile(r"^D\d{3}-.{56}")
                      }
     urls_dsp = {'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/': ['sea_surface_temperature'],
                 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L2.SST':
@@ -209,5 +215,6 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
         if 'url' in raw_attributes:
             for url_start in self.urls_entry_id.keys():
                 if raw_attributes['url'].startswith(url_start):
-                    file_name = self.urls_entry_id[url_start](os.path.basename(raw_attributes['url']))[0]
+                    file_name = re.search(self.urls_entry_id[url_start],
+                                          os.path.basename(raw_attributes['url'])).group(0)
         return file_name
