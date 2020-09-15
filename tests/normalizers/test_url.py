@@ -325,6 +325,13 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         self.assertEqual(self.normalizer.get_entry_id(
             attributes), 'D365-ESACCI-L4_GHRSST-SSTdepth-OSTIA-GLOB_CDR2.1-v02.0-fv01.0')
 
+    def test_entry_id_for_unkown_file_type(self):
+        """entry_id shall equal to None for an unknown fileformat """
+        attributes = {
+            'url': 'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1/D365-ESACCI-L4_GHRSST-SSTdepth-OSTIA-GLOB_CDR2.1-v02.0-fv01.0.bb'}
+        self.assertEqual(self.normalizer.get_entry_id(
+            attributes), None)
+
 
     def test_entry_id_for_osisaf_ingester(self):
         """entry_id from URLMetadataNormalizer for osisaf project """
