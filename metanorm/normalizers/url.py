@@ -53,14 +53,15 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
         }
 
     urls_entry_id = {"https://thredds.met.no/thredds/catalog/osisaf/met.no/ice":
-                     re.compile(r"^ice_.{39}"),
-                     "https://opendap.jpl.nasa.gov/opendap/": re.compile(r"^\d{14}.{62}"),
-                     "ftp://ftp.remss.com/gmi": re.compile(r"^f35_.{16}|f35_.{12}|f35_.{10}"),
+                     re.compile(r"([^/]+)\.nc\.dods"),
+                     "https://opendap.jpl.nasa.gov/opendap/": re.compile(r"([^/]+)\.nc|([^/]+)\.gz"),
+                     "ftp://ftp.remss.com/gmi": re.compile(r"([^/]+)\.gz|([^/]+)\.nc"),
                      "ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/":
-                     re.compile(r"^.{6}_.{34}"),
+                     re.compile(r"([^/]+)\.h5|([^/]+)\.nc"),
                      "ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/":
-                     re.compile(r"^D\d{3}-.{56}")
+                     re.compile(r"([^/]+)\.nc|([^/]+)\.h5")
                      }
+
     urls_dsp = {'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/': ['sea_surface_temperature'],
                 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L2.SST':
                 ['sea_surface_temperature'],
@@ -214,6 +215,10 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
         if 'url' in raw_attributes:
             for url_start in self.urls_entry_id:
                 if raw_attributes['url'].startswith(url_start):
-                    file_name = re.search(self.urls_entry_id[url_start],
-                                          os.path.basename(raw_attributes['url'])).group(0)
+                    try:
+                        file_name = \
+                        re.search(self.urls_entry_id[url_start],raw_attributes['url']).group(1) \
+                        or re.search(self.urls_entry_id[url_start],raw_attributes['url']).group(2)
+                    except AttributeError:
+                        file_name = None
         return file_name
