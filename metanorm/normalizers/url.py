@@ -2,7 +2,6 @@
 
 import calendar
 import logging
-import ntpath
 import os
 import re
 from datetime import datetime
@@ -213,7 +212,7 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
         """ returns the suitable entry_id based on the filename """
         file_name = None
         if 'url' in raw_attributes:
-            for url_start in self.urls_entry_id.keys():
+            for url_start in self.urls_entry_id:
                 if raw_attributes['url'].startswith(url_start):
                     file_name = re.search(self.urls_entry_id[url_start],
                                           os.path.basename(raw_attributes['url'])).group(0)
