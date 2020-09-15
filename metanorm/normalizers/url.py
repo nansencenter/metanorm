@@ -53,13 +53,13 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
         }
 
     urls_entry_id = {"https://thredds.met.no/thredds/catalog/osisaf/met.no/ice":
-                     re.compile(r"([^/]+)\.nc\.dods"),
-                     "https://opendap.jpl.nasa.gov/opendap/": re.compile(r"([^/]+)\.nc|([^/]+)\.gz"),
-                     "ftp://ftp.remss.com/gmi": re.compile(r"([^/]+)\.gz|([^/]+)\.nc"),
+                     re.compile(r"([^/]+)\.nc\.dods$"),
+                     "https://opendap.jpl.nasa.gov/opendap/": re.compile(r"([^/]+)\.(nc|h5)(\.gz)?$"),
+                     "ftp://ftp.remss.com/gmi": re.compile(r"([^/]+)\.gz$"),
                      "ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/":
-                     re.compile(r"([^/]+)\.h5|([^/]+)\.nc"),
+                     re.compile(r"([^/]+)\.(nc|h5)(\.gz)?$"),
                      "ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/":
-                     re.compile(r"([^/]+)\.nc|([^/]+)\.h5")
+                     re.compile(r"([^/]+)\.(nc|h5)(\.gz)?$")
                      }
 
     urls_dsp = {'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/': ['sea_surface_temperature'],
@@ -217,8 +217,7 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
                 if raw_attributes['url'].startswith(url_start):
                     try:
                         file_name = \
-                        re.search(self.urls_entry_id[url_start],raw_attributes['url']).group(1) \
-                        or re.search(self.urls_entry_id[url_start],raw_attributes['url']).group(2)
+                        re.search(self.urls_entry_id[url_start],raw_attributes['url']).group(1)
                     except AttributeError:
                         file_name = None
         return file_name
