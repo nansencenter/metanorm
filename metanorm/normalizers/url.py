@@ -216,8 +216,8 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
             for url_start in self.urls_entry_id:
                 if raw_attributes['url'].startswith(url_start):
                     try:
-                        file_name = \
-                        re.search(self.urls_entry_id[url_start],raw_attributes['url']).group(1)
+                        file_name = re.search(
+                            self.urls_entry_id[url_start],raw_attributes['url']).group(1)
                     except AttributeError:
                         file_name = None
         return file_name
