@@ -58,6 +58,8 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
                      "ftp://ftp.remss.com/gmi": re.compile(r"([^/]+)\.gz$"),
                      "ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/":
                      re.compile(r"([^/]+)\.(nc|h5)(\.gz)?$"),
+                     "ftp://nrt.cmems-du.eu/Core/":
+                     re.compile(r"([^/]+)\.(nc|h5)(\.gz)?$"),
                      "ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/":
                      re.compile(r"([^/]+)\.(nc|h5)(\.gz)?$")
                      }
