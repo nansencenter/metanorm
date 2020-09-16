@@ -91,7 +91,7 @@ class SentinelSAFEMetadataNormalizer(BaseMetadataNormalizer):
 
     def get_entry_id(self, raw_attributes):
         """Returns a entry_id for scihub copernicus cases"""
-        if set(['url']).issubset(raw_attributes.keys()):
-            if 'scihub.copernicus.eu' in raw_attributes['url']:
-                entry_id = raw_attributes['Identifier']
-                return entry_id if entry_id else None
+        entry_id = None
+        if set(['Identifier']).issubset(raw_attributes.keys()):
+            entry_id = raw_attributes['Identifier']
+        return entry_id
