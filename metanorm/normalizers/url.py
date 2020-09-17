@@ -22,18 +22,27 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
     urls_platforms = {
         "ftp://ftp.remss.com/gmi": 'GPM',
         "ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/": 'Earth Observation Satellites',
-        "ftp://ftp.gportal.jaxa.jp/standard/GCOM-W": 'GCOM-W1'}
+        "ftp://ftp.gportal.jaxa.jp/standard/GCOM-W": 'GCOM-W1',
+        "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046":'GCOM-W1',
+        "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003":'GCOM-W1',
+        "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024":'GCOM-W1'}
 
     urls_instruments = {
         'ftp://ftp.remss.com/gmi': 'GMI',
         'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2': 'AMSR2',
         'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/':
-        'Imaging Spectrometers/Radiometers', }
+        'Imaging Spectrometers/Radiometers',
+        "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046":'GMI',
+        "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003":'GMI',
+        "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024":'GMI'}
 
     urls_provider = {
         'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1': 'ESA/CCI',
         "ftp://ftp.remss.com/gmi/": 'NASA/GSFC/SED/ESD/LA/GPM',
-        "ftp://ftp.gportal.jaxa.jp/standard": 'JP/JAXA/EOC'}
+        "ftp://ftp.gportal.jaxa.jp/standard": 'JP/JAXA/EOC',
+        "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046":'ESA/CCI',
+        "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003":'ESA/CCI',
+        "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024":'ESA/CCI'}
 
     urls_geometry = {'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/':
                      ('POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))'),
@@ -42,14 +51,23 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
                      'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25':
                      ('POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))'),
                      "ftp://ftp.remss.com/gmi/":
-                     ('POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))')}
+                     ('POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))'),
+                    "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046":
+                    ('POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))'),
+                    "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003":
+                    ('POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))'),
+                    "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024":
+                    ('POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))')}
 
     urls_title = {
         'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1': 'ESA SST CCI OSTIA L4 Climatology',
         "ftp://ftp.remss.com/gmi/": 'Atmosphere parameters from Global Precipitation Measurement Microwave Imager',
         "ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L2.SST/": 'AMSR2-L2 Sea Surface Temperature',
         "ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_10/": 'AMSR2-L2 Sea Surface Temperature',
-        "ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25/": 'AMSR2-L2 Sea Surface Temperature'
+        "ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25/": 'AMSR2-L2 Sea Surface Temperature',
+        "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046":'X',
+        "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003":'X',
+        "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024":'X'
         }
 
     urls_entry_id = {"https://thredds.met.no/thredds/catalog/osisaf/met.no/ice":
@@ -73,7 +91,31 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
                 ['sea_surface_temperature'],
                 "ftp://ftp.remss.com/gmi/":
                 ['wind_speed', 'atmosphere_mass_content_of_water_vapor',
-                 'atmosphere_mass_content_of_cloud_liquid_water', 'rainfall_rate'], }
+                 'atmosphere_mass_content_of_cloud_liquid_water', 'rainfall_rate'],
+                "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046":
+                #based on http://nrt.cmems-du.eu/motu-web/Motu?action=describeProduct&service=SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046-TDS&product=dataset-duacs-nrt-global-merged-allsat-phy-l4
+                ['surface_geostrophic_eastward_sea_water_velocity',
+                'surface_geostrophic_eastward_sea_water_velocity_assuming_sea_level_for_geoid',
+                'surface_geostrophic_northward_sea_water_velocity',
+                'surface_geostrophic_northward_sea_water_velocity_assuming_sea_level_for_geoid'],
+                "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003":
+                # based on http://nrt.cmems-du.eu/motu-web/Motu?action=describeProduct&service=MULTIOBS_GLO_PHY_NRT_015_003-TDS&product=dataset-uv-nrt-daily
+                ['eastward_sea_water_velocity',
+                'northward_sea_water_velocity'],
+                "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024":
+                # based on http://nrt.cmems-du.eu/motu-web/Motu?action=describeProduct&service=GLOBAL_ANALYSIS_FORECAST_PHY_001_024-TDS&product=global-analysis-forecast-phy-001-024
+                #['sea_water_potential_temperature_at_sea_floor', # problematic for pti!! DANGER TODO
+                ['ocean_mixed_layer_thickness_defined_by_sigma_theta',
+                'sea_ice_area_fraction',
+                'sea_ice_thickness',
+                'sea_water_salinity',
+                'sea_water_potential_temperature',
+                'eastward_sea_water_velocity',
+                'eastward_sea_ice_velocity',
+                'northward_sea_water_velocity',
+                'northward_sea_ice_velocity',
+                'sea_surface_height_above_geoid']
+                }
 
     @staticmethod
     def find_matching_value(associated_dict, raw_attributes):
@@ -92,6 +134,20 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
         # tuple of all formats for usage of "strptime" function of datetime
         # Order of this tuple matters! so the more generic formats must be in the end of tuple
         strp_format = (
+            # for ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046/dataset-duacs-nrt-global-merged-allsat-phy-l4
+            "dataset-uv-nrt-hourly_%Y%m%dT%H%MZ",
+            "dataset-uv-nrt-monthly_%Y%mT%H%MZ",
+            "dataset-uv-nrt-daily_%Y%m%dT%H%MZ",
+            # for ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046/dataset-duacs-nrt-global-merged-allsat-phy-l4
+            "mercatorpsy4v3r1_gl12_so_%Y%m%d_%H",
+            "mercatorpsy4v3r1_gl12_thetao_%Y%m%d_%H",
+            "mercatorpsy4v3r1_gl12_uovo_%Y%m%d_%H",
+            "SMOC_%Y%m%d",
+            "mercatorpsy4v3r1_%Y%m%d",
+            "mercatorpsy4v3r1_%Y%m.nc",
+            # for ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046/dataset-duacs-nrt-global-merged-allsat-phy-l4
+            "nrt_global_allsat_phy_l4_%Y%m%d",# e.x.: 'nrt_global_allsat_phy_l4_20200206'
+            "mercatorpsy4v3r1_%Y%m%d",
             "f35_%Y%m%dv8.2_d3d.gz",
             "f35_%Y%m%dv8.2.gz",
             "f35_%Y%mv8.2.gz",
@@ -152,7 +208,25 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
                 'ftp://ftp.remss.com': file_name,
                 'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1': "19820101" if start else "20100101",
                 "ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2":
-                file_name_splitted[0] + '_' + file_name_splitted[1] if file_name_splitted else None
+                file_name_splitted[0] + '_' + file_name_splitted[1] if file_name_splitted else None,
+                "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046/dataset-duacs-nrt-global-merged-allsat-phy-l4":
+                file_name[:33],
+                "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003":
+                file_name_splitted[0] + '_' + file_name_splitted[1] if file_name_splitted else None,
+                "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/global-analysis-forecast-phy-001-024/":
+                file_name_splitted[0] + '_' + file_name_splitted[-2]  if file_name_splitted else None,
+                "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/global-analysis-forecast-phy-001-024-3dinst-so/":
+                file_name[:36],
+                "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/global-analysis-forecast-phy-001-024-3dinst-thetao":
+                file_name[:40],
+                "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/global-analysis-forecast-phy-001-024-3dinst-uovo":
+                file_name[:38],
+                "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/global-analysis-forecast-phy-001-024-hourly-merged-uv":
+                file_name_splitted[0] + '_' + file_name_splitted[1]  if file_name_splitted else None,
+                "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/global-analysis-forecast-phy-001-024-hourly-t-u-v-ssh/":
+                file_name_splitted[0] + '_' + file_name_splitted[-2]  if file_name_splitted else None,
+                "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/global-analysis-forecast-phy-001-024-monthly/":
+                file_name_splitted[0] + '_' + file_name_splitted[-1]  if file_name_splitted else None
             }
             extracted_date = self.extract_time(self.find_matching_value(
                 url_time, raw_attributes))
@@ -184,6 +258,26 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
                 if file_name_splitted[1].endswith('00'):  # it is a month file
                     extracted_date = extracted_date if start else \
                         extracted_date + self.length_of_month(extracted_date)
+            elif raw_attributes['url'].startswith(
+                "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046"):
+                extracted_date = extracted_date if start else extracted_date + relativedelta(days=1)
+            elif raw_attributes['url'].startswith('ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003'):
+                if "monthly" in file_name:
+                    extracted_date = extracted_date if start else \
+                        extracted_date + self.length_of_month(extracted_date)
+                if "hourly" in file_name or "daily" in file_name:
+                    extracted_date = extracted_date if start else \
+                        extracted_date + relativedelta(days=1)
+            elif raw_attributes['url'].startswith('ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024'):
+                if any(path_part.endswith("monthly") for path_part in url_path_and_file_name_splitted):
+                    extracted_date = extracted_date if start else \
+                        extracted_date + self.length_of_month(extracted_date)
+                elif any("3dinst" in path_part for path_part in url_path_and_file_name_splitted):
+                    extracted_date = extracted_date if start else \
+                        extracted_date + relativedelta(hours=6)
+                else:
+                    extracted_date = extracted_date if start else \
+                        extracted_date + relativedelta(days=1)
             return extracted_date
 
     def get_provider(self, raw_attributes):
@@ -218,8 +312,7 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
             for url_start in self.urls_entry_id:
                 if raw_attributes['url'].startswith(url_start):
                     try:
-                        file_name = re.search(
-                            self.urls_entry_id[url_start],raw_attributes['url']).group(1)
+                        file_name = self.urls_entry_id[url_start].search(raw_attributes['url']).group(1)
                     except AttributeError:
                         file_name = None
         return file_name
