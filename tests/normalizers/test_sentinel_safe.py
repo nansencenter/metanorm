@@ -287,3 +287,20 @@ class SentinelSAFEMetadataNormalizerTestCase(unittest.TestCase):
     def test_provider_missing_attribute(self):
         """Parameter method must return None if the attribute is missing"""
         self.assertEqual(self.normalizer.get_provider({}), None)
+
+    def test_entry_id_copernicus(self):
+        """entry_id from sentinelSafeMetadataNormalizer """
+        attributes = {
+            'url': "https://scihub.copernicus.eu/apihub/odata/v1/Products('1a4ff15b-1504-4d94-8675-e12c06b02858')/$value",
+            'Identifier': 'finename_value'}
+        self.assertEqual(self.normalizer.get_entry_id(
+            attributes), 'finename_value')
+
+    def test_entry_id_missing_attribute(self):
+        """entry_id method must return None if the attribute is missing"""
+        self.assertIsNone(self.normalizer.get_entry_id({}))
+
+    def test_entry_id_is_none_for_non_scihub_url(self):
+        """No entry_id must be returned if the URL is not one from Copernicus scihub"""
+        attributes = {'url': 'https://random.url'}
+        self.assertIsNone(self.normalizer.get_entry_id(attributes))

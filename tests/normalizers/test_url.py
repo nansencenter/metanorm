@@ -305,6 +305,48 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         self.assertEqual(self.normalizer.get_entry_title(
             attributes), 'ESA SST CCI OSTIA L4 Climatology')
 
+    def test_entry_id_jaxa(self):
+        """entry_id from URLMetadataNormalizer """
+        attributes = {
+            'url': 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25/3/2012/07/GW1AM2_201207031905_134D_L2SGSSTLB3300300.h5'}
+        self.assertEqual(
+            self.normalizer.get_entry_id(attributes), 'GW1AM2_201207031905_134D_L2SGSSTLB3300300')
+
+    def test_entry_id_remss(self):
+        """entry_id from URLMetadataNormalizer """
+        attributes = {'url': 'ftp://ftp.remss.com/gmi/bmaps_v08.2/y2014/m06/f35_20140603v8.2.gz'}
+        self.assertEqual(self.normalizer.get_entry_id(attributes),
+                         'f35_20140603v8.2')
+
+    def test_entry_id_ceda(self):
+        """entry_id from URLMetadataNormalizer """
+        attributes = {
+            'url': 'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1/D365-ESACCI-L4_GHRSST-SSTdepth-OSTIA-GLOB_CDR2.1-v02.0-fv01.0.nc'}
+        self.assertEqual(self.normalizer.get_entry_id(
+            attributes), 'D365-ESACCI-L4_GHRSST-SSTdepth-OSTIA-GLOB_CDR2.1-v02.0-fv01.0')
+
+    def test_entry_id_for_unkown_file_type(self):
+        """entry_id shall equal to None for an unknown fileformat """
+        attributes = {
+            'url': 'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1/D365-ESACCI-L4_GHRSST-SSTdepth-OSTIA-GLOB_CDR2.1-v02.0-fv01.0.bb'}
+        self.assertEqual(self.normalizer.get_entry_id(
+            attributes), None)
+
+
+    def test_entry_id_for_osisaf_ingester(self):
+        """entry_id from URLMetadataNormalizer for osisaf project """
+        attributes = {
+            'url': "https://thredds.met.no/thredds/catalog/osisaf/met.no/ice/Some/path/to/file/ice_type_sh_polstere-100_multi_201609261200.nc.dods"}
+        self.assertEqual(self.normalizer.get_entry_id(
+            attributes), 'ice_type_sh_polstere-100_multi_201609261200')
+
+    def test_entry_id_for_podaac_ingester(self):
+        """entry_id from URLMetadataNormalizer for PODAAC metadata"""
+        attributes = {
+            'url': "https://opendap.jpl.nasa.gov/opendap/Some/path/to/file/20180110000000-OSPO-L2P_GHRSST-SSTsubskin-VIIRS_NPP-ACSPO_V2.61-v02.0-fv01.0.nc"}
+        self.assertEqual(self.normalizer.get_entry_id(
+            attributes), '20180110000000-OSPO-L2P_GHRSST-SSTsubskin-VIIRS_NPP-ACSPO_V2.61-v02.0-fv01.0')
+
     def test_geometry_jaxa_the_first_type_of_sst(self):
         """geometry from URLMetadataNormalizer """
         attributes = {
@@ -346,6 +388,7 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         self.assertIsNone(self.normalizer.get_time_coverage_end({'url': 'ftp://test/'}))
         self.assertIsNone(self.normalizer.get_time_coverage_start({'url': 'ftp://test/'}))
         self.assertIsNone(self.normalizer.get_location_geometry({'url': 'ftp://test/'}))
+        self.assertIsNone(self.normalizer.get_entry_id({'url': 'ftp://test/'}))
 
     def test_for_delivering_none_when_lacking_url_in_raw_attributes(self):
         """shall return None in the case of no 'url' field in the raw_attribute dictionary
@@ -360,3 +403,4 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         self.assertIsNone(self.normalizer.get_time_coverage_end({'none-url': 'ftp://test/'}))
         self.assertIsNone(self.normalizer.get_time_coverage_start({'none-url': 'ftp://test/'}))
         self.assertIsNone(self.normalizer.get_location_geometry({'none-url': 'ftp://test/'}))
+        self.assertIsNone(self.normalizer.get_entry_id({'none-url': 'ftp://test/'}))

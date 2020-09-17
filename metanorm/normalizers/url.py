@@ -2,6 +2,7 @@
 
 import calendar
 import logging
+import os
 import re
 from datetime import datetime
 from urllib.parse import urlparse
@@ -46,7 +47,22 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
     urls_title = {
         'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1': 'ESA SST CCI OSTIA L4 Climatology',
         "ftp://ftp.remss.com/gmi/": 'Atmosphere parameters from Global Precipitation Measurement Microwave Imager',
-        "ftp://ftp.gportal.jaxa.jp/standard": 'AMSR2-L2 Sea Surface Temperature'}
+        "ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L2.SST/": 'AMSR2-L2 Sea Surface Temperature',
+        "ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_10/": 'AMSR2-L2 Sea Surface Temperature',
+        "ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25/": 'AMSR2-L2 Sea Surface Temperature'
+        }
+
+    urls_entry_id = {"https://thredds.met.no/thredds/catalog/osisaf/met.no/ice":
+                     re.compile(r"([^/]+)\.nc\.dods$"),
+                     "https://opendap.jpl.nasa.gov/opendap/": re.compile(r"([^/]+)\.(nc|h5)(\.gz)?$"),
+                     "ftp://ftp.remss.com/gmi": re.compile(r"([^/]+)\.gz$"),
+                     "ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/":
+                     re.compile(r"([^/]+)\.(nc|h5)(\.gz)?$"),
+                     "ftp://nrt.cmems-du.eu/Core/":
+                     re.compile(r"([^/]+)\.(nc|h5)(\.gz)?$"),
+                     "ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/":
+                     re.compile(r"([^/]+)\.(nc|h5)(\.gz)?$")
+                     }
 
     urls_dsp = {'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/': ['sea_surface_temperature'],
                 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L2.SST':
@@ -98,7 +114,7 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
     def length_of_month(extracted_date):
         """ length of the month that 'extracted_date' has been found in it """
         return relativedelta(days=calendar.monthrange(
-                extracted_date.year, extracted_date.month)[1] - 1)
+            extracted_date.year, extracted_date.month)[1] - 1)
 
     def get_platform(self, raw_attributes):
         """ return the corresponding platfrom based on specified ftp source """
@@ -185,12 +201,25 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
     def get_dataset_parameters(self, raw_attributes):
         """ return list with different parameter(s) from cf_standard_name """
         return self.create_parameter_list(self.find_matching_value(
-                self.urls_dsp, raw_attributes)) or []
+            self.urls_dsp, raw_attributes)) or []
 
     def get_location_geometry(self, raw_attributes):
         """ returns the suitable location geometry based on the filename """
         return self.find_matching_value(self.urls_geometry, raw_attributes)
 
     def get_entry_title(self, raw_attributes):
-        """ returns the suitable provider based on the filename """
+        """ returns the suitable entry_title based on the filename """
         return self.find_matching_value(self.urls_title, raw_attributes)
+
+    def get_entry_id(self, raw_attributes):
+        """ returns the suitable entry_id based on the filename """
+        file_name = None
+        if 'url' in raw_attributes:
+            for url_start in self.urls_entry_id:
+                if raw_attributes['url'].startswith(url_start):
+                    try:
+                        file_name = re.search(
+                            self.urls_entry_id[url_start],raw_attributes['url']).group(1)
+                    except AttributeError:
+                        file_name = None
+        return file_name
