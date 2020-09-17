@@ -23,26 +23,26 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
         "ftp://ftp.remss.com/gmi": 'GPM',
         "ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/": 'Earth Observation Satellites',
         "ftp://ftp.gportal.jaxa.jp/standard/GCOM-W": 'GCOM-W1',
-        "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046":'GCOM-W1',
-        "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003":'GCOM-W1',
-        "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024":'GCOM-W1'}
+        "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046":'X',
+        "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003":'X',
+        "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024":'X'}
 
     urls_instruments = {
         'ftp://ftp.remss.com/gmi': 'GMI',
         'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2': 'AMSR2',
         'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/':
         'Imaging Spectrometers/Radiometers',
-        "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046":'GMI',
-        "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003":'GMI',
-        "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024":'GMI'}
+        "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046":'X',
+        "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003":'X',
+        "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024":'X'}
 
     urls_provider = {
         'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1': 'ESA/CCI',
         "ftp://ftp.remss.com/gmi/": 'NASA/GSFC/SED/ESD/LA/GPM',
         "ftp://ftp.gportal.jaxa.jp/standard": 'JP/JAXA/EOC',
-        "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046":'ESA/CCI',
-        "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003":'ESA/CCI',
-        "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024":'ESA/CCI'}
+        "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046":'X',
+        "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003":'X',
+        "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024":'X'}
 
     urls_geometry = {'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/':
                      ('POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))'),
@@ -148,6 +148,7 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
             # for ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046/dataset-duacs-nrt-global-merged-allsat-phy-l4
             "nrt_global_allsat_phy_l4_%Y%m%d",# e.x.: 'nrt_global_allsat_phy_l4_20200206'
             "mercatorpsy4v3r1_%Y%m%d",
+            # for remss
             "f35_%Y%m%dv8.2_d3d.gz",
             "f35_%Y%m%dv8.2.gz",
             "f35_%Y%mv8.2.gz",
