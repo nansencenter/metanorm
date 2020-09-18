@@ -2,7 +2,6 @@
 
 import calendar
 import logging
-import os
 import re
 from datetime import datetime
 from urllib.parse import urlparse
@@ -23,41 +22,36 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
         "ftp://ftp.remss.com/gmi": 'GPM',
         "ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/": 'Earth Observation Satellites',
         "ftp://ftp.gportal.jaxa.jp/standard/GCOM-W": 'GCOM-W1',
-        "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046":'X',
-        "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003":'X',
-        "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024":'X'}
+        "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046": 'X',
+        "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003": 'X',
+        "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024": 'X'}
 
     urls_instruments = {
         'ftp://ftp.remss.com/gmi': 'GMI',
         'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2': 'AMSR2',
         'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/':
         'Imaging Spectrometers/Radiometers',
-        "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046":'X',
-        "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003":'X',
-        "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024":'X'}
+        "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046": 'X',
+        "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003": 'X',
+        "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024": 'X'}
 
     urls_provider = {
         'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1': 'ESA/CCI',
         "ftp://ftp.remss.com/gmi/": 'NASA/GSFC/SED/ESD/LA/GPM',
         "ftp://ftp.gportal.jaxa.jp/standard": 'JP/JAXA/EOC',
-        "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046":'X',
-        "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003":'X',
-        "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024":'X'}
+        "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046": 'X',
+        "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003": 'X',
+        "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024": 'X'}
 
-    urls_geometry = {'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/':
-                     ('POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))'),
-                     'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_10':
-                     ('POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))'),
-                     'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25':
-                     ('POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))'),
-                     "ftp://ftp.remss.com/gmi/":
-                     ('POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))'),
-                    "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046":
-                    ('POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))'),
-                    "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003":
-                    ('POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))'),
-                    "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024":
-                    ('POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))')}
+    keys_for_geometry_dictionary = {'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/',
+                                    'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_10',
+                                    'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25',
+                                    "ftp://ftp.remss.com/gmi/",
+                                    "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046",
+                                    "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003",
+                                    "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024"}
+    urls_geometry = dict.fromkeys(keys_for_geometry_dictionary,
+                                  ('POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))'))
 
     urls_title = {
         'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1': 'ESA SST CCI OSTIA L4 Climatology',
@@ -65,10 +59,10 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
         "ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L2.SST/": 'AMSR2-L2 Sea Surface Temperature',
         "ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_10/": 'AMSR2-L2 Sea Surface Temperature',
         "ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25/": 'AMSR2-L2 Sea Surface Temperature',
-        "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046":'X',
-        "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003":'X',
-        "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024":'X'
-        }
+        "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046": 'X',
+        "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003": 'X',
+        "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024": 'X'
+    }
 
     urls_entry_id = {"https://thredds.met.no/thredds/catalog/osisaf/met.no/ice":
                      re.compile(r"([^/]+)\.nc\.dods$"),
@@ -93,28 +87,28 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
                 ['wind_speed', 'atmosphere_mass_content_of_water_vapor',
                  'atmosphere_mass_content_of_cloud_liquid_water', 'rainfall_rate'],
                 "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046":
-                #based on http://nrt.cmems-du.eu/motu-web/Motu?action=describeProduct&service=SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046-TDS&product=dataset-duacs-nrt-global-merged-allsat-phy-l4
+                # based on http://nrt.cmems-du.eu/motu-web/Motu?action=describeProduct&service=SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046-TDS&product=dataset-duacs-nrt-global-merged-allsat-phy-l4
                 ['surface_geostrophic_eastward_sea_water_velocity',
-                'surface_geostrophic_eastward_sea_water_velocity_assuming_sea_level_for_geoid',
-                'surface_geostrophic_northward_sea_water_velocity',
-                'surface_geostrophic_northward_sea_water_velocity_assuming_sea_level_for_geoid'],
+                 'surface_geostrophic_eastward_sea_water_velocity_assuming_sea_level_for_geoid',
+                 'surface_geostrophic_northward_sea_water_velocity',
+                 'surface_geostrophic_northward_sea_water_velocity_assuming_sea_level_for_geoid'],
                 "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003":
                 # based on http://nrt.cmems-du.eu/motu-web/Motu?action=describeProduct&service=MULTIOBS_GLO_PHY_NRT_015_003-TDS&product=dataset-uv-nrt-daily
                 ['eastward_sea_water_velocity',
-                'northward_sea_water_velocity'],
+                 'northward_sea_water_velocity'],
                 "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024":
                 # based on http://nrt.cmems-du.eu/motu-web/Motu?action=describeProduct&service=GLOBAL_ANALYSIS_FORECAST_PHY_001_024-TDS&product=global-analysis-forecast-phy-001-024
-                #['sea_water_potential_temperature_at_sea_floor', # problematic for pti!! DANGER TODO
+                # ['sea_water_potential_temperature_at_sea_floor', # problematic for pti!! DANGER TODO
                 ['ocean_mixed_layer_thickness_defined_by_sigma_theta',
-                'sea_ice_area_fraction',
-                'sea_ice_thickness',
-                'sea_water_salinity',
-                'sea_water_potential_temperature',
-                'eastward_sea_water_velocity',
-                'eastward_sea_ice_velocity',
-                'northward_sea_water_velocity',
-                'northward_sea_ice_velocity',
-                'sea_surface_height_above_geoid']
+                 'sea_ice_area_fraction',
+                 'sea_ice_thickness',
+                 'sea_water_salinity',
+                 'sea_water_potential_temperature',
+                 'eastward_sea_water_velocity',
+                 'eastward_sea_ice_velocity',
+                 'northward_sea_water_velocity',
+                 'northward_sea_ice_velocity',
+                 'sea_surface_height_above_geoid']
                 }
 
     @staticmethod
@@ -146,7 +140,7 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
             "mercatorpsy4v3r1_%Y%m%d",
             "mercatorpsy4v3r1_%Y%m.nc",
             # for ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046/dataset-duacs-nrt-global-merged-allsat-phy-l4
-            "nrt_global_allsat_phy_l4_%Y%m%d",# e.x.: 'nrt_global_allsat_phy_l4_20200206'
+            "nrt_global_allsat_phy_l4_%Y%m%d",  # e.x.: 'nrt_global_allsat_phy_l4_20200206'
             "mercatorpsy4v3r1_%Y%m%d",
             # for remss
             "f35_%Y%m%dv8.2_d3d.gz",
@@ -186,9 +180,11 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
             return pti.get_gcmd_instrument(found_value)
 
     def get_time_coverage_start(self, raw_attributes):
+        """return the start time with "start" flag equals to "True" for the method."""
         return self.find_time_coverage(raw_attributes, start=True)
 
     def get_time_coverage_end(self, raw_attributes):
+        """return the end time with "start" flag equals to "False" for the method."""
         return self.find_time_coverage(raw_attributes, start=False)
 
     def find_time_coverage(self, raw_attributes, start):
@@ -215,7 +211,8 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
                 "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003":
                 file_name_splitted[0] + '_' + file_name_splitted[1] if file_name_splitted else None,
                 "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/global-analysis-forecast-phy-001-024/":
-                file_name_splitted[0] + '_' + file_name_splitted[-2]  if file_name_splitted else None,
+                file_name_splitted[0] + '_' +
+                    file_name_splitted[-2] if file_name_splitted else None,
                 "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/global-analysis-forecast-phy-001-024-3dinst-so/":
                 file_name[:36],
                 "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/global-analysis-forecast-phy-001-024-3dinst-thetao":
@@ -223,11 +220,12 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
                 "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/global-analysis-forecast-phy-001-024-3dinst-uovo":
                 file_name[:38],
                 "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/global-analysis-forecast-phy-001-024-hourly-merged-uv":
-                file_name_splitted[0] + '_' + file_name_splitted[1]  if file_name_splitted else None,
+                file_name_splitted[0] + '_' + file_name_splitted[1] if file_name_splitted else None,
                 "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/global-analysis-forecast-phy-001-024-hourly-t-u-v-ssh/":
-                file_name_splitted[0] + '_' + file_name_splitted[-2]  if file_name_splitted else None,
+                file_name_splitted[0] + '_' +
+                    file_name_splitted[-2] if file_name_splitted else None,
                 "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/global-analysis-forecast-phy-001-024-monthly/":
-                file_name_splitted[0] + '_' + file_name_splitted[-1]  if file_name_splitted else None
+                file_name_splitted[0] + '_' + file_name_splitted[-1] if file_name_splitted else None
             }
             extracted_date = self.extract_time(self.find_matching_value(
                 url_time, raw_attributes))
@@ -239,13 +237,13 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
                 # 'd3d' cases are the average of three consequent days! so start day is yesterday!
                 # if condition is the search of 'd3d' in the filename
                 if 'd3d' in file_name:
-                    d = -1 if start else 1
-                    extracted_date = extracted_date + relativedelta(days=d)
+                    relative_days = -1 if start else 1
+                    extracted_date = extracted_date + relativedelta(days=relative_days)
                 # for weekly average ones in the "weeks" folder
                 # if condition is the search of "weeks" folder in the FTP path
                 elif "weeks" in url_path_and_file_name_splitted:
-                    d = -3 if start else 3
-                    extracted_date = extracted_date + relativedelta(days=d)
+                    relative_days = -3 if start else 3
+                    extracted_date = extracted_date + relativedelta(days=relative_days)
                 elif re.search(r"^f35_[0-9]{6}v[0-9]\.[0-9]\.gz$", file_name):
                     # file is a month file.So,the end time must be the end of month.
                     # python "strptime" always gives the first day. So the length of month in that
@@ -260,7 +258,7 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
                     extracted_date = extracted_date if start else \
                         extracted_date + self.length_of_month(extracted_date)
             elif raw_attributes['url'].startswith(
-                "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046"):
+                    "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046"):
                 extracted_date = extracted_date if start else extracted_date + relativedelta(days=1)
             elif raw_attributes['url'].startswith('ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003'):
                 if "monthly" in file_name:
@@ -313,7 +311,8 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
             for url_start in self.urls_entry_id:
                 if raw_attributes['url'].startswith(url_start):
                     try:
-                        file_name = self.urls_entry_id[url_start].search(raw_attributes['url']).group(1)
+                        file_name = self.urls_entry_id[url_start].search(
+                            raw_attributes['url']).group(1)
                     except AttributeError:
                         file_name = None
         return file_name
