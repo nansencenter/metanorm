@@ -306,6 +306,48 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
                          ('Long_Name', '')])
         )
 
+    def test_instrument_global_analysis_forecast_phy_001_024(self):
+        """instrument from URLMetadataNormalizer """
+        attributes = {
+            'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024'}
+        self.assertEqual(
+            self.normalizer.get_instrument(attributes),
+            OrderedDict([('Category', 'In Situ/Laboratory Instruments'),
+                         ('Class', 'Data Analysis'),
+                         ('Type', 'Environmental Modeling'),
+                         ('Subtype', ''),
+                         ('Short_Name', 'Computer'),
+                         ('Long_Name', 'Computer')])
+        )
+
+    def test_instrument_multiobs_glo_phy_nrt_015_003(self):
+        """instrument from URLMetadataNormalizer """
+        attributes = {
+            'url': 'ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003'}
+        self.assertEqual(
+            self.normalizer.get_instrument(attributes),
+            OrderedDict([('Category', 'Earth Remote Sensing Instruments'),
+                         ('Class', 'Active Remote Sensing'),
+                         ('Type', 'Altimeters'),
+                         ('Subtype', ''),
+                         ('Short_Name', ''),
+                         ('Long_Name', '')])
+        )
+
+    def test_instrument_sealevel_glo_phy_l4_nrt_observations_008_046(self):
+        """instrument from URLMetadataNormalizer """
+        attributes = {
+            'url': 'ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046'}
+        self.assertEqual(
+            self.normalizer.get_instrument(attributes),
+            OrderedDict([('Category', 'Earth Remote Sensing Instruments'),
+                         ('Class', 'Active Remote Sensing'),
+                         ('Type', 'Altimeters'),
+                         ('Subtype', ''),
+                         ('Short_Name', ''),
+                         ('Long_Name', '')])
+        )
+
     def test_platform_jaxa(self):
         """platform from URLMetadataNormalizer """
         attributes = {
@@ -339,6 +381,42 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
                          ('Series_Entity', ''),
                          ('Short_Name', ''),
                          ('Long_Name', '')])
+        )
+
+    def test_platform_global_analysis_forecast_phy_001_024(self):
+        """platform from URLMetadataNormalizer """
+        attributes = {
+            'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024'}
+        self.assertEqual(
+            self.normalizer.get_platform(attributes),
+            OrderedDict([('Category','Models/Analyses'),
+                        ('Series_Entity',''),
+                        ('Short_Name','OPERATIONAL MODELS'),
+                        ('Long_Name','')])
+        )
+
+    def test_platform_multiobs_glo_phy_nrt_015_003(self):
+        """platform from URLMetadataNormalizer """
+        attributes = {
+            'url': 'ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003'}
+        self.assertEqual(
+            self.normalizer.get_platform(attributes),
+            OrderedDict([('Category','Earth Observation Satellites'),
+                        ('Series_Entity',''),
+                        ('Short_Name',''),
+                        ('Long_Name','')])
+        )
+
+    def test_platform_sealevel_glo_phy_l4_nrt_observations_008_046(self):
+        """platform from URLMetadataNormalizer """
+        attributes = {
+            'url': 'ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046'}
+        self.assertEqual(
+            self.normalizer.get_platform(attributes),
+            OrderedDict([('Category','Earth Observation Satellites'),
+                        ('Series_Entity',''),
+                        ('Short_Name',''),
+                        ('Long_Name','')])
         )
 
     def test_provider_jaxa(self):
@@ -383,6 +461,51 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
                          ('Short_Name', 'ESA/CCI'),
                          ('Long_Name', 'Climate Change Initiative, European Space Agency'),
                          ('Data_Center_URL', '')])
+        )
+
+    def test_provider_global_analysis_forecast_phy_001_024(self):
+        """provider from URLMetadataNormalizer """
+        attributes = {
+            'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024'}
+        self.assertEqual(
+            self.normalizer.get_provider(attributes),
+            OrderedDict([('Bucket_Level0','MULTINATIONAL ORGANIZATIONS'),
+                         ('Bucket_Level1',''),
+                         ('Bucket_Level2',''),
+                         ('Bucket_Level3',''),
+                         ('Short_Name','CMEMS'),
+                         ('Long_Name','Copernicus - Marine Environment Monitoring Service'),
+                         ('Data_Center_URL','')])
+        )
+
+    def test_provider_multiobs_glo_phy_nrt_015_003(self):
+        """provider from URLMetadataNormalizer """
+        attributes = {
+            'url': 'ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003'}
+        self.assertEqual(
+            self.normalizer.get_provider(attributes),
+            OrderedDict([('Bucket_Level0','MULTINATIONAL ORGANIZATIONS'),
+                         ('Bucket_Level1',''),
+                         ('Bucket_Level2',''),
+                         ('Bucket_Level3',''),
+                         ('Short_Name','CMEMS'),
+                         ('Long_Name','Copernicus - Marine Environment Monitoring Service'),
+                         ('Data_Center_URL','')])
+        )
+
+    def test_provider_sealevel_glo_phy_l4_nrt_observations_008_046(self):
+        """provider from URLMetadataNormalizer """
+        attributes = {
+            'url': 'ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046'}
+        self.assertEqual(
+            self.normalizer.get_provider(attributes),
+            OrderedDict([('Bucket_Level0','MULTINATIONAL ORGANIZATIONS'),
+                         ('Bucket_Level1',''),
+                         ('Bucket_Level2',''),
+                         ('Bucket_Level3',''),
+                         ('Short_Name','CMEMS'),
+                         ('Long_Name','Copernicus - Marine Environment Monitoring Service'),
+                         ('Data_Center_URL','')])
         )
 
     def test_dataset_parameters_jaxa(self):
@@ -568,6 +691,27 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
             'url': 'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1/D365-ESACCI-L4_GHRSST-SSTdepth-OSTIA-GLOB_CDR2.1-v02.0-fv01.0.nc'}
         self.assertEqual(self.normalizer.get_entry_title(
             attributes), 'ESA SST CCI OSTIA L4 Climatology')
+
+    def test_entry_title_global_analysis_forecast_phy_001_024(self):
+        """entry_title from URLMetadataNormalizer """
+        attributes = {
+            'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024'}
+        self.assertEqual(
+            self.normalizer.get_entry_title(attributes),'GLOBAL OCEAN 1_12 PHYSICS ANALYSIS AND FORECAST UPDATED DAILY')
+
+    def test_entry_title_multiobs_glo_phy_nrt_015_003(self):
+        """entry_title from URLMetadataNormalizer """
+        attributes = {
+            'url': 'ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003'}
+        self.assertEqual(
+            self.normalizer.get_entry_title(attributes),'GLOBAL TOTAL SURFACE AND 15M CURRENT FROM ALTIMETRIC GEOSTROPHIC CURRENT AND MODELED EKMAN CURRENT PROCESSING')
+
+    def test_entry_title_sealevel_glo_phy_l4_nrt_observations_008_046(self):
+        """entry_title from URLMetadataNormalizer """
+        attributes = {
+            'url': 'ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046'}
+        self.assertEqual(
+            self.normalizer.get_entry_title(attributes),'GLOBAL OCEAN GRIDDED L4 SEA SURFACE HEIGHTS AND DERIVED VARIABLES NRT')
 
     def test_entry_id_jaxa(self):
         """entry_id from URLMetadataNormalizer """
