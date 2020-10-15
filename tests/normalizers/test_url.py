@@ -677,7 +677,7 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         attributes = {
             'url': 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25/3/2012/07/GW1AM2_201207031905_134D_L2SGSSTLB3300300.h5'}
         self.assertEqual(
-            self.normalizer.get_entry_title(attributes), 'AMSR2-L2 Sea Surface Temperature')
+            self.normalizer.get_entry_title(attributes), 'AMSR2-L3 Sea Surface Temperature')
 
     def test_entry_title_remss(self):
         """entry_title from URLMetadataNormalizer """
