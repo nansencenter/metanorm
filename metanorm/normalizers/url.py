@@ -58,7 +58,7 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
         "ftp://ftp.remss.com/gmi/": 'Atmosphere parameters from Global Precipitation Measurement Microwave Imager',
         "ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L2.SST/": 'AMSR2-L2 Sea Surface Temperature',
         "ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_10/": 'AMSR2-L2 Sea Surface Temperature',
-        "ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25/": 'AMSR2-L2 Sea Surface Temperature',
+        "ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25/": 'AMSR2-L3 Sea Surface Temperature',
         "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046": 'GLOBAL OCEAN GRIDDED L4 SEA SURFACE HEIGHTS AND DERIVED VARIABLES NRT',
         "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003": 'GLOBAL TOTAL SURFACE AND 15M CURRENT FROM ALTIMETRIC GEOSTROPHIC CURRENT AND MODELED EKMAN CURRENT PROCESSING',
         "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024": 'GLOBAL OCEAN 1_12 PHYSICS ANALYSIS AND FORECAST UPDATED DAILY'
