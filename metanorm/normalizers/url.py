@@ -64,7 +64,7 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
         "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024": 'GLOBAL OCEAN 1_12 PHYSICS ANALYSIS AND FORECAST UPDATED DAILY'
     }
 
-    urls_entry_id = {"https://thredds.met.no/thredds/catalog/osisaf/met.no/ice":
+    urls_entry_id = {"https://thredds.met.no/thredds/dodsC/osisaf/met.no/ice":
                      re.compile(r"([^/]+)\.nc\.dods$"),
                      "https://opendap.jpl.nasa.gov/opendap/": re.compile(r"([^/]+)\.(nc|h5)(\.gz)?$"),
                      "ftp://ftp.remss.com/gmi": re.compile(r"([^/]+)\.gz$"),
