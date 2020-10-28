@@ -82,7 +82,7 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
     }
 
     urls_entry_id = {
-        "https://thredds.met.no/thredds/dodsC/osisaf/met.no/ice": re.compile(r"([^/]+)\.nc\.dods$"),
+        "https://thredds.met.no/thredds/": re.compile(r"([^/]+)\.nc(\.dods)?$"),
         "https://opendap.jpl.nasa.gov/opendap/": re.compile(r"([^/]+)\.(nc|h5)(\.gz)?$"),
         "ftp://ftp.remss.com/gmi": re.compile(r"([^/]+)\.gz$"),
         "ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/":
