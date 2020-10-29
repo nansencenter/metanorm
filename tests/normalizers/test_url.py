@@ -740,12 +740,21 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         self.assertEqual(self.normalizer.get_entry_id(
             attributes), None)
 
-    def test_entry_id_for_osisaf_ingester(self):
-        """entry_id from URLMetadataNormalizer for osisaf project """
+    def test_entry_id_for_thredds_met_no_dods(self):
+        """entry_id from URLMetadataNormalizer for a dods URL from thredds.met.no"""
         attributes = {
             'url': "https://thredds.met.no/thredds/dodsC/osisaf/met.no/ice/Some/path/to/file/ice_type_sh_polstere-100_multi_201609261200.nc.dods"}
-        self.assertEqual(self.normalizer.get_entry_id(
-            attributes), 'ice_type_sh_polstere-100_multi_201609261200')
+        self.assertEqual(
+            self.normalizer.get_entry_id(attributes),
+            'ice_type_sh_polstere-100_multi_201609261200')
+
+    def test_entry_id_for_thredds_met_no_fileserver(self):
+        """entry_id from URLMetadataNormalizer for a fileServer URL from thredds.met.no"""
+        attributes = {
+            'url': "https://thredds.met.no/thredds/fileServer/osisaf/met.no/ice/Some/path/to/file/ice_type_sh_polstere-100_multi_201609261200.nc"}
+        self.assertEqual(
+            self.normalizer.get_entry_id(attributes),
+            'ice_type_sh_polstere-100_multi_201609261200')
 
     def test_entry_id_for_podaac_ingester(self):
         """entry_id from URLMetadataNormalizer for PODAAC metadata"""
