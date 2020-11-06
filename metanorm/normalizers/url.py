@@ -231,7 +231,7 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
                 'ftp://ftp.remss.com': file_name,
                 'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1':
                     "19820101" if start else "20100101",
-                "ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2":
+                "ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25/3":
                     file_name_splitted[0] + '_' +
                     file_name_splitted[1] if file_name_splitted else None,
                 "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046/dataset-duacs-nrt-global-merged-allsat-phy-l4":
@@ -289,10 +289,9 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
                 extracted_date += relativedelta(days=int(file_name[1:4]) - 1)
 
             elif raw_attributes['url'].startswith(
-                    'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2'):
-                if file_name_splitted[1].endswith('00'):  # it is a month file
-                    extracted_date = extracted_date if start else \
-                        extracted_date + self.length_of_month(extracted_date)
+                    'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25/3'):
+                if file_name_splitted[2] == '01M' and not start:  # it is a month file
+                    extracted_date += self.length_of_month(extracted_date)
 
             elif raw_attributes['url'].startswith(
                     "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046"):
