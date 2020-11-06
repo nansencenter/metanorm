@@ -262,6 +262,7 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
                 url_time, raw_attributes))
             if not extracted_date:
                 return None
+
             ########################################################################################
             # further modification of "extracted time" based on other semantics of parts of the path
             if raw_attributes['url'].startswith('ftp://ftp.remss.com'):
@@ -281,15 +282,18 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
                     # year is added.
                     extracted_date = extracted_date if start else \
                         extracted_date + self.length_of_month(extracted_date)
+
             elif raw_attributes['url'].startswith(
                     'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1'):
                 # the constant date is corrected based on the few letter at the beginning of file name
                 extracted_date += relativedelta(days=int(file_name[1:4]) - 1)
+
             elif raw_attributes['url'].startswith(
                     'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2'):
                 if file_name_splitted[1].endswith('00'):  # it is a month file
                     extracted_date = extracted_date if start else \
                         extracted_date + self.length_of_month(extracted_date)
+
             elif raw_attributes['url'].startswith(
                     "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046"):
                 delta = relativedelta(hours=12)
@@ -297,6 +301,7 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
                     extracted_date -= delta
                 else:
                     extracted_date += delta
+
             elif raw_attributes['url'].startswith(
                     'ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003'):
                 if "monthly" in file_name:
@@ -305,6 +310,7 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
                 if "hourly" in file_name or "daily" in file_name:
                     extracted_date = extracted_date if start else \
                         extracted_date + relativedelta(days=1)
+
             elif raw_attributes['url'].startswith(
                     'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024'):
                 if any(path_part.endswith("monthly") for path_part in url_path_and_file_name_splitted):
@@ -316,6 +322,7 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
                 else:
                     extracted_date = extracted_date if start else \
                         extracted_date + relativedelta(days=1)
+
             return extracted_date
 
     def get_provider(self, raw_attributes):
