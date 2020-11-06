@@ -116,7 +116,7 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         self.assertEqual(
             self.normalizer.get_time_coverage_start(
                 {'url': 'ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046/dataset-duacs-nrt-global-merged-allsat-phy-l4/2019/04/nrt_global_allsat_phy_l4_20190403_20200320.nc'}),
-            datetime(year=2019, month=4, day=3, hour=0, minute=0, second=0, tzinfo=tzutc()))
+            datetime(year=2019, month=4, day=2, hour=12, minute=0, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_start_multiobs_glo_phy_nrt_015_003_daily(self):
         """shall return the propert starting time for hardcoded normalizer """
@@ -242,7 +242,7 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         self.assertEqual(
             self.normalizer.get_time_coverage_end(
                 {'url': 'ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046/dataset-duacs-nrt-global-merged-allsat-phy-l4/2019/04/nrt_global_allsat_phy_l4_20190403_20200320.nc'}),
-            datetime(year=2019, month=4, day=4, hour=0, minute=0, second=0, tzinfo=tzutc()))
+            datetime(year=2019, month=4, day=3, hour=12, minute=0, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_end_multiobs_glo_phy_nrt_015_003_daily(self):
         """shall return the propert ending time for hardcoded normalizer """

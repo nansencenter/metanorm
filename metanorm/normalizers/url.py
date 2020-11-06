@@ -292,7 +292,11 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
                         extracted_date + self.length_of_month(extracted_date)
             elif raw_attributes['url'].startswith(
                     "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046"):
-                extracted_date = extracted_date if start else extracted_date + relativedelta(days=1)
+                delta = relativedelta(hours=12)
+                if start:
+                    extracted_date -= delta
+                else:
+                    extracted_date += delta
             elif raw_attributes['url'].startswith(
                     'ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003'):
                 if "monthly" in file_name:
