@@ -266,22 +266,22 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
             ########################################################################################
             # further modification of "extracted time" based on other semantics of parts of the path
             if raw_attributes['url'].startswith('ftp://ftp.remss.com'):
-                # 'd3d' cases are the average of three consequent days! so start day is yesterday!
-                # if condition is the search of 'd3d' in the filename
+                # 'd3d' are the "average of 3 days ending on and including file date"
+                # See http://www.remss.com/missions/gmi/
                 if 'd3d' in file_name:
-                    relative_days = -1 if start else 1
-                    extracted_date = extracted_date + relativedelta(days=relative_days)
+                    relative_days = -2 if start else 1
+                    extracted_date += relativedelta(days=relative_days)
                 # for weekly average ones in the "weeks" folder
                 # if condition is the search of "weeks" folder in the FTP path
                 elif "weeks" in url_path_and_file_name_splitted:
-                    relative_days = -3 if start else 3
-                    extracted_date = extracted_date + relativedelta(days=relative_days)
+                    relative_days = -6 if start else 1
+                    extracted_date += relativedelta(days=relative_days)
                 elif re.search(r"^f35_[0-9]{6}v[0-9]\.[0-9]\.gz$", file_name):
-                    # file is a month file.So,the end time must be the end of month.
+                    # file is a month file. So, the end time must be the end of month.
                     # python "strptime" always gives the first day. So the length of month in that
                     # year is added.
-                    extracted_date = extracted_date if start else \
-                        extracted_date + self.length_of_month(extracted_date)
+                    if not start:
+                        extracted_date += self.length_of_month(extracted_date)
 
             elif raw_attributes['url'].startswith(
                     'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1'):
