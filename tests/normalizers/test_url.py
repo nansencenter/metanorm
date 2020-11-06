@@ -200,21 +200,21 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         self.assertEqual(
             self.normalizer.get_time_coverage_end(
                 {'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/global-analysis-forecast-phy-001-024-3dinst-so/2019/04/mercatorpsy4v3r1_gl12_so_20190403_18h_R20190404.nc'}),
-            datetime(year=2019, month=4, day=4, hour=0, minute=0, second=0, tzinfo=tzutc()))
+            datetime(year=2019, month=4, day=3, hour=18, minute=0, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_end_phy_001_024_3dinst_thetao(self):
         """shall return the propert starting time for hardcoded normalizer """
         self.assertEqual(
             self.normalizer.get_time_coverage_end(
                 {'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/global-analysis-forecast-phy-001-024-3dinst-thetao/2020/04/mercatorpsy4v3r1_gl12_thetao_20200404_18h_R20200405.nc'}),
-            datetime(year=2020, month=4, day=5, hour=0, minute=0, second=0, tzinfo=tzutc()))
+            datetime(year=2020, month=4, day=4, hour=18, minute=0, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_end_phy_001_024_3dinst_uovo(self):
         """shall return the propert starting time for hardcoded normalizer """
         self.assertEqual(
             self.normalizer.get_time_coverage_end(
                 {'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/global-analysis-forecast-phy-001-024-3dinst-uovo/2020/04/mercatorpsy4v3r1_gl12_uovo_20200403_06h_R20200404.nc'}),
-            datetime(year=2020, month=4, day=3, hour=12, minute=0, second=0, tzinfo=tzutc()))
+            datetime(year=2020, month=4, day=3, hour=6, minute=0, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_end_phy_001_024_hourly_merged_uv(self):
         """shall return the propert starting time for hardcoded normalizer """

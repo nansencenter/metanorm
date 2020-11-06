@@ -312,15 +312,15 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
 
             elif raw_attributes['url'].startswith(
                     'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024'):
-                if any(path_part.endswith("monthly") for path_part in url_path_and_file_name_splitted):
-                    extracted_date = extracted_date if start else \
-                        extracted_date + self.length_of_month(extracted_date)
-                elif any("3dinst" in path_part for path_part in url_path_and_file_name_splitted):
-                    extracted_date = extracted_date if start else \
-                        extracted_date + relativedelta(hours=6)
-                else:
-                    extracted_date = extracted_date if start else \
-                        extracted_date + relativedelta(days=1)
+                if not start:
+                    if any(path_part.endswith("monthly")
+                           for path_part in url_path_and_file_name_splitted):
+                        extracted_date += self.length_of_month(extracted_date)
+                    elif any("3dinst" in path_part
+                             for path_part in url_path_and_file_name_splitted):
+                        pass  # datasets containing "3dinst" are instantaneous
+                    else:
+                        extracted_date += relativedelta(days=1)
 
             return extracted_date
 
