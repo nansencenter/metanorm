@@ -31,15 +31,15 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         """shall return the propert starting time for hardcoded normalizer """
         self.assertEqual(
             self.normalizer.get_time_coverage_start(
-                {'url': 'ftp://ftp.remss.com/gmi/bmaps_v08.2/weeks/f35_20140610v8.2.gz'}),
-            datetime(year=2014, month=6, day=7, hour=0, minute=0, second=0, tzinfo=tzutc()))
+                {'url': 'ftp://ftp.remss.com/gmi/bmaps_v08.2/weeks/f35_20140614v8.2.gz'}),
+            datetime(year=2014, month=6, day=8, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_start_remss_3d3_file(self):
         """shall return the propert starting time for hardcoded normalizer """
         self.assertEqual(
             self.normalizer.get_time_coverage_start(
                 {'url': 'ftp://ftp.remss.com/gmi/bmaps_v08.2/y2014/m06/f35_20140630v8.2_d3d.gz'}),
-            datetime(year=2014, month=6, day=29, hour=0, minute=0, second=0, tzinfo=tzutc()))
+            datetime(year=2014, month=6, day=28, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_start_ceda(self):
         """shall return the propert starting time for hardcoded normalizer """
@@ -157,15 +157,15 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         """shall return the propert end time for hardcoded normalizer """
         self.assertEqual(
             self.normalizer.get_time_coverage_end(
-                {'url': 'ftp://ftp.remss.com/gmi/bmaps_v08.2/weeks/f35_20140610v8.2.gz'}),
-            datetime(year=2014, month=6, day=13, hour=0, minute=0, second=0, tzinfo=tzutc()))
+                {'url': 'ftp://ftp.remss.com/gmi/bmaps_v08.2/weeks/f35_20140614v8.2.gz'}),
+            datetime(year=2014, month=6, day=15, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_end_remss_3d3_file(self):
         """shall return the propert end time for hardcoded normalizer """
         self.assertEqual(
             self.normalizer.get_time_coverage_end(
-                {'url': 'ftp://ftp.remss.com/gmi/bmaps_v08.2/y2014/m06/f35_20140620v8.2_d3d.gz'}),
-            datetime(year=2014, month=6, day=21, hour=0, minute=0, second=0, tzinfo=tzutc()))
+                {'url': 'ftp://ftp.remss.com/gmi/bmaps_v08.2/y2014/m06/f35_20140630v8.2_d3d.gz'}),
+            datetime(year=2014, month=7, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_end_ceda(self):
         """shall return the propert end time for hardcoded normalizer """
