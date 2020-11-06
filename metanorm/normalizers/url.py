@@ -285,7 +285,8 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
 
             elif raw_attributes['url'].startswith(
                     'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1'):
-                # the constant date is corrected based on the few letter at the beginning of file name
+                # the constant date is corrected using the day
+                # number in the beginning of the file name
                 extracted_date += relativedelta(days=int(file_name[1:4]) - 1)
 
             elif raw_attributes['url'].startswith(
