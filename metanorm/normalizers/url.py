@@ -191,7 +191,7 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
     def length_of_month(extracted_date):
         """ length of the month that 'extracted_date' has been found in it """
         return relativedelta(days=calendar.monthrange(
-            extracted_date.year, extracted_date.month)[1] - 1)
+            extracted_date.year, extracted_date.month)[1])
 
     def get_platform(self, raw_attributes):
         """ return the corresponding platfrom based on specified ftp source """

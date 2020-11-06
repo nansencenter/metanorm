@@ -151,7 +151,7 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         self.assertEqual(
             self.normalizer.get_time_coverage_end(
                 {'url': 'ftp://ftp.remss.com/gmi/bmaps_v08.2/y2014/m06/f35_201406v8.2.gz'}),
-            datetime(year=2014, month=6, day=30, hour=0, minute=0, second=0, tzinfo=tzutc()))
+            datetime(year=2014, month=7, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_end_remss_week_file(self):
         """shall return the propert end time for hardcoded normalizer """
@@ -186,7 +186,7 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         self.assertEqual(
             self.normalizer.get_time_coverage_end(
                 {'url': 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25/3/2015/04/GW1AM2_20150400_01M_EQMD_L3SGSSTLB3300300.h5'}),
-            datetime(year=2015, month=4, day=30, hour=0, minute=0, second=0, tzinfo=tzutc()))
+            datetime(year=2015, month=5, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_end_phy_001_024(self):
         """shall return the propert starting time for hardcoded normalizer """
@@ -235,7 +235,7 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         self.assertEqual(
             self.normalizer.get_time_coverage_end(
                 {'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/global-analysis-forecast-phy-001-024-monthly/2018/mercatorpsy4v3r1_gl12_mean_201807.nc'}),
-            datetime(year=2018, month=7, day=31, hour=0, minute=0, second=0, tzinfo=tzutc()))
+            datetime(year=2018, month=8, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_end_sealevel_glo_phy_l4_nrt_observations_008_046(self):
         """shall return the propert ending time for hardcoded normalizer """
@@ -256,7 +256,7 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         self.assertEqual(
             self.normalizer.get_time_coverage_end(
                 {'url': 'ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003/dataset-uv-nrt-monthly/2020/dataset-uv-nrt-monthly_202004T0000Z_P20200506T0000.nc'}),
-            datetime(year=2020, month=4, day=30, hour=0, minute=0, second=0, tzinfo=tzutc()))
+            datetime(year=2020, month=5, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_end_multiobs_glo_phy_nrt_015_003_hourly(self):
         """shall return the propert ending time for hardcoded normalizer """
