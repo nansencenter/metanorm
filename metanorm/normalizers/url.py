@@ -304,12 +304,11 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
 
             elif raw_attributes['url'].startswith(
                     'ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003'):
-                if "monthly" in file_name:
-                    extracted_date = extracted_date if start else \
-                        extracted_date + self.length_of_month(extracted_date)
-                if "hourly" in file_name or "daily" in file_name:
-                    extracted_date = extracted_date if start else \
-                        extracted_date + relativedelta(days=1)
+                if not start:
+                    if "monthly" in file_name:
+                        extracted_date += self.length_of_month(extracted_date)
+                    elif "hourly" in file_name or "daily" in file_name:
+                        extracted_date += relativedelta(days=1)
 
             elif raw_attributes['url'].startswith(
                     'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024'):
