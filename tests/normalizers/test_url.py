@@ -139,6 +139,25 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
                 {'url': 'ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003/dataset-uv-nrt-hourly/2020/09/dataset-uv-nrt-hourly_20200906T0000Z_P20200912T0000.nc'}),
             datetime(year=2020, month=9, day=6, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
+    def test_time_coverage_start_medsea_analysis_forecast_phy_006_013_day(self):
+        """Should return the proper starting time"""
+        urls = [
+            'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/med00-cmcc-cur-an-fc-d/2020/06/20200601_d-CMCC--RFVL-MFSeas5-MEDATL-b20200616_an-sv06.00.nc',
+            'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/med00-cmcc-cur-an-fc-h/2020/06/20200601_h-CMCC--RFVL-MFSeas5-MEDATL-b20200616_an-sv06.00.nc',
+            'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/med00-cmcc-cur-an-fc-hts/2020/06/20200601_hts-CMCC--RFVL-MFSeas5-MEDATL-b20200616_an-sv06.00.nc'
+        ]
+        for url in urls:
+            self.assertEqual(
+                self.normalizer.get_time_coverage_start({'url': url}),
+                datetime(year=2020, month=6, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
+
+    def test_time_coverage_start_medsea_analysis_forecast_phy_006_013_month(self):
+        """Should return the proper starting time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_start(
+                {'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/med00-cmcc-cur-an-fc-m/2020/20200601_m-CMCC--RFVL-MFSeas5-MEDATL-b20200714_an-sv06.00.nc'}),
+            datetime(year=2020, month=6, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
+
     def test_time_coverage_end_remss_single_day_file(self):
         """shall return the propert end time for hardcoded normalizer """
         self.assertEqual(
@@ -265,6 +284,25 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
                 {'url': 'ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003/dataset-uv-nrt-hourly/2020/09/dataset-uv-nrt-hourly_20200906T0000Z_P20200918T0000.nc'}),
             datetime(year=2020, month=9, day=7, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
+    def test_time_coverage_end_medsea_analysis_forecast_phy_006_013_day(self):
+        """Should return the proper ending time"""
+        urls = [
+            'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/med00-cmcc-cur-an-fc-d/2020/06/20200601_d-CMCC--RFVL-MFSeas5-MEDATL-b20200616_an-sv06.00.nc',
+            'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/med00-cmcc-cur-an-fc-h/2020/06/20200601_h-CMCC--RFVL-MFSeas5-MEDATL-b20200616_an-sv06.00.nc',
+            'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/med00-cmcc-cur-an-fc-hts/2020/06/20200601_hts-CMCC--RFVL-MFSeas5-MEDATL-b20200616_an-sv06.00.nc'
+        ]
+        for url in urls:
+            self.assertEqual(
+                self.normalizer.get_time_coverage_end({'url': url}),
+                datetime(year=2020, month=6, day=2, hour=0, minute=0, second=0, tzinfo=tzutc()))
+
+    def test_time_coverage_end_medsea_analysis_forecast_phy_006_013_month(self):
+        """Should return the proper ending time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_end(
+                {'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/med00-cmcc-cur-an-fc-m/2020/20200601_m-CMCC--RFVL-MFSeas5-MEDATL-b20200714_an-sv06.00.nc'}),
+            datetime(year=2020, month=7, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
+
     def test_instrument_jaxa(self):
         """instrument from URLMetadataNormalizer """
         attributes = {
@@ -348,6 +386,19 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
                          ('Long_Name', '')])
         )
 
+    def test_instrument_medsea_analysis_forecast_phy_006_013(self):
+        """Should return the proper instrument"""
+        attributes = {'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/'}
+        self.assertEqual(
+            self.normalizer.get_instrument(attributes),
+            OrderedDict([('Category', 'In Situ/Laboratory Instruments'),
+                         ('Class', 'Data Analysis'),
+                         ('Type', 'Environmental Modeling'),
+                         ('Subtype', ''),
+                         ('Short_Name', 'Computer'),
+                         ('Long_Name', 'Computer')])
+        )
+
     def test_platform_jaxa(self):
         """platform from URLMetadataNormalizer """
         attributes = {
@@ -417,6 +468,17 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
                         ('Series_Entity',''),
                         ('Short_Name',''),
                         ('Long_Name','')])
+        )
+
+    def test_platform_medsea_analysis_forecast_phy_006_013(self):
+        """Should return the proper platform"""
+        attributes = {'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/'}
+        self.assertEqual(
+            self.normalizer.get_platform(attributes),
+            OrderedDict([('Category', 'Models/Analyses'),
+                         ('Series_Entity', ''),
+                         ('Short_Name', 'OPERATIONAL MODELS'),
+                         ('Long_Name', '')])
         )
 
     def test_provider_jaxa(self):
@@ -497,6 +559,20 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         """provider from URLMetadataNormalizer """
         attributes = {
             'url': 'ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046'}
+        self.assertEqual(
+            self.normalizer.get_provider(attributes),
+            OrderedDict([('Bucket_Level0','MULTINATIONAL ORGANIZATIONS'),
+                         ('Bucket_Level1',''),
+                         ('Bucket_Level2',''),
+                         ('Bucket_Level3',''),
+                         ('Short_Name','CMEMS'),
+                         ('Long_Name','Copernicus - Marine Environment Monitoring Service'),
+                         ('Data_Center_URL','')])
+        )
+
+    def test_provider_medsea_analysis_forecast_phy_006_013(self):
+        """Should return the proper provider"""
+        attributes = {'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/'}
         self.assertEqual(
             self.normalizer.get_provider(attributes),
             OrderedDict([('Bucket_Level0','MULTINATIONAL ORGANIZATIONS'),
@@ -690,6 +766,195 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
             ]
         )
 
+    def test_dataset_parameters_medsea_analysis_forecast_phy_006_013_cur(self):
+        """Should return the proper dataset parameters"""
+        attributes = {
+            'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/med00-cmcc-cur'}
+        self.assertEqual(
+            self.normalizer.get_dataset_parameters(attributes), [
+                OrderedDict([('standard_name', 'eastward_sea_water_velocity'),
+                             ('canonical_units', 'm s-1'),
+                             ('grib', '49'),
+                             ('amip', ''),
+                             ('description',
+                             ('A velocity is a vector quantity. "Eastward" indicates a vector '
+                              'component which is positive when directed eastward '
+                              '(negative westward).'))]),
+                OrderedDict([('standard_name', 'northward_sea_water_velocity'),
+                             ('canonical_units', 'm s-1'),
+                             ('grib', '50'),
+                             ('amip', ''),
+                             ('description',
+                             ('A velocity is a vector quantity. "Northward" indicates a vector '
+                              'component which is positive when directed northward '
+                              '(negative southward).'))])
+            ]
+        )
+
+    def test_dataset_parameters_medsea_analysis_forecast_phy_006_013_mld(self):
+        """Should return the proper dataset parameters"""
+        attributes = {
+            'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/med00-cmcc-mld'}
+        self.assertEqual(
+            self.normalizer.get_dataset_parameters(attributes), [
+                OrderedDict([
+                    ('standard_name', 'ocean_mixed_layer_thickness_defined_by_sigma_theta'),
+                    ('canonical_units', 'm'),
+                    ('grib', ''),
+                    ('amip', ''),
+                    ('description',
+                    ('The ocean mixed layer is the upper part of the ocean, regarded as being '
+                     'well-mixed. The base of the mixed layer defined by temperature, sigma or '
+                     'sigma_theta is the level at which the quantity indicated differs from its '
+                     'surface value by a certain amount.'))])
+            ]
+        )
+
+    def test_dataset_parameters_medsea_analysis_forecast_phy_006_013_sal(self):
+        """Should return the proper dataset parameters"""
+        attributes = {
+            'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/med00-cmcc-sal'}
+        self.assertEqual(
+            self.normalizer.get_dataset_parameters(attributes), [
+                OrderedDict([('standard_name', 'sea_water_salinity'),
+                             ('canonical_units', '1e-3'),
+                             ('grib', '88'),
+                             ('amip', 'so'),
+                             ('description',
+                             ('Sea water salinity is the salt content of sea water, often on the '
+                              'Practical Salinity Scale of 1978. However, the unqualified term '
+                              '\'salinity\' is generic and does not necessarily imply any '
+                              'particular method of calculation. The units of salinity are '
+                              'dimensionless and the units attribute should normally be given as '
+                              '1e-3 or 0.001 i.e. parts per thousand. There are standard names for '
+                              'the more precisely defined salinity quantities: '
+                              'sea_water_knudsen_salinity, S_K (used for salinity observations '
+                              'between 1901 and 1966),  sea_water_cox_salinity, S_C (used for '
+                              'salinity observations between 1967 and 1977), '
+                              'sea_water_practical_salinity, S_P (used for salinity observations '
+                              'from 1978 to the present day), sea_water_absolute_salinity, S_A, '
+                              'sea_water_preformed_salinity, S_*, and sea_water_reference_salinity.'
+                              ' Practical Salinity is reported on the Practical Salinity Scale of '
+                              '1978 (PSS-78), and is usually based on the electrical conductivity '
+                              'of sea water in observations since the 1960s. Conversion of data '
+                              'between the observed scales follows: '
+                              'S_P = (S_K - 0.03) * (1.80655 / 1.805) and S_P = S_C, however the '
+                              'accuracy of the latter is dependent on whether chlorinity or '
+                              'conductivity was used to determine the S_C value, with this '
+                              'inconsistency driving the development of PSS-78. The more precise '
+                              'standard names should be used where appropriate for both modelled '
+                              'and observed salinities. In particular, the use of '
+                              'sea_water_salinity to describe salinity observations made from 1978 '
+                              'onwards is now deprecated in favor of the term '
+                              'sea_water_practical_salinity which is the salinity quantity stored '
+                              'by national data centers for post-1978 observations. The only '
+                              'exception to this is where the observed salinities are definitely '
+                              'known not to be recorded on the Practical Salinity Scale. The unit '
+                              '"parts per thousand" was used for sea_water_knudsen_salinity and '
+                              'sea_water_cox_salinity.'))])
+            ]
+        )
+
+    def test_dataset_parameters_medsea_analysis_forecast_phy_006_013_ssh(self):
+        """Should return the proper dataset parameters"""
+        attributes = {
+            'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/med00-cmcc-ssh'}
+        self.assertEqual(
+            self.normalizer.get_dataset_parameters(attributes), [
+                OrderedDict([('standard_name', 'sea_surface_height_above_geoid'),
+                             ('canonical_units', 'm'),
+                             ('grib', ''),
+                             ('amip', ''),
+                             ('description',
+                             ('The geoid is a surface of constant geopotential with which mean sea '
+                              'level would coincide if the ocean were at rest. (The volume enclosed'
+                              ' between the geoid and the sea floor equals the mean volume of water'
+                              ' in the ocean.) In an ocean GCM the geoid is the surface of zero '
+                              'depth, or the rigid lid if the model uses that approximation. "Sea '
+                              'surface height" is a time-varying quantity. By definition of the '
+                              'geoid, the global average of the time-mean sea surface height (i.e. '
+                              'mean sea level) above the geoid must be zero. The standard name for '
+                              'the height of the sea surface above mean sea level is '
+                              'sea_surface_height_above_sea_level. The standard name for the '
+                              'height of the sea surface above the reference ellipsoid is '
+                              'sea_surface_height_above_reference_ellipsoid.'))])
+            ]
+        )
+
+    def test_dataset_parameters_medsea_analysis_forecast_phy_006_013_tem(self):
+        """Should return the proper dataset parameters"""
+        attributes = {
+            'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/med00-cmcc-tem'}
+        self.assertEqual(
+            self.normalizer.get_dataset_parameters(attributes), [
+                OrderedDict([('standard_name', 'sea_water_potential_temperature_at_sea_floor'),
+                             ('long_name', 'Bottom temperature'),
+                             ('short_name', 'bottomT'),
+                             ('units', 'celsius'),
+                             ('minmax', '1 40'),
+                             ('colormap', 'jet')]),
+                OrderedDict([('standard_name', 'sea_water_potential_temperature'),
+                             ('canonical_units', 'K'),
+                             ('grib', ''),
+                             ('amip', ''),
+                             ('description',
+                             ('Potential temperature is the temperature a parcel of air or sea '
+                             'water would have if moved adiabatically to sea level pressure.'))])
+            ]
+        )
+
+    def test_dataset_parameters_medsea_analysis_forecast_phy_006_013_mask_bathy(self):
+        """Should return the proper dataset parameters"""
+        attributes = {
+            'url': "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/" +
+                   "MEDSEA_ANALYSIS_FORECAST_PHY_006_013-statics/MED-MFC_006_013_mask_bathy.nc"
+        }
+        self.assertEqual(
+            self.normalizer.get_dataset_parameters(attributes), [
+                OrderedDict([('standard_name', 'model_level_number_at_sea_floor'),
+                             ('canonical_units', '1'),
+                             ('grib', ''),
+                             ('amip', ''),
+                             ('description',
+                             ('The quantity with standard name model_level_number_at_sea_floor is '
+                              'the depth of the ocean expressed in model levels. This could be a '
+                              'non-integer value because some ocean models use partial cells close '
+                              'to the sea floor.  For example, if this field were 23.4 at some '
+                              'location, it would mean the water column at that point comprised 23 '
+                              'full model levels plus 40% occupancy of the lowest (24th) '
+                              'gridcell.'))]),
+                OrderedDict([('standard_name', 'sea_floor_depth_below_geoid'),
+                             ('canonical_units', 'm'),
+                             ('grib', ''),
+                             ('amip', 'zobt'),
+                             ('description',
+                             ('The geoid is a surface of constant geopotential with which mean sea '
+                              'level would coincide if the ocean were at rest. (The volume '
+                              'enclosed between the geoid and the sea floor equals the mean volume '
+                              'of water in the ocean.) In an ocean GCM the geoid is the surface of '
+                              'zero depth, or the rigid lid if the model uses that '
+                              'approximation.'))])
+            ]
+        )
+
+    def test_dataset_parameters_medsea_analysis_forecast_phy_006_013_coordinates(self):
+        """Should return the proper dataset parameters"""
+        attributes = {
+            'url': "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/" +
+                   "MEDSEA_ANALYSIS_FORECAST_PHY_006_013-statics/MED-MFC_006_013_coordinates.nc"
+        }
+        self.assertEqual(
+            self.normalizer.get_dataset_parameters(attributes), [
+                OrderedDict([('standard_name', 'cell_thickness'),
+                             ('canonical_units', 'm'),
+                             ('grib', ''),
+                             ('amip', ''),
+                             ('description',
+                             ('"Thickness" means the vertical extent of a layer. '
+                              '"Cell" refers to a model grid-cell.'))])
+            ]
+        )
+
     def test_entry_title_jaxa(self):
         """entry_title from URLMetadataNormalizer """
         attributes = {
@@ -730,6 +995,14 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
             'url': 'ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046'}
         self.assertEqual(
             self.normalizer.get_entry_title(attributes),'GLOBAL OCEAN GRIDDED L4 SEA SURFACE HEIGHTS AND DERIVED VARIABLES NRT')
+
+    def test_entry_title_medsea_analysis_forecast_phy_006_013(self):
+        """Should return the proper entry_title"""
+        attributes = {'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/'}
+        self.assertEqual(
+            self.normalizer.get_entry_title(attributes),
+            'Mediterranean Forecasting System (hydrodynamic-wave model)'
+        )
 
     def test_entry_id_jaxa(self):
         """entry_id from URLMetadataNormalizer """
@@ -788,6 +1061,16 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         self.assertEqual(self.normalizer.get_entry_id(
             attributes), '20180110000000-OSPO-L2P_GHRSST-SSTsubskin-VIIRS_NPP-ACSPO_V2.61-v02.0-fv01.0')
 
+    def test_entry_id_medsea_analysis_forecast_phy_006_013(self):
+        """Should return the proper entry_id"""
+        attributes = {'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/'
+                             'med00-cmcc-sal-an-fc-hts/2019/07/'
+                             '20190706_hts-CMCC--PSAL-MFSeas5-MEDATL-b20190101_an-sv06.00.nc'}
+        self.assertEqual(
+            self.normalizer.get_entry_id(attributes),
+            '20190706_hts-CMCC--PSAL-MFSeas5-MEDATL-b20190101_an-sv06.00'
+        )
+
     def test_geometry_jaxa_the_first_type_of_sst(self):
         """geometry from URLMetadataNormalizer """
         attributes = {
@@ -842,6 +1125,14 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         self.assertEqual(
             self.normalizer.get_location_geometry(attributes),
             'POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))')
+
+    def test_geometry_medsea_analysis_forecast_phy_006_013(self):
+        """Should return the proper geometry"""
+        attributes = {'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/'}
+        self.assertEqual(
+            self.normalizer.get_location_geometry(attributes),
+            'POLYGON((-17.29 45.98, -17.29 30.18, 36.30 30.18, 36.30 45.98, -17.29 45.98))'
+        )
 
     def test_none_for_incorrect_ftp_resource(self):
         """shall return None in the case of incorrect ftp resource (incorrect 'ftp_domain_name')
