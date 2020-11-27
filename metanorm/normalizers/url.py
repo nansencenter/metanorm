@@ -34,7 +34,7 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
         'ftp://ftp.remss.com/gmi': 'GMI',
         'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2': 'AMSR2',
         'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/':
-        'Imaging Spectrometers/Radiometers',
+            'Imaging Spectrometers/Radiometers',
         "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046": 'altimeters',
         "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003": 'altimeters',
         "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024": 'computer'
