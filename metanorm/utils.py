@@ -1,6 +1,8 @@
 """Utility functions for metadata normalizing"""
 
 from collections import OrderedDict
+from datetime import datetime, timedelta
+from dateutil.tz import tzutc
 
 import pythesint as pti
 
@@ -157,3 +159,27 @@ def get_cf_or_wkv_standard_name(keyword):
     except IndexError:
         result_values = pti.get_wkv_variable(keyword)
     return result_values
+
+
+YEARMONTH_REGEX = r'(?P<year>\d{4})(?P<month>\d{2})'
+YEARMONTHDAY_REGEX = YEARMONTH_REGEX + r'(?P<day>\d{2})'
+
+def create_datetime(year, month=1, day=1, day_of_year=None, hour=0, minute=0, second=0):
+    """Returns a datetime object using the provided arguments.
+    Possible argument combinations are:
+      - year, month, day(, hour, minute, second)
+      - year, day_of_year(, hour, minute, second)
+    """
+    year = int(year)
+    hour = int(hour)
+    minute = int(minute)
+    second = int(second)
+
+    if day_of_year:
+        day_of_year = int(day_of_year)
+        first_day = datetime(year, 1, 1, hour, minute, second).replace(tzinfo=tzutc())
+        return first_day + timedelta(days=day_of_year-1)
+    else:
+        month = int(month)
+        day = int(day)
+        return datetime(year, month, day, hour, minute, second).replace(tzinfo=tzutc())
