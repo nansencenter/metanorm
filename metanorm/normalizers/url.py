@@ -93,7 +93,7 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
             NC_H5_FILENAME_MATCHER
     }
 
-    urls_dsp = {
+    urls_dataset_parameters = {
         'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/': ['sea_surface_temperature'],
         'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L2.SST': [
             'sea_surface_temperature'
@@ -317,7 +317,7 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
     def get_dataset_parameters(self, raw_attributes):
         """ return list with different parameter(s) from cf_standard_name """
         return self.create_parameter_list(self.find_matching_value(
-            self.urls_dsp, raw_attributes)) or []
+            self.urls_dataset_parameters, raw_attributes)) or []
 
     def get_location_geometry(self, raw_attributes):
         """ returns the suitable location geometry based on the filename """
