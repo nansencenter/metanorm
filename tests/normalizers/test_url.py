@@ -136,15 +136,15 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         """shall return the propert starting time for hardcoded normalizer """
         self.assertEqual(
             self.normalizer.get_time_coverage_start(
-                {'url': 'ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003/dataset-uv-nrt-hourly/2020/09/dataset-uv-nrt-hourly_20200906T1800Z_P20200918T0000.nc'}),
-            datetime(year=2020, month=9, day=6, hour=18, minute=0, second=0, tzinfo=tzutc()))
+                {'url': 'ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003/dataset-uv-nrt-hourly/2020/09/dataset-uv-nrt-hourly_20200906T0000Z_P20200912T0000.nc'}),
+            datetime(year=2020, month=9, day=6, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_end_remss_single_day_file(self):
         """shall return the propert end time for hardcoded normalizer """
         self.assertEqual(
             self.normalizer.get_time_coverage_end(
                 {'url': 'ftp://ftp.remss.com/gmi/bmaps_v08.2/y2014/m06/f35_20140620v8.2.gz'}),
-            datetime(year=2014, month=6, day=20, hour=0, minute=0, second=0, tzinfo=tzutc()))
+            datetime(year=2014, month=6, day=21, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_end_remss_month_file(self):
         """shall return the propert end time for hardcoded normalizer """
@@ -179,7 +179,7 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         self.assertEqual(
             self.normalizer.get_time_coverage_end(
                 {'url': 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25/3/2015/04/GW1AM2_20150401_01D_EQOD_L3SGSSTLB3300300.h5'}),
-            datetime(year=2015, month=4, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
+            datetime(year=2015, month=4, day=2, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_end_jaxa_month_file(self):
         """shall return the propert end time for hardcoded normalizer """

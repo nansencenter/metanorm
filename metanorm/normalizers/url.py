@@ -10,6 +10,7 @@ import pythesint as pti
 from dateutil.relativedelta import relativedelta
 from dateutil.tz import tzutc
 
+import metanorm.utils as utils
 from .base import BaseMetadataNormalizer
 
 LOGGER = logging.getLogger(__name__)
@@ -137,6 +138,96 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
         ]
     }
 
+    # See the docstring of find_time_coverage() to get
+    # information about the dictionary structure
+    urls_time = {
+        'ftp://ftp.remss.com/gmi': [
+            (
+                re.compile(r'/y\d{4}/m\d{2}/f35_' + utils.YEARMONTHDAY_REGEX + r'v[\d.]+\.gz$'),
+                utils.create_datetime,
+                lambda time: (time, time + relativedelta(days=1))
+            ),
+            (
+                re.compile(r'/y\d{4}/m\d{2}/f35_' + utils.YEARMONTHDAY_REGEX + r'v[\d.]+_d3d\.gz$'),
+                utils.create_datetime,
+                lambda time: (time - relativedelta(days=2), time + relativedelta(days=1))
+            ),
+            (
+                re.compile(r'/weeks/f35_' + utils.YEARMONTHDAY_REGEX + r'v[\d.]+\.gz$'),
+                utils.create_datetime,
+                lambda time: (time - relativedelta(days=6), time + relativedelta(days=1))
+            ),
+            (
+                re.compile(r'/y\d{4}/m\d{2}/f35_' + utils.YEARMONTH_REGEX + r'v[\d.]+\.gz$'),
+                utils.create_datetime,
+                lambda time: (time, time + relativedelta(months=1))
+            ),
+        ],
+        'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1': [
+            (   # model data over a year, based on observations from 1982 to 2010. TODO: confirm
+                re.compile(r'/D(?P<d>\d{3})-.*\.nc$'),
+                lambda d: utils.create_datetime(1982, day_of_year=d),
+                lambda time: (time, datetime(2010, time.month, time.day).replace(tzinfo=tzutc()))
+            )
+        ],
+        'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25/3': [
+            (
+                re.compile(r'/[A-Z\d]+_' + utils.YEARMONTHDAY_REGEX + r'_\d{2}D.*\.h5$'),
+                utils.create_datetime,
+                lambda time: (time, time + relativedelta(days=1))
+            ),
+            (
+                re.compile(r'/[A-Z\d]+_' + utils.YEARMONTH_REGEX + r'00_\d{2}M.*\.h5$'),
+                utils.create_datetime,
+                lambda time: (time, time + relativedelta(months=1))
+            ),
+        ],
+        'ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046/' +
+        'dataset-duacs-nrt-global-merged-allsat-phy-l4': [
+            (
+                re.compile(r'/nrt_global_allsat_phy_l4_' + utils.YEARMONTHDAY_REGEX + r'_.*\.nc$'),
+                utils.create_datetime,
+                lambda time: (time - relativedelta(hours=12), time + relativedelta(hours=12))
+            )
+        ],
+        'ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003': [
+            (
+                re.compile(r'/dataset-uv-nrt-(daily|hourly)_' +
+                    utils.YEARMONTHDAY_REGEX + r'T.*\.nc$'),
+                utils.create_datetime,
+                lambda time: (time, time + relativedelta(days=1))
+            ),
+            (
+                re.compile(r'/dataset-uv-nrt-monthly_' + utils.YEARMONTH_REGEX + r'T.*\.nc$'),
+                utils.create_datetime,
+                lambda time: (time, time + relativedelta(months=1))
+            )
+        ],
+        'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/': [
+            (
+                re.compile(
+                    r'/(SMOC|mercatorpsy4v3r1_gl12_(mean|hrly))_' +
+                    utils.YEARMONTHDAY_REGEX +
+                    r'_R.*\.nc$'),
+                utils.create_datetime,
+                lambda time: (time, time + relativedelta(days=1))
+            ),
+            (
+                re.compile(r'/mercatorpsy4v3r1_gl12_mean_' + utils.YEARMONTH_REGEX + r'.*\.nc$'),
+                utils.create_datetime,
+                lambda time: (time, time + relativedelta(months=1))
+            ),
+            (
+                re.compile(
+                    r'/mercatorpsy4v3r1_gl12_(thetao|so|uovo)_' +
+                    utils.YEARMONTHDAY_REGEX +
+                    r'_(?P<hour>\d{2})h_R.*\.nc$'),
+                utils.create_datetime,
+                lambda time: (time, time)
+            ),
+        ],
+    }
+
     @staticmethod
     def find_matching_value(associated_dict, raw_attributes):
         """ Loop through <associated_dict> and get the matching value  """
@@ -145,53 +236,6 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
                 if raw_attributes['url'].startswith(url):
                     return associated_dict[url]
         return None
-
-    @staticmethod
-    def extract_time(time_text):
-        """ Extract time from file name """
-        if not time_text:
-            return None
-        # tuple of all formats for usage of "strptime" function of datetime
-        # Order of this tuple matters! so the more generic formats must be in the end of tuple
-        strp_format = (
-            # for ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046/dataset-duacs-nrt-global-merged-allsat-phy-l4
-            "dataset-uv-nrt-hourly_%Y%m%dT%H%MZ",
-            "dataset-uv-nrt-monthly_%Y%mT%H%MZ",
-            "dataset-uv-nrt-daily_%Y%m%dT%H%MZ",
-            # for ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046/dataset-duacs-nrt-global-merged-allsat-phy-l4
-            "mercatorpsy4v3r1_gl12_so_%Y%m%d_%H",
-            "mercatorpsy4v3r1_gl12_thetao_%Y%m%d_%H",
-            "mercatorpsy4v3r1_gl12_uovo_%Y%m%d_%H",
-            "SMOC_%Y%m%d",
-            "mercatorpsy4v3r1_%Y%m%d",
-            "mercatorpsy4v3r1_%Y%m.nc",
-            # for ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046/dataset-duacs-nrt-global-merged-allsat-phy-l4
-            "nrt_global_allsat_phy_l4_%Y%m%d",  # e.x.: 'nrt_global_allsat_phy_l4_20200206'
-            "mercatorpsy4v3r1_%Y%m%d",
-            # for remss
-            "f35_%Y%m%dv8.2_d3d.gz",
-            "f35_%Y%m%dv8.2.gz",
-            "f35_%Y%mv8.2.gz",
-            # for normal daily files of jaxa GCOM-W.AMSR2 folder
-            "GW1AM2_%Y%m%d",
-            # for month files of jaxa GCOM-W.AMSR2 (MUST below the one for daily files)
-            "GW1AM2_%Y%m%H",
-            "%Y%m%d%H%M",
-            "%Y%m%d",
-        )
-        for _format in strp_format:
-            try:
-                extracted_date = datetime.strptime(time_text, _format).replace(tzinfo=tzutc())
-            except ValueError:
-                continue  # if the format is incorrect, then try another format for "strptime"
-            else:
-                return extracted_date
-
-    @staticmethod
-    def length_of_month(extracted_date):
-        """ length of the month that 'extracted_date' has been found in it """
-        return relativedelta(days=calendar.monthrange(
-            extracted_date.year, extracted_date.month)[1])
 
     def get_platform(self, raw_attributes):
         """ return the corresponding platfrom based on specified ftp source """
@@ -205,124 +249,59 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
         if found_value:
             return pti.get_gcmd_instrument(found_value)
 
+    def find_time_coverage(self, raw_attributes):
+        """Find the time coverage based on the 'url' raw attribute.
+        Returns a 2-tuple containing the start and end time,
+        or a 2-tuple containing None if no time coverage was found.
+
+        This method uses the `urls_time` dictionary.
+        This dictionary has the following structure:
+        urls_time = {
+            'url_prefix': [
+                (
+                    compiled_regex,
+                    datetime_creation_function,
+                    time_coverage_function
+                ),
+                (...)
+            ],
+            ...
+        }
+        Where:
+          - "url_prefix" is the prefix matched against the 'url' raw
+            attribute
+
+          - "compiled_regex" is a compiled regular expresion used to
+            extract the time information from the URL. It should
+            contain named groups which will be given as arguments
+            to the datetime_creation_function
+
+          - "datetime_creation_function" is a function which creates
+            a datetime object from the information extracted using
+            the regex.
+
+          - "time_coverage_function" is a function which takes the
+            datetime object returned by datetime_creation_function
+            and returns the time coverage as a 2-tuple
+        """
+        if 'url' in raw_attributes:
+            time_finder = self.find_matching_value(self.urls_time, raw_attributes)
+            if time_finder:
+                for matcher, get_time, get_coverage in time_finder:
+                    match = matcher.search(raw_attributes['url'])
+                    if match:
+                        time_info = match.groupdict()
+                        file_time = get_time(**time_info)
+                        return (get_coverage(file_time)[0], get_coverage(file_time)[1])
+        return (None, None)
+
     def get_time_coverage_start(self, raw_attributes):
-        """return the start time with "start" flag equals to "True" for the method."""
-        return self.find_time_coverage(raw_attributes, start=True)
+        """Returns the start time"""
+        return self.find_time_coverage(raw_attributes)[0]
 
     def get_time_coverage_end(self, raw_attributes):
-        """return the end time with "start" flag equals to "False" for the method."""
-        return self.find_time_coverage(raw_attributes, start=False)
-
-    def find_time_coverage(self, raw_attributes, start):
-        """find out the time based on the filename and them some modification based on path.
-        'start' is a flag that indicates whether it is a "start time usage" of function or "start
-        time usage" of it.start=True is for find the "time_coverage_start". """
-        if 'url' in raw_attributes:
-            url_path_and_file_name = urlparse(raw_attributes['url']).path
-            file_name = url_path_and_file_name.split('/')[-1]
-            url_path_and_file_name_splitted = url_path_and_file_name.split('/')
-            file_name_splitted = None
-            if '_' in file_name:
-                file_name_splitted = file_name.split('_')
-            # proper splitting or modification of filename is done by this dictionary(url_time)
-            # in order to be ready for sending into "self.extract_time".
-            # Sometimes there is constant value needed for this calculation instead of filename
-            url_time = {
-                'ftp://ftp.remss.com': file_name,
-                'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1':
-                    "19820101" if start else "20100101",
-                "ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25/3":
-                    file_name_splitted[0] + '_' +
-                    file_name_splitted[1] if file_name_splitted else None,
-                "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046/dataset-duacs-nrt-global-merged-allsat-phy-l4":
-                    file_name[:33],
-                "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003":
-                    file_name_splitted[0] + '_' +
-                    file_name_splitted[1] if file_name_splitted else None,
-                "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/global-analysis-forecast-phy-001-024/":
-                    file_name_splitted[0] + '_' +
-                    file_name_splitted[-2] if file_name_splitted else None,
-                "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/global-analysis-forecast-phy-001-024-3dinst-so/":
-                    file_name[:36],
-                "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/global-analysis-forecast-phy-001-024-3dinst-thetao":
-                    file_name[:40],
-                "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/global-analysis-forecast-phy-001-024-3dinst-uovo":
-                    file_name[:38],
-                "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/global-analysis-forecast-phy-001-024-hourly-merged-uv":
-                    file_name_splitted[0] + '_' +
-                file_name_splitted[1] if file_name_splitted else None,
-                "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/global-analysis-forecast-phy-001-024-hourly-t-u-v-ssh/":
-                    file_name_splitted[0] + '_' +
-                    file_name_splitted[-2] if file_name_splitted else None,
-                "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/global-analysis-forecast-phy-001-024-monthly/":
-                    file_name_splitted[0] + '_' +
-                    file_name_splitted[-1] if file_name_splitted else None
-            }
-            extracted_date = self.extract_time(self.find_matching_value(
-                url_time, raw_attributes))
-            if not extracted_date:
-                return None
-
-            ########################################################################################
-            # further modification of "extracted time" based on other semantics of parts of the path
-            if raw_attributes['url'].startswith('ftp://ftp.remss.com'):
-                # 'd3d' are the "average of 3 days ending on and including file date"
-                # See http://www.remss.com/missions/gmi/
-                if 'd3d' in file_name:
-                    relative_days = -2 if start else 1
-                    extracted_date += relativedelta(days=relative_days)
-                # for weekly average ones in the "weeks" folder
-                # if condition is the search of "weeks" folder in the FTP path
-                elif "weeks" in url_path_and_file_name_splitted:
-                    relative_days = -6 if start else 1
-                    extracted_date += relativedelta(days=relative_days)
-                elif re.search(r"^f35_[0-9]{6}v[0-9]\.[0-9]\.gz$", file_name):
-                    # file is a month file. So, the end time must be the end of month.
-                    # python "strptime" always gives the first day. So the length of month in that
-                    # year is added.
-                    if not start:
-                        extracted_date += self.length_of_month(extracted_date)
-
-            elif raw_attributes['url'].startswith(
-                    'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1'):
-                # the constant date is corrected using the day
-                # number in the beginning of the file name
-                extracted_date += relativedelta(days=int(file_name[1:4]) - 1)
-
-            elif raw_attributes['url'].startswith(
-                    'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25/3'):
-                if file_name_splitted[2] == '01M' and not start:  # it is a month file
-                    extracted_date += self.length_of_month(extracted_date)
-
-            elif raw_attributes['url'].startswith(
-                    "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046"):
-                delta = relativedelta(hours=12)
-                if start:
-                    extracted_date -= delta
-                else:
-                    extracted_date += delta
-
-            elif raw_attributes['url'].startswith(
-                    'ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003'):
-                if not start:
-                    if "monthly" in file_name:
-                        extracted_date += self.length_of_month(extracted_date)
-                    elif "hourly" in file_name or "daily" in file_name:
-                        extracted_date += relativedelta(days=1)
-
-            elif raw_attributes['url'].startswith(
-                    'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024'):
-                if not start:
-                    if any(path_part.endswith("monthly")
-                           for path_part in url_path_and_file_name_splitted):
-                        extracted_date += self.length_of_month(extracted_date)
-                    elif any("3dinst" in path_part
-                             for path_part in url_path_and_file_name_splitted):
-                        pass  # datasets containing "3dinst" are instantaneous
-                    else:
-                        extracted_date += relativedelta(days=1)
-
-            return extracted_date
+        """Return the end time"""
+        return self.find_time_coverage(raw_attributes)[1]
 
     def get_provider(self, raw_attributes):
         """ returns the suitable provider based on the filename """
