@@ -110,7 +110,7 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
             'atmosphere_mass_content_of_cloud_liquid_water',
             'rainfall_rate'
         ],
-        # based on http://nrt.cmems-du.eu/motu-web/Motu?action=describeProduct&service=SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046-TDS&product=dataset-duacs-nrt-global-merged-allsat-phy-l4
+        # based on http://nrt.cmems-du.eu/motu-web/Motu?action=describeProduct&service=SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046-TDS
         "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046": [
             'sea_surface_height_above_geoid',
             'sea_surface_height_above_sea_level',
@@ -119,12 +119,12 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
             'surface_geostrophic_northward_sea_water_velocity',
             'surface_geostrophic_northward_sea_water_velocity_assuming_sea_level_for_geoid'
         ],
-        # based on http://nrt.cmems-du.eu/motu-web/Motu?action=describeProduct&service=MULTIOBS_GLO_PHY_NRT_015_003-TDS&product=dataset-uv-nrt-daily
+        # based on http://nrt.cmems-du.eu/motu-web/Motu?action=describeProduct&service=MULTIOBS_GLO_PHY_NRT_015_003-TDS
         "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003": [
             'eastward_sea_water_velocity',
             'northward_sea_water_velocity'
         ],
-        # based on http://nrt.cmems-du.eu/motu-web/Motu?action=describeProduct&service=GLOBAL_ANALYSIS_FORECAST_PHY_001_024-TDS&product=global-analysis-forecast-phy-001-024
+        # based on http://nrt.cmems-du.eu/motu-web/Motu?action=describeProduct&service=GLOBAL_ANALYSIS_FORECAST_PHY_001_024-TDS
         "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024": [
             # 'sea_water_potential_temperature_at_sea_floor', # problematic for pti!! DANGER TODO
             'ocean_mixed_layer_thickness_defined_by_sigma_theta',
