@@ -81,15 +81,16 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
             'GLOBAL OCEAN 1_12 PHYSICS ANALYSIS AND FORECAST UPDATED DAILY'
     }
 
+    NC_H5_FILENAME_MATCHER = re.compile(r"([^/]+)\.(nc|h5)(\.gz)?$")
     urls_entry_id = {
         "https://thredds.met.no/thredds/": re.compile(r"([^/]+)\.nc(\.dods)?$"),
-        "https://opendap.jpl.nasa.gov/opendap/": re.compile(r"([^/]+)\.(nc|h5)(\.gz)?$"),
+        "https://opendap.jpl.nasa.gov/opendap/": NC_H5_FILENAME_MATCHER,
         "ftp://ftp.remss.com/gmi": re.compile(r"([^/]+)\.gz$"),
         "ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/":
-            re.compile(r"([^/]+)\.(nc|h5)(\.gz)?$"),
-        "ftp://nrt.cmems-du.eu/Core/": re.compile(r"([^/]+)\.(nc|h5)(\.gz)?$"),
+            NC_H5_FILENAME_MATCHER,
+        "ftp://nrt.cmems-du.eu/Core/": NC_H5_FILENAME_MATCHER,
         "ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/":
-            re.compile(r"([^/]+)\.(nc|h5)(\.gz)?$")
+            NC_H5_FILENAME_MATCHER
     }
 
     urls_dsp = {
