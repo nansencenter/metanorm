@@ -49,18 +49,17 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
         "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024": 'cmems'
     }
 
-    keys_for_geometry_dictionary = {
-        'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/',
-        'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_10',
-        'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25',
-        "ftp://ftp.remss.com/gmi/",
-        "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046",
-        "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003",
-        "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024"
+    WORLD_WIDE_COVERAGE_WKT = 'POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))'
+    urls_geometry = {
+        'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/': WORLD_WIDE_COVERAGE_WKT,
+        'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_10': WORLD_WIDE_COVERAGE_WKT,
+        'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25': WORLD_WIDE_COVERAGE_WKT,
+        "ftp://ftp.remss.com/gmi/": WORLD_WIDE_COVERAGE_WKT,
+        "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046":
+            WORLD_WIDE_COVERAGE_WKT,
+        "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003": WORLD_WIDE_COVERAGE_WKT,
+        "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024": WORLD_WIDE_COVERAGE_WKT,
     }
-
-    urls_geometry = dict.fromkeys(keys_for_geometry_dictionary,
-                                  ('POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))'))
 
     urls_title = {
         'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1':
