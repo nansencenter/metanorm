@@ -649,6 +649,18 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         self.assertEqual(
             self.normalizer.get_dataset_parameters(attributes),
             [
+                OrderedDict([('standard_name', 'sea_surface_height_above_geoid'),
+                             ('canonical_units', 'm'),
+                             ('grib', ''),
+                             ('amip', ''),
+                             ('description',
+                             'The geoid is a surface of constant geopotential with which mean sea level would coincide if the ocean were at rest. (The volume enclosed between the geoid and the sea floor equals the mean volume of water in the ocean.) In an ocean GCM the geoid is the surface of zero depth, or the rigid lid if the model uses that approximation. "Sea surface height" is a time-varying quantity. By definition of the geoid, the global average of the time-mean sea surface height (i.e. mean sea level) above the geoid must be zero. The standard name for the height of the sea surface above mean sea level is sea_surface_height_above_sea_level. The standard name for the height of the sea surface above the reference ellipsoid is sea_surface_height_above_reference_ellipsoid.')]),
+                OrderedDict([('standard_name', 'sea_surface_height_above_sea_level'),
+                             ('canonical_units', 'm'),
+                             ('grib', '82'),
+                             ('amip', ''),
+                             ('description',
+                             'sea_level means mean sea level, which is close to the geoid in sea areas. "Sea surface height" is a time-varying quantity. The standard name for the height of the sea surface above the geoid is sea_surface_height_above_geoid. The standard name for the height of the sea surface above the reference ellipsoid is sea_surface_height_above_reference_ellipsoid.')]),
                 OrderedDict([('standard_name', 'surface_geostrophic_eastward_sea_water_velocity'),
                              ('canonical_units', 'm s-1'),
                              ('grib', ''),

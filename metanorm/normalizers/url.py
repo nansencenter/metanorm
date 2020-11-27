@@ -112,6 +112,8 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
         ],
         # based on http://nrt.cmems-du.eu/motu-web/Motu?action=describeProduct&service=SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046-TDS&product=dataset-duacs-nrt-global-merged-allsat-phy-l4
         "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046": [
+            'sea_surface_height_above_geoid',
+            'sea_surface_height_above_sea_level',
             'surface_geostrophic_eastward_sea_water_velocity',
             'surface_geostrophic_eastward_sea_water_velocity_assuming_sea_level_for_geoid',
             'surface_geostrophic_northward_sea_water_velocity',
