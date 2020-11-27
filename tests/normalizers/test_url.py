@@ -569,6 +569,12 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         self.assertEqual(
             self.normalizer.get_dataset_parameters(attributes),
             [
+                OrderedDict([('standard_name', 'sea_water_potential_temperature_at_sea_floor'),
+                             ('long_name', 'Bottom temperature'),
+                             ('short_name', 'bottomT'),
+                             ('units', 'celsius'),
+                             ('minmax', '1 40'),
+                             ('colormap', 'jet')]),
                 OrderedDict([('standard_name', 'ocean_mixed_layer_thickness_defined_by_sigma_theta'),
                              ('canonical_units', 'm'),
                              ('grib', ''),

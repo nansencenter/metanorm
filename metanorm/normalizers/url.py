@@ -126,7 +126,7 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
         ],
         # based on http://nrt.cmems-du.eu/motu-web/Motu?action=describeProduct&service=GLOBAL_ANALYSIS_FORECAST_PHY_001_024-TDS
         "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024": [
-            # 'sea_water_potential_temperature_at_sea_floor', # problematic for pti!! DANGER TODO
+            'sea_water_potential_temperature_at_sea_floor',
             'ocean_mixed_layer_thickness_defined_by_sigma_theta',
             'sea_ice_area_fraction',
             'sea_ice_thickness',
@@ -314,7 +314,7 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
     def create_parameter_list(parameters):
         """ Convert list with standard names into list with Pythesing dicts """
         if parameters:
-            return [pti.get_cf_standard_name(cf_parameter) for cf_parameter in parameters]
+            return [utils.get_cf_or_wkv_standard_name(cf_parameter) for cf_parameter in parameters]
 
     def get_dataset_parameters(self, raw_attributes):
         """ return list with different parameter(s) from cf_standard_name """
