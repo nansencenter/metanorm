@@ -27,7 +27,8 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
         "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046":
             'Earth Observation satellites',
         "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003": 'Earth Observation satellites',
-        "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024": 'OPERATIONAL MODELS'
+        "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024": 'OPERATIONAL MODELS',
+        "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013": 'OPERATIONAL MODELS'
     }
 
     urls_instruments = {
@@ -37,7 +38,8 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
             'Imaging Spectrometers/Radiometers',
         "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046": 'altimeters',
         "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003": 'altimeters',
-        "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024": 'computer'
+        "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024": 'computer',
+        "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013": 'computer'
     }
 
     urls_provider = {
@@ -46,7 +48,8 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
         "ftp://ftp.gportal.jaxa.jp/standard": 'JP/JAXA/EOC',
         "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046": 'cmems',
         "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003": 'cmems',
-        "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024": 'cmems'
+        "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024": 'cmems',
+        "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013": 'cmems'
     }
 
     WORLD_WIDE_COVERAGE_WKT = 'POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))'
@@ -59,6 +62,8 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
             WORLD_WIDE_COVERAGE_WKT,
         "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003": WORLD_WIDE_COVERAGE_WKT,
         "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024": WORLD_WIDE_COVERAGE_WKT,
+        "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013":
+            'POLYGON((-17.29 45.98, -17.29 30.18, 36.30 30.18, 36.30 45.98, -17.29 45.98))'
     }
 
     urls_title = {
@@ -78,7 +83,9 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
             'GLOBAL TOTAL SURFACE AND 15M CURRENT FROM ALTIMETRIC '
             'GEOSTROPHIC CURRENT AND MODELED EKMAN CURRENT PROCESSING',
         "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024":
-            'GLOBAL OCEAN 1_12 PHYSICS ANALYSIS AND FORECAST UPDATED DAILY'
+            'GLOBAL OCEAN 1_12 PHYSICS ANALYSIS AND FORECAST UPDATED DAILY',
+        "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013":
+            'Mediterranean Forecasting System (hydrodynamic-wave model)'
     }
 
     NC_H5_FILENAME_MATCHER = re.compile(r"([^/]+)\.(nc|h5)(\.gz)?$")
@@ -137,7 +144,33 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
             'northward_sea_water_velocity',
             'northward_sea_ice_velocity',
             'sea_surface_height_above_geoid'
-        ]
+        ],
+        "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/med00-cmcc-cur": [
+            'eastward_sea_water_velocity',
+            'northward_sea_water_velocity',
+        ],
+        "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/med00-cmcc-mld": [
+            'ocean_mixed_layer_thickness_defined_by_sigma_theta'
+        ],
+        "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/med00-cmcc-sal": [
+            'sea_water_salinity'
+        ],
+        "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/med00-cmcc-ssh": [
+            'sea_surface_height_above_geoid'
+        ],
+        "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/med00-cmcc-tem": [
+            'sea_water_potential_temperature_at_sea_floor',
+            'sea_water_potential_temperature'
+        ],
+        "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/" +
+        "MEDSEA_ANALYSIS_FORECAST_PHY_006_013-statics/MED-MFC_006_013_mask_bathy.nc": [
+            'model_level_number_at_sea_floor',
+            'sea_floor_depth_below_geoid'
+        ],
+        "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/" +
+        "MEDSEA_ANALYSIS_FORECAST_PHY_006_013-statics/MED-MFC_006_013_coordinates.nc": [
+            'cell_thickness'
+        ],
     }
 
     # See the docstring of find_time_coverage() to get
@@ -226,6 +259,18 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
                     r'_(?P<hour>\d{2})h_R.*\.nc$'),
                 utils.create_datetime,
                 lambda time: (time, time)
+            ),
+        ],
+        'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013': [
+            (
+                re.compile(utils.YEARMONTHDAY_REGEX + r'_(d|h|hts)-.*\.nc$'),
+                utils.create_datetime,
+                lambda time: (time, time + relativedelta(days=1))
+            ),
+            (
+                re.compile(utils.YEARMONTHDAY_REGEX + r'_m-.*\.nc$'),
+                utils.create_datetime,
+                lambda time: (time, time + relativedelta(months=1))
             ),
         ],
     }
