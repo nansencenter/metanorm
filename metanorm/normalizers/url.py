@@ -290,8 +290,7 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
                 for matcher, get_time, get_coverage in time_finder:
                     match = matcher.search(raw_attributes['url'])
                     if match:
-                        time_info = match.groupdict()
-                        file_time = get_time(**time_info)
+                        file_time = get_time(**match.groupdict())
                         return (get_coverage(file_time)[0], get_coverage(file_time)[1])
         return (None, None)
 
