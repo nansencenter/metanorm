@@ -1,10 +1,7 @@
 """Normalizer for the interpretation of file name convention"""
-
-import calendar
 import logging
 import re
 from datetime import datetime
-from urllib.parse import urlparse
 
 import pythesint as pti
 from dateutil.relativedelta import relativedelta
