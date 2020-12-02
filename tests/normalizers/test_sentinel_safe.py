@@ -23,19 +23,64 @@ class SentinelSAFEMetadataNormalizerTestCase(unittest.TestCase):
         """Parameter method must return None if the attribute is missing"""
         self.assertEqual(self.normalizer.get_entry_title({}), None)
 
-    def test_summary(self):
+    def test_summary_description_only(self):
         """summary from SentinelSAFEMetadataNormalizer"""
         attributes = {
             'Date': '2018-04-18T01:02:03Z',
-            'Instrument': 'instrument_value',
+            'Instrument name': 'instrument_value',
             'Mode': 'mode_value',
             'Satellite': 'satellite_value',
             'Size': 'size_value'
         }
         self.assertEqual(
             self.normalizer.get_summary(attributes),
-            'Date: 2018-04-18T01:02:03Z, Instrument: instrument_value, Mode: mode_value, ' +
-            'Satellite: satellite_value, Size: size_value')
+            'Description: Date=2018-04-18T01:02:03Z, Instrument name=instrument_value, ' +
+            'Mode=mode_value, Satellite=satellite_value, Size=size_value')
+
+    def test_summary_with_processing_level_sentinel1_style(self):
+        """summary from SentinelSAFEMetadataNormalizer, with sentinel-1 style processing level"""
+        attributes = {
+            'Date': '2018-04-18T01:02:03Z',
+            'Instrument name': 'instrument_value',
+            'Mode': 'mode_value',
+            'Satellite': 'satellite_value',
+            'Size': 'size_value',
+            'Product level': 'L1'
+        }
+        self.assertEqual(
+            self.normalizer.get_summary(attributes),
+            'Description: Date=2018-04-18T01:02:03Z, Instrument name=instrument_value, ' +
+            'Mode=mode_value, Satellite=satellite_value, Size=size_value;Processing level: 1')
+
+    def test_summary_with_processing_level_sentinel2_style(self):
+        """summary from SentinelSAFEMetadataNormalizer, with sentinel-2 style processing level"""
+        attributes = {
+            'Date': '2018-04-18T01:02:03Z',
+            'Instrument name': 'instrument_value',
+            'Mode': 'mode_value',
+            'Satellite': 'satellite_value',
+            'Size': 'size_value',
+            'Processing level': 'Level-1C'
+        }
+        self.assertEqual(
+            self.normalizer.get_summary(attributes),
+            'Description: Date=2018-04-18T01:02:03Z, Instrument name=instrument_value, ' +
+            'Mode=mode_value, Satellite=satellite_value, Size=size_value;Processing level: 1C')
+
+    def test_summary_with_processing_level_sentinel3_style(self):
+        """summary from SentinelSAFEMetadataNormalizer, with sentinel-3 style processing level"""
+        attributes = {
+            'Date': '2018-04-18T01:02:03Z',
+            'Instrument name': 'instrument_value',
+            'Mode': 'mode_value',
+            'Satellite': 'satellite_value',
+            'Size': 'size_value',
+            'Processing level': '1'
+        }
+        self.assertEqual(
+            self.normalizer.get_summary(attributes),
+            'Description: Date=2018-04-18T01:02:03Z, Instrument name=instrument_value, ' +
+            'Mode=mode_value, Satellite=satellite_value, Size=size_value;Processing level: 1')
 
     def test_summary_missing_attribute(self):
         """Parameter method must return None if the attribute is missing"""
