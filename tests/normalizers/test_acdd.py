@@ -23,10 +23,21 @@ class ACDDMetadataNormalizerTestCase(unittest.TestCase):
         """Parameter method must return None if the attribute is missing"""
         self.assertEqual(self.normalizer.get_entry_title({}), None)
 
-    def test_summary(self):
-        """summary from ACDDMetadataNormalizer"""
+    def test_summary_only_description(self):
+        """summary from ACDDMetadataNormalizer, with only the description"""
         attributes = {'summary': 'summary_value'}
-        self.assertEqual(self.normalizer.get_summary(attributes), 'summary_value')
+        self.assertEqual(self.normalizer.get_summary(attributes), 'Description: summary_value')
+
+    def test_summary_description_and_processing_level(self):
+        """summary from ACDDMetadataNormalizer, with the description and processing level"""
+        attributes = {
+            'summary': 'summary_value',
+            'processing_level': 'L2'
+        }
+        self.assertEqual(
+            self.normalizer.get_summary(attributes),
+            'Description: summary_value;Processing level: 2'
+        )
 
     def test_summary_missing_attribute(self):
         """Parameter method must return None if the attribute is missing"""
