@@ -1,10 +1,7 @@
 """Normalizer for the interpretation of file name convention"""
-
-import calendar
 import logging
 import re
 from datetime import datetime
-from urllib.parse import urlparse
 
 import pythesint as pti
 from dateutil.relativedelta import relativedelta
@@ -27,17 +24,19 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
         "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046":
             'Earth Observation satellites',
         "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003": 'Earth Observation satellites',
-        "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024": 'OPERATIONAL MODELS'
+        "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024": 'OPERATIONAL MODELS',
+        "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013": 'OPERATIONAL MODELS'
     }
 
     urls_instruments = {
         'ftp://ftp.remss.com/gmi': 'GMI',
         'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2': 'AMSR2',
         'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/':
-        'Imaging Spectrometers/Radiometers',
+            'Imaging Spectrometers/Radiometers',
         "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046": 'altimeters',
         "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003": 'altimeters',
-        "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024": 'computer'
+        "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024": 'computer',
+        "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013": 'computer'
     }
 
     urls_provider = {
@@ -46,21 +45,23 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
         "ftp://ftp.gportal.jaxa.jp/standard": 'JP/JAXA/EOC',
         "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046": 'cmems',
         "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003": 'cmems',
-        "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024": 'cmems'
+        "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024": 'cmems',
+        "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013": 'cmems'
     }
 
-    keys_for_geometry_dictionary = {
-        'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/',
-        'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_10',
-        'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25',
-        "ftp://ftp.remss.com/gmi/",
-        "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046",
-        "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003",
-        "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024"
+    WORLD_WIDE_COVERAGE_WKT = 'POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))'
+    urls_geometry = {
+        'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/': WORLD_WIDE_COVERAGE_WKT,
+        'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_10': WORLD_WIDE_COVERAGE_WKT,
+        'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25': WORLD_WIDE_COVERAGE_WKT,
+        "ftp://ftp.remss.com/gmi/": WORLD_WIDE_COVERAGE_WKT,
+        "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046":
+            WORLD_WIDE_COVERAGE_WKT,
+        "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003": WORLD_WIDE_COVERAGE_WKT,
+        "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024": WORLD_WIDE_COVERAGE_WKT,
+        "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013":
+            'POLYGON((-17.29 45.98, -17.29 30.18, 36.30 30.18, 36.30 45.98, -17.29 45.98))'
     }
-
-    urls_geometry = dict.fromkeys(keys_for_geometry_dictionary,
-                                  ('POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))'))
 
     urls_title = {
         'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1':
@@ -79,21 +80,24 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
             'GLOBAL TOTAL SURFACE AND 15M CURRENT FROM ALTIMETRIC '
             'GEOSTROPHIC CURRENT AND MODELED EKMAN CURRENT PROCESSING',
         "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024":
-            'GLOBAL OCEAN 1_12 PHYSICS ANALYSIS AND FORECAST UPDATED DAILY'
+            'GLOBAL OCEAN 1_12 PHYSICS ANALYSIS AND FORECAST UPDATED DAILY',
+        "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013":
+            'Mediterranean Forecasting System (hydrodynamic-wave model)'
     }
 
+    NC_H5_FILENAME_MATCHER = re.compile(r"([^/]+)\.(nc|h5)(\.gz)?$")
     urls_entry_id = {
         "https://thredds.met.no/thredds/": re.compile(r"([^/]+)\.nc(\.dods)?$"),
-        "https://opendap.jpl.nasa.gov/opendap/": re.compile(r"([^/]+)\.(nc|h5)(\.gz)?$"),
+        "https://opendap.jpl.nasa.gov/opendap/": NC_H5_FILENAME_MATCHER,
         "ftp://ftp.remss.com/gmi": re.compile(r"([^/]+)\.gz$"),
         "ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/":
-            re.compile(r"([^/]+)\.(nc|h5)(\.gz)?$"),
-        "ftp://nrt.cmems-du.eu/Core/": re.compile(r"([^/]+)\.(nc|h5)(\.gz)?$"),
+            NC_H5_FILENAME_MATCHER,
+        "ftp://nrt.cmems-du.eu/Core/": NC_H5_FILENAME_MATCHER,
         "ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/":
-            re.compile(r"([^/]+)\.(nc|h5)(\.gz)?$")
+            NC_H5_FILENAME_MATCHER
     }
 
-    urls_dsp = {
+    urls_dataset_parameters = {
         'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/': ['sea_surface_temperature'],
         'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L2.SST': [
             'sea_surface_temperature'
@@ -110,21 +114,23 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
             'atmosphere_mass_content_of_cloud_liquid_water',
             'rainfall_rate'
         ],
-        # based on http://nrt.cmems-du.eu/motu-web/Motu?action=describeProduct&service=SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046-TDS&product=dataset-duacs-nrt-global-merged-allsat-phy-l4
+        # based on http://nrt.cmems-du.eu/motu-web/Motu?action=describeProduct&service=SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046-TDS
         "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046": [
+            'sea_surface_height_above_geoid',
+            'sea_surface_height_above_sea_level',
             'surface_geostrophic_eastward_sea_water_velocity',
             'surface_geostrophic_eastward_sea_water_velocity_assuming_sea_level_for_geoid',
             'surface_geostrophic_northward_sea_water_velocity',
             'surface_geostrophic_northward_sea_water_velocity_assuming_sea_level_for_geoid'
         ],
-        # based on http://nrt.cmems-du.eu/motu-web/Motu?action=describeProduct&service=MULTIOBS_GLO_PHY_NRT_015_003-TDS&product=dataset-uv-nrt-daily
+        # based on http://nrt.cmems-du.eu/motu-web/Motu?action=describeProduct&service=MULTIOBS_GLO_PHY_NRT_015_003-TDS
         "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003": [
             'eastward_sea_water_velocity',
             'northward_sea_water_velocity'
         ],
-        # based on http://nrt.cmems-du.eu/motu-web/Motu?action=describeProduct&service=GLOBAL_ANALYSIS_FORECAST_PHY_001_024-TDS&product=global-analysis-forecast-phy-001-024
+        # based on http://nrt.cmems-du.eu/motu-web/Motu?action=describeProduct&service=GLOBAL_ANALYSIS_FORECAST_PHY_001_024-TDS
         "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024": [
-            # 'sea_water_potential_temperature_at_sea_floor', # problematic for pti!! DANGER TODO
+            'sea_water_potential_temperature_at_sea_floor',
             'ocean_mixed_layer_thickness_defined_by_sigma_theta',
             'sea_ice_area_fraction',
             'sea_ice_thickness',
@@ -135,7 +141,33 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
             'northward_sea_water_velocity',
             'northward_sea_ice_velocity',
             'sea_surface_height_above_geoid'
-        ]
+        ],
+        "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/med00-cmcc-cur": [
+            'eastward_sea_water_velocity',
+            'northward_sea_water_velocity',
+        ],
+        "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/med00-cmcc-mld": [
+            'ocean_mixed_layer_thickness_defined_by_sigma_theta'
+        ],
+        "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/med00-cmcc-sal": [
+            'sea_water_salinity'
+        ],
+        "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/med00-cmcc-ssh": [
+            'sea_surface_height_above_geoid'
+        ],
+        "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/med00-cmcc-tem": [
+            'sea_water_potential_temperature_at_sea_floor',
+            'sea_water_potential_temperature'
+        ],
+        "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/" +
+        "MEDSEA_ANALYSIS_FORECAST_PHY_006_013-statics/MED-MFC_006_013_mask_bathy.nc": [
+            'model_level_number_at_sea_floor',
+            'sea_floor_depth_below_geoid'
+        ],
+        "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/" +
+        "MEDSEA_ANALYSIS_FORECAST_PHY_006_013-statics/MED-MFC_006_013_coordinates.nc": [
+            'cell_thickness'
+        ],
     }
 
     # See the docstring of find_time_coverage() to get
@@ -226,6 +258,18 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
                 lambda time: (time, time)
             ),
         ],
+        'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013': [
+            (
+                re.compile(utils.YEARMONTHDAY_REGEX + r'_(d|h|hts)-.*\.nc$'),
+                utils.create_datetime,
+                lambda time: (time, time + relativedelta(days=1))
+            ),
+            (
+                re.compile(utils.YEARMONTHDAY_REGEX + r'_m-.*\.nc$'),
+                utils.create_datetime,
+                lambda time: (time, time + relativedelta(months=1))
+            ),
+        ],
     }
 
     @staticmethod
@@ -312,12 +356,12 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
     def create_parameter_list(parameters):
         """ Convert list with standard names into list with Pythesing dicts """
         if parameters:
-            return [pti.get_cf_standard_name(cf_parameter) for cf_parameter in parameters]
+            return [utils.get_cf_or_wkv_standard_name(cf_parameter) for cf_parameter in parameters]
 
     def get_dataset_parameters(self, raw_attributes):
         """ return list with different parameter(s) from cf_standard_name """
         return self.create_parameter_list(self.find_matching_value(
-            self.urls_dsp, raw_attributes)) or []
+            self.urls_dataset_parameters, raw_attributes)) or []
 
     def get_location_geometry(self, raw_attributes):
         """ returns the suitable location geometry based on the filename """

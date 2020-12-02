@@ -1,4 +1,4 @@
-FROM nansencenter/nansat_base:1.2.2
+FROM nansencenter/nansat_base:2.0.2
 
 RUN pip install --no-cache-dir \
     django==3.0 \
