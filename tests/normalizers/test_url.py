@@ -1195,3 +1195,83 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         self.assertIsNone(self.normalizer.get_time_coverage_start({'none-url': 'ftp://test/'}))
         self.assertIsNone(self.normalizer.get_location_geometry({'none-url': 'ftp://test/'}))
         self.assertIsNone(self.normalizer.get_entry_id({'none-url': 'ftp://test/'}))
+
+    def test_summary_jaxa_l2(self):
+        """summary from URLMetadataNormalizer """
+        attributes = {
+            'url': 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L2.SST'}
+        self.assertEqual(
+            self.normalizer.get_summary(attributes), 'Processing level: 2')
+
+    def test_summary_jaxa_l3(self):
+        """summary from URLMetadataNormalizer """
+        attributes = {
+            'url': 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25'}
+        self.assertEqual(
+            self.normalizer.get_summary(attributes), 'Processing level: 3')
+
+    def test_summary_remss(self):
+        """summary from URLMetadataNormalizer """
+        attributes = {'url': 'ftp://ftp.remss.com/gmi/bmaps_v08.2/y2014/m06/'}
+        self.assertEqual(
+            self.normalizer.get_summary(attributes),
+            'Description: GMI is a dual-polarization, multi-channel, conical-scanning, passive '
+            'microwave radiometer with frequent revisit times.;Processing level: 3'
+        )
+
+    def test_summary_ceda(self):
+        """summary from URLMetadataNormalizer """
+        attributes = {
+            'url': 'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1/D365-ESACCI-L4_GHRSST-SSTdepth-OSTIA-GLOB_CDR2.1-v02.0-fv01.0.nc'}
+        self.assertEqual(
+            self.normalizer.get_summary(attributes),
+            'Description: This v2.1 SST_cci Climatology Data Record (CDR) consists of Level 4 daily'
+            ' climatology files gridded on a 0.05 degree grid.;Processing level: 4'
+        )
+
+    def test_summary_global_analysis_forecast_phy_001_024(self):
+        """summary from URLMetadataNormalizer """
+        attributes = {
+            'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024'}
+        self.assertEqual(
+            self.normalizer.get_summary(attributes),
+            'Description: The Operational Mercator global ocean analysis and forecast system at '
+            '1/12 degree is providing 10 days of 3D global ocean forecasts updated daily.;'
+            'Processing level: 4;'
+            'Product: GLOBAL_ANALYSIS_FORECAST_PHY_001_024'
+        )
+
+    def test_summary_multiobs_glo_phy_nrt_015_003(self):
+        """summary from URLMetadataNormalizer """
+        attributes = {
+            'url': 'ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003'}
+        self.assertEqual(
+            self.normalizer.get_summary(attributes),
+            'Description: This product is a NRT L4 global total velocity field at 0m and 15m.;'
+            'Processing level: 4;'
+            'Product: MULTIOBS_GLO_PHY_NRT_015_003'
+        )
+
+    def test_summary_sealevel_glo_phy_l4_nrt_observations_008_046(self):
+        """summary from URLMetadataNormalizer """
+        attributes = {
+            'url': 'ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046'}
+        self.assertEqual(
+            self.normalizer.get_summary(attributes),
+            'Description: Altimeter satellite gridded Sea Level Anomalies (SLA) computed with '
+            'respect to a twenty-year mean.;'
+            'Processing level: 4;'
+            'Product: SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046'
+        )
+
+    def test_summary_medsea_analysis_forecast_phy_006_013(self):
+        """Should return the proper summary"""
+        attributes = {'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/'}
+        self.assertEqual(
+            self.normalizer.get_summary(attributes),
+            'Description: The physical component of the Mediterranean Forecasting System '
+            '(Med-Currents) is a coupled hydrodynamic-wave model implemented over the whole '
+            'Mediterranean Basin.;'
+            'Processing level: 4;'
+            'Product: MEDSEA_ANALYSIS_FORECAST_PHY_006_013'
+        )
