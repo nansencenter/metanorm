@@ -139,23 +139,40 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
                 {'url': 'ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003/dataset-uv-nrt-hourly/2020/09/dataset-uv-nrt-hourly_20200906T0000Z_P20200912T0000.nc'}),
             datetime(year=2020, month=9, day=6, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
-    def test_time_coverage_start_medsea_analysis_forecast_phy_006_013_day(self):
-        """Should return the proper starting time"""
-        urls = [
-            'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/med00-cmcc-cur-an-fc-d/2020/06/20200601_d-CMCC--RFVL-MFSeas5-MEDATL-b20200616_an-sv06.00.nc',
-            'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/med00-cmcc-cur-an-fc-h/2020/06/20200601_h-CMCC--RFVL-MFSeas5-MEDATL-b20200616_an-sv06.00.nc',
-            'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/med00-cmcc-cur-an-fc-hts/2020/06/20200601_hts-CMCC--RFVL-MFSeas5-MEDATL-b20200616_an-sv06.00.nc'
-        ]
-        for url in urls:
-            self.assertEqual(
-                self.normalizer.get_time_coverage_start({'url': url}),
-                datetime(year=2020, month=6, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
+    def test_time_coverage_start_medsea_analysis_forecast_phy_006_013_daily_mean(self):
+        """Should return the proper starting time for a daily mean file"""
+        url = ('ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/'
+               'med00-cmcc-cur-an-fc-d/2020/06/'
+               '20200601_d-CMCC--RFVL-MFSeas5-MEDATL-b20200616_an-sv06.00.nc')
+        self.assertEqual(
+            self.normalizer.get_time_coverage_start({'url': url}),
+            datetime(year=2020, month=6, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
+
+    def test_time_coverage_start_medsea_analysis_forecast_phy_006_013_hourly_mean(self):
+        """Should return the proper starting time for an hourly mean file"""
+        url = ('ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/'
+               'med00-cmcc-cur-an-fc-h/2020/06/'
+               '20200601_h-CMCC--RFVL-MFSeas5-MEDATL-b20200616_an-sv06.00.nc')
+        self.assertEqual(
+            self.normalizer.get_time_coverage_start({'url': url}),
+            datetime(year=2020, month=6, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
+
+    def test_time_coverage_start_medsea_analysis_forecast_phy_006_013_hourly_mean_hts(self):
+        """Should return the proper starting time for an hts hourly mean file"""
+        url = ('ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/'
+               'med00-cmcc-cur-an-fc-hts/2020/06/'
+               '20200601_hts-CMCC--RFVL-MFSeas5-MEDATL-b20200616_an-sv06.00.nc')
+        self.assertEqual(
+            self.normalizer.get_time_coverage_start({'url': url}),
+            datetime(year=2020, month=6, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_start_medsea_analysis_forecast_phy_006_013_month(self):
         """Should return the proper starting time"""
         self.assertEqual(
             self.normalizer.get_time_coverage_start(
-                {'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/med00-cmcc-cur-an-fc-m/2020/20200601_m-CMCC--RFVL-MFSeas5-MEDATL-b20200714_an-sv06.00.nc'}),
+                {'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/'
+                        'med00-cmcc-cur-an-fc-m/2020/'
+                        '20200601_m-CMCC--RFVL-MFSeas5-MEDATL-b20200714_an-sv06.00.nc'}),
             datetime(year=2020, month=6, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_end_remss_single_day_file(self):
@@ -284,23 +301,40 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
                 {'url': 'ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003/dataset-uv-nrt-hourly/2020/09/dataset-uv-nrt-hourly_20200906T0000Z_P20200918T0000.nc'}),
             datetime(year=2020, month=9, day=7, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
-    def test_time_coverage_end_medsea_analysis_forecast_phy_006_013_day(self):
-        """Should return the proper ending time"""
-        urls = [
-            'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/med00-cmcc-cur-an-fc-d/2020/06/20200601_d-CMCC--RFVL-MFSeas5-MEDATL-b20200616_an-sv06.00.nc',
-            'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/med00-cmcc-cur-an-fc-h/2020/06/20200601_h-CMCC--RFVL-MFSeas5-MEDATL-b20200616_an-sv06.00.nc',
-            'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/med00-cmcc-cur-an-fc-hts/2020/06/20200601_hts-CMCC--RFVL-MFSeas5-MEDATL-b20200616_an-sv06.00.nc'
-        ]
-        for url in urls:
-            self.assertEqual(
-                self.normalizer.get_time_coverage_end({'url': url}),
-                datetime(year=2020, month=6, day=2, hour=0, minute=0, second=0, tzinfo=tzutc()))
+    def test_time_coverage_end_medsea_analysis_forecast_phy_006_013_daily_mean(self):
+        """Should return the proper ending time for a daily mean file"""
+        url = ('ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/'
+               'med00-cmcc-cur-an-fc-d/2020/06/'
+               '20200601_d-CMCC--RFVL-MFSeas5-MEDATL-b20200616_an-sv06.00.nc')
+        self.assertEqual(
+            self.normalizer.get_time_coverage_end({'url': url}),
+            datetime(year=2020, month=6, day=2, hour=0, minute=0, second=0, tzinfo=tzutc()))
+
+    def test_time_coverage_end_medsea_analysis_forecast_phy_006_013_hourly_mean(self):
+        """Should return the proper ending time for an hourly mean file"""
+        url = ('ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/'
+               'med00-cmcc-cur-an-fc-h/2020/06/'
+               '20200601_h-CMCC--RFVL-MFSeas5-MEDATL-b20200616_an-sv06.00.nc')
+        self.assertEqual(
+            self.normalizer.get_time_coverage_end({'url': url}),
+            datetime(year=2020, month=6, day=2, hour=0, minute=0, second=0, tzinfo=tzutc()))
+
+    def test_time_coverage_end_medsea_analysis_forecast_phy_006_013_hourly_mean_hts(self):
+        """Should return the proper ending time for an hts hourly mean file"""
+        url = ('ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/'
+               'med00-cmcc-cur-an-fc-hts/2020/06/'
+               '20200601_hts-CMCC--RFVL-MFSeas5-MEDATL-b20200616_an-sv06.00.nc')
+        self.assertEqual(
+            self.normalizer.get_time_coverage_end({'url': url}),
+            datetime(year=2020, month=6, day=2, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_end_medsea_analysis_forecast_phy_006_013_month(self):
         """Should return the proper ending time"""
         self.assertEqual(
             self.normalizer.get_time_coverage_end(
-                {'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/med00-cmcc-cur-an-fc-m/2020/20200601_m-CMCC--RFVL-MFSeas5-MEDATL-b20200714_an-sv06.00.nc'}),
+                {'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/'
+                        'med00-cmcc-cur-an-fc-m/2020/'
+                        '20200601_m-CMCC--RFVL-MFSeas5-MEDATL-b20200714_an-sv06.00.nc'}),
             datetime(year=2020, month=7, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
     def test_instrument_jaxa(self):
