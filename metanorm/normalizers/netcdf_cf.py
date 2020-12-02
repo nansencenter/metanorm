@@ -2,7 +2,6 @@
 
 import logging
 
-import pythesint as pti
 import metanorm.utils as utils
 from .base import BaseMetadataNormalizer
 
