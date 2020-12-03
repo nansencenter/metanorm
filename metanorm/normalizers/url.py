@@ -25,7 +25,8 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
             'Earth Observation satellites',
         "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003": 'Earth Observation satellites',
         "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024": 'OPERATIONAL MODELS',
-        "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013": 'OPERATIONAL MODELS'
+        "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013": 'OPERATIONAL MODELS',
+        "ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001": 'OPERATIONAL MODELS'
     }
 
     urls_instruments = {
@@ -36,7 +37,8 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
         "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046": 'altimeters',
         "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003": 'altimeters',
         "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024": 'computer',
-        "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013": 'computer'
+        "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013": 'computer',
+        "ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001": 'computer'
     }
 
     urls_provider = {
@@ -46,7 +48,8 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
         "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046": 'cmems',
         "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003": 'cmems',
         "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024": 'cmems',
-        "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013": 'cmems'
+        "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013": 'cmems',
+        "ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001": 'cmems'
     }
 
     WORLD_WIDE_COVERAGE_WKT = 'POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))'
@@ -60,7 +63,9 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
         "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003": WORLD_WIDE_COVERAGE_WKT,
         "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024": WORLD_WIDE_COVERAGE_WKT,
         "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013":
-            'POLYGON((-17.29 45.98, -17.29 30.18, 36.30 30.18, 36.30 45.98, -17.29 45.98))'
+            'POLYGON((-17.29 45.98, -17.29 30.18, 36.30 30.18, 36.30 45.98, -17.29 45.98))',
+        "ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001":
+            'POLYGON((-19 56, 5 56, 5 26, -19 26, -19 56))'
     }
 
     urls_title = {
@@ -82,7 +87,9 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
         "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024":
             'GLOBAL OCEAN 1_12 PHYSICS ANALYSIS AND FORECAST UPDATED DAILY',
         "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013":
-            'Mediterranean Forecasting System (hydrodynamic-wave model)'
+            'Mediterranean Forecasting System (hydrodynamic-wave model)',
+        "ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001":
+            'Atlantic-Iberian Biscay Irish-Ocean Physics Analysis and Forecast'
     }
 
     NC_H5_FILENAME_MATCHER = re.compile(r"([^/]+)\.(nc|h5)(\.gz)?$")
@@ -90,11 +97,11 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
         "https://thredds.met.no/thredds/": re.compile(r"([^/]+)\.nc(\.dods)?$"),
         "https://opendap.jpl.nasa.gov/opendap/": NC_H5_FILENAME_MATCHER,
         "ftp://ftp.remss.com/gmi": re.compile(r"([^/]+)\.gz$"),
-        "ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/":
-            NC_H5_FILENAME_MATCHER,
+        "ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/": NC_H5_FILENAME_MATCHER,
         "ftp://nrt.cmems-du.eu/Core/": NC_H5_FILENAME_MATCHER,
         "ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/":
-            NC_H5_FILENAME_MATCHER
+            NC_H5_FILENAME_MATCHER,
+        "ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001": NC_H5_FILENAME_MATCHER
     }
 
     urls_summary = {
@@ -152,6 +159,16 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
                 'Mediterranean Basin.',
                 utils.SUMMARY_FIELDS['processing_level']: '4',
                 utils.SUMMARY_FIELDS['product']: 'MEDSEA_ANALYSIS_FORECAST_PHY_006_013'
+            }),
+        'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001':
+            utils.dict_to_string({
+                utils.SUMMARY_FIELDS['description']:
+                    'The operational IBI (Iberian Biscay Irish) Ocean Analysis and Forecasting'
+                    ' system provides a 5-day hydrodynamic forecast including high frequency '
+                    'processes of paramount importance to characterize regional scale marine '
+                    'processes.',
+                utils.SUMMARY_FIELDS['processing_level']: '4',
+                utils.SUMMARY_FIELDS['product']: 'IBI_ANALYSIS_FORECAST_PHYS_005_001'
             }),
     }
 
@@ -226,6 +243,49 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
         "MEDSEA_ANALYSIS_FORECAST_PHY_006_013-statics/MED-MFC_006_013_coordinates.nc": [
             'cell_thickness'
         ],
+        "ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001/" +
+        "dataset-ibi-analysis-forecast-phys-005-001-15min/": [
+            'sea_surface_height_above_geoid',
+            'eastward_sea_water_velocity',
+            'northward_sea_water_velocity'
+        ],
+        "ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001/" +
+        "dataset-ibi-analysis-forecast-phys-005-001-daily/": [
+            'sea_water_potential_temperature',
+            'sea_water_salinity',
+            'eastward_sea_water_velocity',
+            'northward_sea_water_velocity',
+            'sea_surface_height_above_geoid',
+            'ocean_mixed_layer_thickness_defined_by_sigma_theta',
+            'sea_water_potential_temperature_at_sea_floor'
+        ],
+        "ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001/" +
+        "dataset-ibi-analysis-forecast-phys-005-001-hourly/": [
+            'sea_water_potential_temperature',
+            'eastward_sea_water_velocity',
+            'northward_sea_water_velocity',
+            'barotropic_eastward_sea_water_velocity',
+            'barotropic_northward_sea_water_velocity',
+            'sea_surface_height_above_geoid',
+            'ocean_mixed_layer_thickness_defined_by_sigma_theta'
+        ],
+        "ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001/" +
+        "dataset-ibi-analysis-forecast-phys-005-001-hourly3d/": [
+            'sea_water_potential_temperature',
+            'sea_water_salinity',
+            'eastward_sea_water_velocity',
+            'northward_sea_water_velocity'
+        ],
+        "ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001/" +
+        "dataset-ibi-analysis-forecast-phys-005-001-monthly/": [
+            'sea_water_potential_temperature',
+            'sea_water_salinity',
+            'eastward_sea_water_velocity',
+            'northward_sea_water_velocity',
+            'sea_surface_height_above_geoid',
+            'ocean_mixed_layer_thickness_defined_by_sigma_theta',
+            'sea_water_potential_temperature_at_sea_floor'
+        ]
     }
 
     # See the docstring of find_time_coverage() to get
@@ -328,6 +388,22 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
                 lambda time: (time, time + relativedelta(months=1))
             ),
         ],
+        'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001': [
+            (
+                re.compile(
+                    r'/CMEMS_v4r1_IBI_PHY_NRT_PdE_(15minav|01dav|01hav(3D)?)_' +
+                    utils.YEARMONTHDAY_REGEX + r'_.*\.nc$'
+                ),
+                utils.create_datetime,
+                lambda time: (time, time + relativedelta(days=1))
+            ),
+            (
+                re.compile(
+                    r'/CMEMS_v4r1_IBI_PHY_NRT_PdE_01mav_' + utils.YEARMONTHDAY_REGEX + r'_.*\.nc$'),
+                utils.create_datetime,
+                lambda time: (time, time + relativedelta(months=1))
+            ),
+        ]
     }
 
     @staticmethod
