@@ -31,7 +31,7 @@ class ACDDMetadataNormalizer(BaseMetadataNormalizer):
             summary_fields.append(f"Description: {raw_attributes['summary']}")
 
             if 'processing_level' in raw_attributes.keys():
-                processing_level = raw_attributes['processing_level'].lstrip('L')
+                processing_level = raw_attributes['processing_level'].lstrip('Ll')
                 summary_fields.append(f"Processing level: {processing_level}")
 
             return ';'.join(summary_fields)
