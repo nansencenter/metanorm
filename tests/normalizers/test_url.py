@@ -13,6 +13,120 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
     def setUpClass(cls):
         cls.normalizer = normalizers.URLMetadataNormalizer([], [])
 
+    DATASET_PARAMETERS = {
+        'sea_surface_height_above_geoid': OrderedDict([
+            ('standard_name', 'sea_surface_height_above_geoid'),
+            ('canonical_units', 'm'),
+            ('grib', ''),
+            ('amip', ''),
+            ('description',
+             'The geoid is a surface of constant geopotential with which mean sea level would '
+             'coincide if the ocean were at rest. (The volume enclosed between the geoid and the '
+             'sea floor equals the mean volume of water in the ocean.) In an ocean GCM the geoid '
+             'is the surface of zero depth, or the rigid lid if the model uses that approximation. '
+             '"Sea surface height" is a time-varying quantity. By definition of the geoid, the '
+             'global average of the time-mean sea surface height (i.e. mean sea level) above the '
+             'geoid must be zero. The standard name for the height of the sea surface above mean '
+             'sea level is sea_surface_height_above_sea_level. The standard name for the height of '
+             'the sea surface above the reference ellipsoid is '
+             'sea_surface_height_above_reference_ellipsoid.')
+        ]),
+        'eastward_sea_water_velocity': OrderedDict([
+            ('standard_name', 'eastward_sea_water_velocity'),
+            ('canonical_units', 'm s-1'),
+            ('grib', '49'),
+            ('amip', ''),
+            ('description',
+             'A velocity is a vector quantity. "Eastward" indicates a vector component which is '
+             'positive when directed eastward (negative westward).')
+        ]),
+        'northward_sea_water_velocity': OrderedDict([
+            ('standard_name', 'northward_sea_water_velocity'),
+            ('canonical_units', 'm s-1'),
+            ('grib', '50'),
+            ('amip', ''),
+            ('description',
+             'A velocity is a vector quantity. "Northward" indicates a vector component which is '
+             'positive when directed northward (negative southward).')
+        ]),
+        'sea_water_potential_temperature': OrderedDict([
+            ('standard_name', 'sea_water_potential_temperature'),
+            ('canonical_units', 'K'),
+            ('grib', ''),
+            ('amip', ''),
+            ('description',
+             'Potential temperature is the temperature a parcel of air or sea water would have if '
+             'moved adiabatically to sea level pressure.')
+        ]),
+        'sea_water_potential_temperature_at_sea_floor': OrderedDict([
+            ('standard_name', 'sea_water_potential_temperature_at_sea_floor'),
+            ('long_name', 'Bottom temperature'),
+            ('short_name', 'bottomT'),
+            ('units', 'celsius'),
+            ('minmax', '1 40'),
+            ('colormap', 'jet')
+        ]),
+        'sea_water_salinity': OrderedDict([
+            ('standard_name', 'sea_water_salinity'),
+            ('canonical_units', '1e-3'),
+            ('grib', '88'),
+            ('amip', 'so'),
+            ('description',
+             'Sea water salinity is the salt content of sea water, often on the Practical Salinity '
+             'Scale of 1978. However, the unqualified term \'salinity\' is generic and does not '
+             'necessarily imply any particular method of calculation. The units of salinity are '
+             'dimensionless and the units attribute should normally be given as 1e-3 or 0.001 i.e. '
+             'parts per thousand. There are standard names for the more precisely defined salinity '
+             'quantities: sea_water_knudsen_salinity, S_K (used for salinity observations between '
+             '1901 and 1966),  sea_water_cox_salinity, S_C (used for salinity observations between '
+             '1967 and 1977), sea_water_practical_salinity, S_P (used for salinity observations '
+             'from 1978 to the present day), sea_water_absolute_salinity, S_A, '
+             'sea_water_preformed_salinity, S_*, and sea_water_reference_salinity. Practical '
+             'Salinity is reported on the Practical Salinity Scale of 1978 (PSS-78), and is '
+             'usually based on the electrical conductivity of sea water in observations since the '
+             '1960s. Conversion of data between the observed scales follows: '
+             'S_P = (S_K - 0.03) * (1.80655 / 1.805) and S_P = S_C, however the accuracy of the '
+             'latter is dependent on whether chlorinity or conductivity was used to determine the '
+             'S_C value, with this inconsistency driving the development of PSS-78. The more '
+             'precise standard names should be used where appropriate for both modelled and '
+             'observed salinities. In particular, the use of sea_water_salinity to describe '
+             'salinity observations made from 1978 onwards is now deprecated in favor of the term '
+             'sea_water_practical_salinity which is the salinity quantity stored by national data '
+             'centers for post-1978 observations. The only exception to this is where the observed '
+             'salinities are definitely known not to be recorded on the Practical Salinity Scale. '
+             'The unit "parts per thousand" was used for sea_water_knudsen_salinity and '
+             'sea_water_cox_salinity.')
+        ]),
+        'ocean_mixed_layer_thickness_defined_by_sigma_theta': OrderedDict([
+            ('standard_name', 'ocean_mixed_layer_thickness_defined_by_sigma_theta'),
+            ('canonical_units', 'm'),
+            ('grib', ''),
+            ('amip', ''),
+            ('description',
+             'The ocean mixed layer is the upper part of the ocean, regarded as being well-mixed. '
+             'The base of the mixed layer defined by temperature, sigma or sigma_theta is the level'
+             ' at which the quantity indicated differs from its surface value by a certain amount.')
+        ]),
+        'barotropic_eastward_sea_water_velocity': OrderedDict([
+            ('standard_name', 'barotropic_eastward_sea_water_velocity'),
+            ('canonical_units', 'm s-1'),
+            ('grib', ''),
+            ('amip', ''),
+            ('description',
+             'A velocity is a vector quantity. "Eastward" indicates a vector component which is '
+             'positive when directed eastward (negative westward).')
+        ]),
+        'barotropic_northward_sea_water_velocity': OrderedDict([
+            ('standard_name', 'barotropic_northward_sea_water_velocity'),
+            ('canonical_units', 'm s-1'),
+            ('grib', ''),
+            ('amip', ''),
+            ('description',
+             'A velocity is a vector quantity. "Northward" indicates a vector component which is '
+             'positive when directed northward (negative southward).')
+        ]),
+    }
+
     def test_time_coverage_start_remss_month_file(self):
         """shall return the propert starting time for hardcoded normalizer """
         self.assertEqual(
@@ -174,6 +288,56 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
                         'med00-cmcc-cur-an-fc-m/2020/'
                         '20200601_m-CMCC--RFVL-MFSeas5-MEDATL-b20200714_an-sv06.00.nc'}),
             datetime(year=2020, month=6, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
+
+    def test_time_coverage_start_ibi_analysis_forecast_phys_005_001_15min(self):
+        """Should return the proper starting time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_start({
+                'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001/'
+                       'dataset-ibi-analysis-forecast-phys-005-001-15min/2020/03/'
+                       'CMEMS_v4r1_IBI_PHY_NRT_PdE_15minav_20200301_20200301_R20200309_HC05.nc'
+            }),
+            datetime(year=2020, month=3, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
+
+    def test_time_coverage_start_ibi_analysis_forecast_phys_005_001_daily(self):
+        """Should return the proper starting time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_start({
+                'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001/'
+                       'dataset-ibi-analysis-forecast-phys-005-001-daily/2020/03/'
+                       'CMEMS_v4r1_IBI_PHY_NRT_PdE_01dav_20200301_20200301_R20200309_HC05.nc'
+            }),
+            datetime(year=2020, month=3, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
+
+    def test_time_coverage_start_ibi_analysis_forecast_phys_005_001_hourly(self):
+        """Should return the proper starting time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_start({
+                'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001/'
+                       'dataset-ibi-analysis-forecast-phys-005-001-hourly/2020/03/'
+                       'CMEMS_v4r1_IBI_PHY_NRT_PdE_01hav_20200301_20200301_R20200309_HC05.nc'
+            }),
+            datetime(year=2020, month=3, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
+
+    def test_time_coverage_start_ibi_analysis_forecast_phys_005_001_hourly3d(self):
+        """Should return the proper starting time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_start({
+                'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001/'
+                       'dataset-ibi-analysis-forecast-phys-005-001-hourly3d/2020/11/'
+                       'CMEMS_v4r1_IBI_PHY_NRT_PdE_01hav3D_20201124_20201124_R20201125_HC01.nc'
+            }),
+            datetime(year=2020, month=11, day=24, hour=0, minute=0, second=0, tzinfo=tzutc()))
+
+    def test_time_coverage_start_ibi_analysis_forecast_phys_005_001_monthly(self):
+        """Should return the proper starting time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_start({
+                'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001/'
+                       'dataset-ibi-analysis-forecast-phys-005-001-monthly/2020/'
+                       'CMEMS_v4r1_IBI_PHY_NRT_PdE_01mav_20200301_20200331_R20200331_HC01.nc'
+            }),
+            datetime(year=2020, month=3, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_end_remss_single_day_file(self):
         """shall return the propert end time for hardcoded normalizer """
@@ -337,6 +501,56 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
                         '20200601_m-CMCC--RFVL-MFSeas5-MEDATL-b20200714_an-sv06.00.nc'}),
             datetime(year=2020, month=7, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
+    def test_time_coverage_end_ibi_analysis_forecast_phys_005_001_15min(self):
+        """Should return the proper ending time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_end({
+                'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001/'
+                       'dataset-ibi-analysis-forecast-phys-005-001-15min/2020/03/'
+                       'CMEMS_v4r1_IBI_PHY_NRT_PdE_15minav_20200301_20200301_R20200309_HC05.nc'
+            }),
+            datetime(year=2020, month=3, day=2, hour=0, minute=0, second=0, tzinfo=tzutc()))
+
+    def test_time_coverage_end_ibi_analysis_forecast_phys_005_001_daily(self):
+        """Should return the proper ending time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_end({
+                'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001/'
+                       'dataset-ibi-analysis-forecast-phys-005-001-daily/2020/03/'
+                       'CMEMS_v4r1_IBI_PHY_NRT_PdE_01dav_20200301_20200301_R20200309_HC05.nc'
+            }),
+            datetime(year=2020, month=3, day=2, hour=0, minute=0, second=0, tzinfo=tzutc()))
+
+    def test_time_coverage_end_ibi_analysis_forecast_phys_005_001_hourly(self):
+        """Should return the proper ending time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_end({
+                'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001/'
+                       'dataset-ibi-analysis-forecast-phys-005-001-hourly/2020/03/'
+                       'CMEMS_v4r1_IBI_PHY_NRT_PdE_01hav_20200301_20200301_R20200309_HC05.nc'
+            }),
+            datetime(year=2020, month=3, day=2, hour=0, minute=0, second=0, tzinfo=tzutc()))
+
+    def test_time_coverage_end_ibi_analysis_forecast_phys_005_001_hourly3d(self):
+        """Should return the proper ending time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_end({
+                'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001/'
+                       'dataset-ibi-analysis-forecast-phys-005-001-hourly3d/2020/11/'
+                       'CMEMS_v4r1_IBI_PHY_NRT_PdE_01hav3D_20201124_20201124_R20201125_HC01.nc'
+            }),
+            datetime(year=2020, month=11, day=25, hour=0, minute=0, second=0, tzinfo=tzutc()))
+
+    def test_time_coverage_end_ibi_analysis_forecast_phys_005_001_monthly(self):
+        """Should return the proper ending time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_end({
+                'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001/'
+                       'dataset-ibi-analysis-forecast-phys-005-001-monthly/2020/'
+                       'CMEMS_v4r1_IBI_PHY_NRT_PdE_01mav_20200301_20200331_R20200331_HC01.nc'
+            }),
+            datetime(year=2020, month=4, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
+
     def test_instrument_jaxa(self):
         """instrument from URLMetadataNormalizer """
         attributes = {
@@ -433,6 +647,19 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
                          ('Long_Name', 'Computer')])
         )
 
+    def test_instrument_ibi_analysis_forecast_phys_005_001(self):
+        """Should return the proper instrument"""
+        attributes = {'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001/'}
+        self.assertEqual(
+            self.normalizer.get_instrument(attributes),
+            OrderedDict([('Category', 'In Situ/Laboratory Instruments'),
+                         ('Class', 'Data Analysis'),
+                         ('Type', 'Environmental Modeling'),
+                         ('Subtype', ''),
+                         ('Short_Name', 'Computer'),
+                         ('Long_Name', 'Computer')])
+        )
+
     def test_platform_jaxa(self):
         """platform from URLMetadataNormalizer """
         attributes = {
@@ -507,6 +734,17 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
     def test_platform_medsea_analysis_forecast_phy_006_013(self):
         """Should return the proper platform"""
         attributes = {'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/'}
+        self.assertEqual(
+            self.normalizer.get_platform(attributes),
+            OrderedDict([('Category', 'Models/Analyses'),
+                         ('Series_Entity', ''),
+                         ('Short_Name', 'OPERATIONAL MODELS'),
+                         ('Long_Name', '')])
+        )
+
+    def test_platform_ibi_analysis_forecast_phys_005_001(self):
+        """Should return the proper platform"""
+        attributes = {'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001/'}
         self.assertEqual(
             self.normalizer.get_platform(attributes),
             OrderedDict([('Category', 'Models/Analyses'),
@@ -616,6 +854,20 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
                          ('Short_Name','CMEMS'),
                          ('Long_Name','Copernicus - Marine Environment Monitoring Service'),
                          ('Data_Center_URL','')])
+        )
+
+    def test_provider_ibi_analysis_forecast_phys_005_001(self):
+        """Should return the proper provider"""
+        attributes = {'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001/'}
+        self.assertEqual(
+            self.normalizer.get_provider(attributes),
+            OrderedDict([('Bucket_Level0', 'MULTINATIONAL ORGANIZATIONS'),
+                         ('Bucket_Level1', ''),
+                         ('Bucket_Level2', ''),
+                         ('Bucket_Level3', ''),
+                         ('Short_Name', 'CMEMS'),
+                         ('Long_Name', 'Copernicus - Marine Environment Monitoring Service'),
+                         ('Data_Center_URL', '')])
         )
 
     def test_dataset_parameters_jaxa(self):
@@ -989,6 +1241,85 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
             ]
         )
 
+    def test_dataset_parameters_ibi_analysis_forecast_phys_005_001_15min(self):
+        """Should return the proper dataset parameters"""
+        attributes = {
+            'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001/'
+                   'dataset-ibi-analysis-forecast-phys-005-001-15min/2020/03/'
+                   'CMEMS_v4r1_IBI_PHY_NRT_PdE_15minav_20200301_20200301_R20200309_HC05.nc'
+        }
+        self.assertListEqual(self.normalizer.get_dataset_parameters(attributes), [
+            self.DATASET_PARAMETERS['sea_surface_height_above_geoid'],
+            self.DATASET_PARAMETERS['eastward_sea_water_velocity'],
+            self.DATASET_PARAMETERS['northward_sea_water_velocity']
+        ])
+
+    def test_dataset_parameters_ibi_analysis_forecast_phys_005_001_daily(self):
+        """Should return the proper dataset parameters"""
+        attributes = {
+            'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001/'
+                   'dataset-ibi-analysis-forecast-phys-005-001-daily/2020/03/'
+                   'CMEMS_v4r1_IBI_PHY_NRT_PdE_01dav_20200301_20200301_R20200309_HC05.nc'
+        }
+        self.assertListEqual(self.normalizer.get_dataset_parameters(attributes), [
+            self.DATASET_PARAMETERS['sea_water_potential_temperature'],
+            self.DATASET_PARAMETERS['sea_water_salinity'],
+            self.DATASET_PARAMETERS['eastward_sea_water_velocity'],
+            self.DATASET_PARAMETERS['northward_sea_water_velocity'],
+            self.DATASET_PARAMETERS['sea_surface_height_above_geoid'],
+            self.DATASET_PARAMETERS['ocean_mixed_layer_thickness_defined_by_sigma_theta'],
+            self.DATASET_PARAMETERS['sea_water_potential_temperature_at_sea_floor'],
+        ])
+
+    def test_dataset_parameters_ibi_analysis_forecast_phys_005_001_hourly(self):
+        """Should return the proper dataset parameters"""
+        attributes = {
+            'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001/'
+                   'dataset-ibi-analysis-forecast-phys-005-001-hourly/2020/03/'
+                   'CMEMS_v4r1_IBI_PHY_NRT_PdE_01hav_20200301_20200301_R20200309_HC05.nc'
+        }
+        self.assertListEqual(self.normalizer.get_dataset_parameters(attributes), [
+            self.DATASET_PARAMETERS['sea_water_potential_temperature'],
+            self.DATASET_PARAMETERS['eastward_sea_water_velocity'],
+            self.DATASET_PARAMETERS['northward_sea_water_velocity'],
+            self.DATASET_PARAMETERS['barotropic_eastward_sea_water_velocity'],
+            self.DATASET_PARAMETERS['barotropic_northward_sea_water_velocity'],
+            self.DATASET_PARAMETERS['sea_surface_height_above_geoid'],
+            self.DATASET_PARAMETERS['ocean_mixed_layer_thickness_defined_by_sigma_theta'],
+
+        ])
+
+    def test_dataset_parameters_ibi_analysis_forecast_phys_005_001_hourly3d(self):
+        """Should return the proper dataset parameters"""
+        attributes = {
+            'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001/'
+                   'dataset-ibi-analysis-forecast-phys-005-001-hourly3d/2020/11/'
+                   'CMEMS_v4r1_IBI_PHY_NRT_PdE_01hav3D_20201124_20201124_R20201125_HC01.nc'
+        }
+        self.assertListEqual(self.normalizer.get_dataset_parameters(attributes), [
+            self.DATASET_PARAMETERS['sea_water_potential_temperature'],
+            self.DATASET_PARAMETERS['sea_water_salinity'],
+            self.DATASET_PARAMETERS['eastward_sea_water_velocity'],
+            self.DATASET_PARAMETERS['northward_sea_water_velocity'],
+        ])
+
+    def test_dataset_parameters_ibi_analysis_forecast_phys_005_001_monthly(self):
+        """Should return the proper dataset parameters"""
+        attributes = {
+            'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001/'
+                   'dataset-ibi-analysis-forecast-phys-005-001-monthly/2020/'
+                   'CMEMS_v4r1_IBI_PHY_NRT_PdE_01mav_20200301_20200331_R20200331_HC01.nc'
+        }
+        self.assertListEqual(self.normalizer.get_dataset_parameters(attributes), [
+            self.DATASET_PARAMETERS['sea_water_potential_temperature'],
+            self.DATASET_PARAMETERS['sea_water_salinity'],
+            self.DATASET_PARAMETERS['eastward_sea_water_velocity'],
+            self.DATASET_PARAMETERS['northward_sea_water_velocity'],
+            self.DATASET_PARAMETERS['sea_surface_height_above_geoid'],
+            self.DATASET_PARAMETERS['ocean_mixed_layer_thickness_defined_by_sigma_theta'],
+            self.DATASET_PARAMETERS['sea_water_potential_temperature_at_sea_floor'],
+        ])
+
     def test_entry_title_jaxa(self):
         """entry_title from URLMetadataNormalizer """
         attributes = {
@@ -1036,6 +1367,14 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         self.assertEqual(
             self.normalizer.get_entry_title(attributes),
             'Mediterranean Forecasting System (hydrodynamic-wave model)'
+        )
+
+    def test_entry_title_ibi_analysis_forecast_phys_005_001(self):
+        """Should return the proper entry_title"""
+        attributes = {'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001/'}
+        self.assertEqual(
+            self.normalizer.get_entry_title(attributes),
+            'Atlantic-Iberian Biscay Irish-Ocean Physics Analysis and Forecast'
         )
 
     def test_entry_id_jaxa(self):
@@ -1105,6 +1444,18 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
             '20190706_hts-CMCC--PSAL-MFSeas5-MEDATL-b20190101_an-sv06.00'
         )
 
+    def test_entry_id_ibi_analysis_forecast_phys_005_001(self):
+        """Should return the proper entry_id"""
+        attributes = {
+            'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001/'
+                   'dataset-ibi-analysis-forecast-phys-005-001-monthly/2020/'
+                   'CMEMS_v4r1_IBI_PHY_NRT_PdE_01mav_20200301_20200331_R20200331_HC01.nc'
+        }
+        self.assertEqual(
+            self.normalizer.get_entry_id(attributes),
+            'CMEMS_v4r1_IBI_PHY_NRT_PdE_01mav_20200301_20200331_R20200331_HC01'
+        )
+
     def test_geometry_jaxa_the_first_type_of_sst(self):
         """geometry from URLMetadataNormalizer """
         attributes = {
@@ -1166,6 +1517,14 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         self.assertEqual(
             self.normalizer.get_location_geometry(attributes),
             'POLYGON((-17.29 45.98, -17.29 30.18, 36.30 30.18, 36.30 45.98, -17.29 45.98))'
+        )
+
+    def test_geometry_ibi_analysis_forecast_phys_005_001(self):
+        """Should return the proper geometry"""
+        attributes = {'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001/'}
+        self.assertEqual(
+            self.normalizer.get_location_geometry(attributes),
+            'POLYGON((-19 56, 5 56, 5 26, -19 26, -19 56))'
         )
 
     def test_none_for_incorrect_ftp_resource(self):
@@ -1274,4 +1633,17 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
             'Mediterranean Basin.;'
             'Processing level: 4;'
             'Product: MEDSEA_ANALYSIS_FORECAST_PHY_006_013'
+        )
+
+    def test_summary_ibi_analysis_forecast_phys_005_001(self):
+        """Should return the proper summary"""
+        attributes = {'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001/'}
+        self.assertEqual(
+            self.normalizer.get_summary(attributes),
+            'Description: The operational IBI (Iberian Biscay Irish) Ocean Analysis and Forecasting'
+            ' system provides a 5-day hydrodynamic forecast including high frequency '
+            'processes of paramount importance to characterize regional scale marine '
+            'processes.;'
+            'Processing level: 4;'
+            'Product: IBI_ANALYSIS_FORECAST_PHYS_005_001'
         )
