@@ -10,6 +10,14 @@ import pythesint as pti
 UNKNOWN = 'Unknown'
 
 
+# Field names commonly used in the 'summary' attribute
+SUMMARY_FIELDS = {
+    'description': 'Description',
+    'processing_level': 'Processing level',
+    'product': 'Product',
+}
+
+
 def get_gcmd_provider(potential_provider_attributes, additional_keywords=None):
     """
     Get a GCMD provider from a name and/or URL, otherwise return None
@@ -183,3 +191,16 @@ def create_datetime(year, month=1, day=1, day_of_year=None, hour=0, minute=0, se
         month = int(month)
         day = int(day)
         return datetime(year, month, day, hour, minute, second).replace(tzinfo=tzutc())
+
+
+def dict_to_string(dictionary):
+    """Returns a string representation of the dictionary argument.
+    The following dictionary:
+    {'key1': 'value1', 'key2': 'value2'}
+    Will be represented as:
+    "key1: value1;key2: value2"
+    """
+    string = ''
+    for key, value in dictionary.items():
+        string += f"{key}: {value};"
+    return string.rstrip(';')

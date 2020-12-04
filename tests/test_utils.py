@@ -54,3 +54,16 @@ class TimeTestCase(unittest.TestCase):
             re.match(utils.YEARMONTHDAY_REGEX, '20201017').groupdict(),
             {'year': '2020', 'month': '10', 'day': '17'}
         )
+
+class UtilsTestCase(unittest.TestCase):
+    """Test case for utils functions"""
+    def test_dict_to_string(self):
+        """dict_to_string() should return the proper representation"""
+        self.assertEqual(
+            utils.dict_to_string({'key1': 'value1', 'key2': 'value2'}),
+            'key1: value1;key2: value2'
+        )
+
+    def test_empty_dict_to_string(self):
+        """The representation of an empty dict is an empty string"""
+        self.assertEqual(utils.dict_to_string({}), '')
