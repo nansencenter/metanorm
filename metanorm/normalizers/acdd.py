@@ -25,16 +25,16 @@ class ACDDMetadataNormalizer(BaseMetadataNormalizer):
 
     def get_summary(self, raw_attributes):
         """Get the dataset's summary"""
-        summary_fields = []
+        summary_fields = {}
 
         if 'summary' in raw_attributes.keys():
-            summary_fields.append(f"Description: {raw_attributes['summary']}")
+            summary_fields[utils.SUMMARY_FIELDS['description']] = raw_attributes['summary']
 
             if 'processing_level' in raw_attributes.keys():
                 processing_level = raw_attributes['processing_level'].lstrip('Ll')
-                summary_fields.append(f"Processing level: {processing_level}")
+                summary_fields[utils.SUMMARY_FIELDS['processing_level']] = processing_level
 
-            return ';'.join(summary_fields)
+            return utils.dict_to_string(summary_fields)
         else:
             return None
 

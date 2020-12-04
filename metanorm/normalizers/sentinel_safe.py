@@ -27,22 +27,22 @@ class SentinelSAFEMetadataNormalizer(BaseMetadataNormalizer):
     def get_summary(self, raw_attributes):
         """Get the dataset's summary"""
         description_attributes = ['Date', 'Instrument name', 'Mode', 'Satellite', 'Size']
-        summary_fields = []
+        summary_fields = {}
         if set(description_attributes).intersection(raw_attributes.keys()):
             description = ', '.join([
                 f"{attribute}={raw_attributes[attribute]}"
                 for attribute in description_attributes
                 if attribute in list(raw_attributes.keys())
             ])
-            summary_fields.append(f"Description: {description}")
+            summary_fields[utils.SUMMARY_FIELDS['description']] = description
 
             for attribute_name in ['Processing level', 'Product level']:
                 if attribute_name in raw_attributes.keys():
                     processing_level = re.match(
                         '^(L|Level-)?([0-9A-Z]+)$', raw_attributes[attribute_name]).group(2)
-                    summary_fields.append(f"Processing level: {processing_level}")
+                    summary_fields[utils.SUMMARY_FIELDS['processing_level']] = processing_level
 
-            return ';'.join(summary_fields)
+            return utils.dict_to_string(summary_fields)
         else:
             return None
 
