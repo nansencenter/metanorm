@@ -1,4 +1,4 @@
-"""Normalizer for the ACDD convention"""
+"""Normalizer for the Sentinel SAFE convention, used by Scihub"""
 
 import logging
 import re
@@ -15,7 +15,7 @@ LOGGER.addHandler(logging.NullHandler())
 
 
 class SentinelSAFEMetadataNormalizer(BaseMetadataNormalizer):
-    """Generate the properties of a GeoSPaaS Dataset using ACDD attributes"""
+    """Generate the properties of a GeoSPaaS Dataset using Sentinel SAFE attributes"""
 
     def get_entry_title(self, raw_attributes):
         """Get the dataset's title"""
