@@ -137,7 +137,7 @@ class CreodiasEOFinderMetadataNormalizerTestCase(unittest.TestCase):
     def test_entry_id(self):
         """entry_id from CreodiasEOFinderMetadataNormalizer """
         attributes = {
-            'url': "https://finder.creodias.eu/foo",
+            'url': "https://zipper.creodias.eu/foo",
             'title': 'id_value'
         }
         self.assertEqual(self.normalizer.get_entry_id(attributes), 'id_value')
