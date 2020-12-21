@@ -49,6 +49,33 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
              'A velocity is a vector quantity. "Northward" indicates a vector component which is '
              'positive when directed northward (negative southward).')
         ]),
+        'sea_water_temperature': OrderedDict([
+            ('standard_name', 'sea_water_temperature'),
+            ('canonical_units', 'K'),
+            ('grib', '80'),
+            ('amip', 'to'),
+            ('description',
+             'Sea water temperature is the in situ temperature of the sea water. To specify the '
+             'depth at which the temperature applies use a vertical coordinate variable or scalar '
+             'coordinate variable. There are standard names for sea_surface_temperature, '
+             'sea_surface_skin_temperature, sea_surface_subskin_temperature and '
+             'sea_surface_foundation_temperature which can be used to describe data located at the '
+             'specified surfaces. For observed data, depending on the period during which the '
+             'observation was made, the measured in situ temperature was recorded against standard '
+             '"scales". These historical scales include the International Practical Temperature '
+             'Scale of 1948 (IPTS-48; 1948-1967), the International Practical Temperature Scale of '
+             '1968 (IPTS-68, Barber, 1969; 1968-1989) and the International Temperature Scale of '
+             '1990 (ITS-90, Saunders 1990; 1990 onwards). Conversion of data between these scales '
+             'follows t68 = t48 - (4.4 x 10e-6) * t48(100 - t - 48); t90 = 0.99976 * t68. '
+             'Observations made prior to 1948 (IPTS-48) have not been documented and therefore a '
+             'conversion cannot be certain. Differences between t90 and t68 can be up to 0.01 at '
+             'temperatures of 40 C and above; differences of 0.002-0.007 occur across the standard '
+             'range of ocean temperatures (-10 - 30 C). The International Equation of State of '
+             'Seawater 1980 (EOS-80, UNESCO, 1981) and the Practical Salinity Scale (PSS-78) were '
+             'both based on IPTS-68, while the Thermodynamic Equation of Seawater 2010 (TEOS-10) is'
+             ' based on ITS-90. References: Barber, 1969, doi: 10.1088/0026-1394/5/2/001; UNESCO, '
+             '1981; Saunders, 1990, WOCE Newsletter, 10, September 1990.')
+        ]),
         'sea_water_potential_temperature': OrderedDict([
             ('standard_name', 'sea_water_potential_temperature'),
             ('canonical_units', 'K'),
@@ -555,6 +582,42 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
             }),
             datetime(year=2020, month=3, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
+    def test_time_coverage_start_hycom_region_000(self):
+        """Should return the proper starting time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_start({
+                'url': 'ftp://ftp.opc.ncep.noaa.gov/grids/operational/GLOBALHYCOM/Navy/'
+                       'hycom_glb_regp01_2020121900_t000.nc.gz'
+            }),
+            datetime(year=2020, month=12, day=19, hour=0, minute=0, second=0, tzinfo=tzutc()))
+
+    def test_time_coverage_start_hycom_region_009(self):
+        """Should return the proper starting time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_start({
+                'url': 'ftp://ftp.opc.ncep.noaa.gov/grids/operational/GLOBALHYCOM/Navy/'
+                       'hycom_glb_regp01_2020121900_t009.nc.gz'
+            }),
+            datetime(year=2020, month=12, day=19, hour=9, minute=0, second=0, tzinfo=tzutc()))
+
+    def test_time_coverage_start_hycom_region_027(self):
+        """Should return the proper starting time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_start({
+                'url': 'ftp://ftp.opc.ncep.noaa.gov/grids/operational/GLOBALHYCOM/Navy/'
+                       'hycom_glb_regp01_2020121900_t027.nc.gz'
+            }),
+            datetime(year=2020, month=12, day=20, hour=3, minute=0, second=0, tzinfo=tzutc()))
+
+    def test_time_coverage_start_hycom_sfc(self):
+        """Should return the proper starting time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_start({
+                'url': 'ftp://ftp.opc.ncep.noaa.gov/grids/operational/GLOBALHYCOM/Navy/'
+                       'hycom_glb_sfc_u_2020121900_t003.nc.gz'
+            }),
+            datetime(year=2020, month=12, day=19, hour=3, minute=0, second=0, tzinfo=tzutc()))
+
     def test_time_coverage_end_remss_single_day_file(self):
         """shall return the propert end time for hardcoded normalizer """
         self.assertEqual(
@@ -767,6 +830,42 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
             }),
             datetime(year=2020, month=4, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
+    def test_time_coverage_end_hycom_region_000(self):
+        """Should return the proper ending time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_end({
+                'url': 'ftp://ftp.opc.ncep.noaa.gov/grids/operational/GLOBALHYCOM/Navy/'
+                       'hycom_glb_regp01_2020121900_t000.nc.gz'
+            }),
+            datetime(year=2020, month=12, day=19, hour=3, minute=0, second=0, tzinfo=tzutc()))
+
+    def test_time_coverage_end_hycom_region_009(self):
+        """Should return the proper ending time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_end({
+                'url': 'ftp://ftp.opc.ncep.noaa.gov/grids/operational/GLOBALHYCOM/Navy/'
+                       'hycom_glb_regp01_2020121900_t009.nc.gz'
+            }),
+            datetime(year=2020, month=12, day=19, hour=12, minute=0, second=0, tzinfo=tzutc()))
+
+    def test_time_coverage_end_hycom_region_027(self):
+        """Should return the proper ending time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_end({
+                'url': 'ftp://ftp.opc.ncep.noaa.gov/grids/operational/GLOBALHYCOM/Navy/'
+                       'hycom_glb_regp01_2020121900_t027.nc.gz'
+            }),
+            datetime(year=2020, month=12, day=20, hour=6, minute=0, second=0, tzinfo=tzutc()))
+
+    def test_time_coverage_end_hycom_sfc(self):
+        """Should return the proper starting time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_end({
+                'url': 'ftp://ftp.opc.ncep.noaa.gov/grids/operational/GLOBALHYCOM/Navy/'
+                       'hycom_glb_sfc_u_2020121900_t003.nc.gz'
+            }),
+            datetime(year=2020, month=12, day=19, hour=6, minute=0, second=0, tzinfo=tzutc()))
+
     def test_instrument_jaxa(self):
         """instrument from URLMetadataNormalizer """
         attributes = {
@@ -876,6 +975,19 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
                          ('Long_Name', 'Computer')])
         )
 
+    def test_instrument_hycom(self):
+        """Should return the proper instrument"""
+        attributes = {'url': 'ftp://ftp.opc.ncep.noaa.gov/grids/operational/GLOBALHYCOM/Navy/'}
+        self.assertEqual(
+            self.normalizer.get_instrument(attributes),
+            OrderedDict([('Category', 'In Situ/Laboratory Instruments'),
+                         ('Class', 'Data Analysis'),
+                         ('Type', 'Environmental Modeling'),
+                         ('Subtype', ''),
+                         ('Short_Name', 'Computer'),
+                         ('Long_Name', 'Computer')])
+        )
+
     def test_platform_jaxa(self):
         """platform from URLMetadataNormalizer """
         attributes = {
@@ -961,6 +1073,17 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
     def test_platform_ibi_analysis_forecast_phys_005_001(self):
         """Should return the proper platform"""
         attributes = {'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001/'}
+        self.assertEqual(
+            self.normalizer.get_platform(attributes),
+            OrderedDict([('Category', 'Models/Analyses'),
+                         ('Series_Entity', ''),
+                         ('Short_Name', 'OPERATIONAL MODELS'),
+                         ('Long_Name', '')])
+        )
+
+    def test_platform_hycom(self):
+        """Should return the proper platform"""
+        attributes = {'url': 'ftp://ftp.opc.ncep.noaa.gov/grids/operational/GLOBALHYCOM/Navy/'}
         self.assertEqual(
             self.normalizer.get_platform(attributes),
             OrderedDict([('Category', 'Models/Analyses'),
@@ -1084,6 +1207,23 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
                          ('Short_Name', 'CMEMS'),
                          ('Long_Name', 'Copernicus - Marine Environment Monitoring Service'),
                          ('Data_Center_URL', '')])
+        )
+
+    def test_provider_hycom(self):
+        """Should return the proper provider"""
+        attributes = {'url': 'ftp://ftp.opc.ncep.noaa.gov/grids/operational/GLOBALHYCOM/Navy/'}
+        self.assertEqual(
+            self.normalizer.get_provider(attributes),
+            OrderedDict([
+                ('Bucket_Level0', 'GOVERNMENT AGENCIES-U.S. FEDERAL AGENCIES'),
+                ('Bucket_Level1', 'DOC'),
+                ('Bucket_Level2', 'NOAA'),
+                ('Bucket_Level3', ''),
+                ('Short_Name', 'DOC/NOAA/NWS/NCEP'),
+                ('Long_Name',
+                 'National Centers for Environmental Prediction, National Weather Service, NOAA, '
+                 'U.S. Department of Commerce'),
+                ('Data_Center_URL', 'http://www.ncep.noaa.gov/')])
         )
 
     def test_dataset_parameters_jaxa(self):
@@ -1313,6 +1453,17 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
             self.DATASET_PARAMETERS['sea_water_potential_temperature_at_sea_floor'],
         ])
 
+    def test_dataset_parameters_hycom_region(self):
+        """Should return the proper dataset parameters"""
+        attributes = {'url': 'ftp://ftp.opc.ncep.noaa.gov/grids/operational/GLOBALHYCOM/Navy/'}
+        self.assertListEqual(self.normalizer.get_dataset_parameters(attributes), [
+            self.DATASET_PARAMETERS['sea_water_salinity'],
+            self.DATASET_PARAMETERS['sea_water_temperature'],
+            self.DATASET_PARAMETERS['sea_surface_height_above_geoid'],
+            self.DATASET_PARAMETERS['eastward_sea_water_velocity'],
+            self.DATASET_PARAMETERS['northward_sea_water_velocity'],
+        ])
+
     def test_entry_title_jaxa(self):
         """entry_title from URLMetadataNormalizer """
         attributes = {
@@ -1368,6 +1519,14 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         self.assertEqual(
             self.normalizer.get_entry_title(attributes),
             'Atlantic-Iberian Biscay Irish-Ocean Physics Analysis and Forecast'
+        )
+
+    def test_entry_title_hycom(self):
+        """Should return the proper entry_title"""
+        attributes = {'url': 'ftp://ftp.opc.ncep.noaa.gov/grids/operational/GLOBALHYCOM/Navy/'}
+        self.assertEqual(
+            self.normalizer.get_entry_title(attributes),
+            'Global Hybrid Coordinate Ocean Model (HYCOM)'
         )
 
     def test_entry_id_jaxa(self):
@@ -1449,6 +1608,28 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
             'CMEMS_v4r1_IBI_PHY_NRT_PdE_01mav_20200301_20200331_R20200331_HC01'
         )
 
+    def test_entry_id_hycom_region(self):
+        """Should return the proper entry_id"""
+        attributes = {
+            'url': 'ftp://ftp.opc.ncep.noaa.gov/grids/operational/GLOBALHYCOM/Navy/'
+                   'hycom_glb_regp17_2020122000_t168.nc.gz'
+        }
+        self.assertEqual(
+            self.normalizer.get_entry_id(attributes),
+            'hycom_glb_regp17_2020122000_t168'
+        )
+
+    def test_entry_id_hycom_sfc(self):
+        """Should return the proper entry_id"""
+        attributes = {
+            'url': 'ftp://ftp.opc.ncep.noaa.gov/grids/operational/GLOBALHYCOM/Navy/'
+                   'hycom_glb_sfc_u_2020121900_t000.nc.gz'
+        }
+        self.assertEqual(
+            self.normalizer.get_entry_id(attributes),
+            'hycom_glb_sfc_u_2020121900_t000'
+        )
+
     def test_geometry_jaxa_the_first_type_of_sst(self):
         """geometry from URLMetadataNormalizer """
         attributes = {
@@ -1518,6 +1699,61 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         self.assertEqual(
             self.normalizer.get_location_geometry(attributes),
             'POLYGON((-19 56, 5 56, 5 26, -19 26, -19 56))'
+        )
+
+    def test_geometry_hycom_region1(self):
+        """Should return the proper geometry"""
+        attributes = {
+            'url': 'ftp://ftp.opc.ncep.noaa.gov/grids/operational/GLOBALHYCOM/Navy/'
+                   'hycom_glb_regp01_2020121900_t030.nc.gz'
+        }
+        self.assertEqual(
+            self.normalizer.get_location_geometry(attributes),
+            'POLYGON((-100.04 70.04, -100.04 -0.04, -49.96 -0.04, -49.96 70.04, -100.04 70.04))'
+        )
+
+    def test_geometry_hycom_region6(self):
+        """Should return the proper geometry"""
+        attributes = {
+            'url': 'ftp://ftp.opc.ncep.noaa.gov/grids/operational/GLOBALHYCOM/Navy/'
+                   'hycom_glb_regp06_2020121900_t030.nc.gz'
+        }
+        self.assertEqual(
+            self.normalizer.get_location_geometry(attributes),
+            'POLYGON((149.96 70.04, 149.96 9.96, 210.04 9.96, 210.04 70.04, 149.96 70.04))'
+        )
+
+    def test_geometry_hycom_region7(self):
+        """Should return the proper geometry"""
+        attributes = {
+            'url': 'ftp://ftp.opc.ncep.noaa.gov/grids/operational/GLOBALHYCOM/Navy/'
+                   'hycom_glb_regp07_2020121900_t030.nc.gz'
+        }
+        self.assertEqual(
+            self.normalizer.get_location_geometry(attributes),
+            'POLYGON((-150.04 60.04, -150.04 9.96, -99.96 9.96, -99.96 60.04, -150.04 60.04))'
+        )
+
+    def test_geometry_hycom_region17(self):
+        """Should return the proper geometry"""
+        attributes = {
+            'url': 'ftp://ftp.opc.ncep.noaa.gov/grids/operational/GLOBALHYCOM/Navy/'
+                   'hycom_glb_regp17_2020121900_t030.nc.gz'
+        }
+        self.assertEqual(
+            self.normalizer.get_location_geometry(attributes),
+            'POLYGON((-180.04 80.02,-180.04 59.98,-119.96 59.98,-119.96 80.02,-180.04 80.02))'
+        )
+
+    def test_geometry_hycom_sfc(self):
+        """Should return the proper geometry"""
+        attributes = {
+            'url': 'ftp://ftp.opc.ncep.noaa.gov/grids/operational/GLOBALHYCOM/Navy/'
+                   'hycom_glb_sfc_u_2020121900_t030.nc.gz'
+        }
+        self.assertEqual(
+            self.normalizer.get_location_geometry(attributes),
+            'POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))'
         )
 
     def test_none_for_incorrect_ftp_resource(self):
@@ -1639,4 +1875,18 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
             'processes.;'
             'Processing level: 4;'
             'Product: IBI_ANALYSIS_FORECAST_PHYS_005_001'
+        )
+
+    def test_summary_hycom(self):
+        """Should return the proper summary"""
+        attributes = {'url': 'ftp://ftp.opc.ncep.noaa.gov/grids/operational/GLOBALHYCOM/Navy/'}
+        self.assertEqual(
+            self.normalizer.get_summary(attributes),
+            'Description: This system provides 4-day forecasts at 3-hour time steps, updated at '
+            '00Z daily. Navy Global HYCOM has a resolution of 1/12 degree in the horizontal and '
+            'uses hybrid (isopycnal/sigma/z-level) coordinates in the vertical. The output is '
+            'interpolated onto a regular 1/12-degree grid horizontally and 40 standard depth '
+            'levels.;'
+            'Processing level: 4;'
+            'Product: HYCOM'
         )
