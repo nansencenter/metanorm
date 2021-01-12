@@ -43,7 +43,7 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
 
     urls_provider = {
         'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1': 'ESA/CCI',
-        "ftp://ftp.remss.com/gmi/": 'NASA/GSFC/SED/ESD/LA/GPM',
+        "ftp://ftp.remss.com/": 'Remote Sensing Systems',
         "ftp://ftp.gportal.jaxa.jp/standard": 'JP/JAXA/EOC',
         "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046": 'cmems',
         "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003": 'cmems',

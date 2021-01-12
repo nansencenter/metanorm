@@ -989,14 +989,14 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         attributes = {'url': 'ftp://ftp.remss.com/gmi/bmaps_v08.2/y2014/m06/'}
         self.assertEqual(
             self.normalizer.get_provider(attributes),
-            OrderedDict([('Bucket_Level0', 'GOVERNMENT AGENCIES-U.S. FEDERAL AGENCIES'),
-                         ('Bucket_Level1', 'NASA'),
+            OrderedDict([('Bucket_Level0', 'COMMERCIAL'),
+                         ('Bucket_Level1', ''),
                          ('Bucket_Level2', ''),
                          ('Bucket_Level3', ''),
-                         ('Short_Name', 'NASA/GSFC/SED/ESD/LA/GPM'),
-                         ('Long_Name', 'GPM Project Office, Laboratory for Atmospheres, Earth Sciences Division, Science and Exploration Directorate, Goddard Space Flight Center, NASA'),
-                         ('Data_Center_URL', 'https://pmm.nasa.gov/')])
-        )
+                         ('Short_Name', 'RSS'),
+                         ('Long_Name', 'Remote Sensing Systems'),
+                         ('Data_Center_URL', 'http://www.remss.com/')])
+    )
 
     def test_provider_ceda(self):
         """provider from URLMetadataNormalizer """
