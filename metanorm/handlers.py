@@ -55,6 +55,7 @@ class GeospatialMetadataHandler(MetadataHandler):
         normalizers.CreodiasEOFinderMetadataNormalizer,
         normalizers.ACDDMetadataNormalizer,
         normalizers.OSISAFMetadataNormalizer,
+        normalizers.CMEMSInSituTACMetadataNormalizer,
         normalizers.GeoSpatialWellKnownMetadataNormalizer,
         normalizers.GeoSpatialDefaultMetadataNormalizer,
     ]
