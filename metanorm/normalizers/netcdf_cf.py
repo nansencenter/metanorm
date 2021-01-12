@@ -21,7 +21,7 @@ class NETCDFCFMetadataNormalizer(BaseMetadataNormalizer):
                 try:
                     result = utils.get_cf_or_wkv_standard_name(raw_parameter_name)
                 except IndexError:
-                    pass
+                    LOGGER.warning("%s parameter could not be normalized")
                 else:
                     standardized_dataset_parameters.append(result)
             return standardized_dataset_parameters
