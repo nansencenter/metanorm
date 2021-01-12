@@ -316,9 +316,9 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
         "ftp://ftp.opc.ncep.noaa.gov/grids/operational/GLOBALHYCOM/Navy/": [
             'sea_water_salinity',
             'sea_water_temperature',
-            # 'sea_water_salinity_at_bottom', TODO: is it important?
-            # 'sea_water_temperature_at_bottom', TODO: is it important?
-            'sea_surface_height_above_geoid', #TODO: original name: "Water Surface Elevation". Confirm with Anton.
+            'sea_water_salinity_at_bottom',
+            'sea_water_temperature_at_bottom',
+            'sea_surface_height_above_geoid',
             'eastward_sea_water_velocity',
             'northward_sea_water_velocity',
         ]

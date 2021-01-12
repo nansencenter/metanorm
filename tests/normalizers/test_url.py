@@ -367,7 +367,23 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
             ('description',
             ('"Thickness" means the vertical extent of a layer. '
              '"Cell" refers to a model grid-cell.'))
-        ])
+        ]),
+        'sea_water_salinity_at_bottom': OrderedDict([
+            ('standard_name', 'sea_water_salinity_at_bottom'),
+            ('long_name', 'Sea water salinity at bottom'),
+            ('short_name', 'salinity_bottom'),
+            ('units', 'psu'),
+            ('minmax', '0 50'),
+            ('colormap', 'jet')
+        ]),
+        'sea_water_temperature_at_bottom': OrderedDict([
+            ('standard_name', 'sea_water_temperature_at_bottom'),
+            ('long_name', 'Sea water temperature at bottom'),
+            ('short_name', 'water_temp_bottom'),
+            ('units', 'celsius'),
+            ('minmax', '-2 40'),
+            ('colormap', 'jet')
+        ]),
     }
 
     def test_time_coverage_start_remss_month_file(self):
@@ -1459,6 +1475,8 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         self.assertListEqual(self.normalizer.get_dataset_parameters(attributes), [
             self.DATASET_PARAMETERS['sea_water_salinity'],
             self.DATASET_PARAMETERS['sea_water_temperature'],
+            self.DATASET_PARAMETERS['sea_water_salinity_at_bottom'],
+            self.DATASET_PARAMETERS['sea_water_temperature_at_bottom'],
             self.DATASET_PARAMETERS['sea_surface_height_above_geoid'],
             self.DATASET_PARAMETERS['eastward_sea_water_velocity'],
             self.DATASET_PARAMETERS['northward_sea_water_velocity'],
