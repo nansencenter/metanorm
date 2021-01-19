@@ -54,9 +54,9 @@ class SentinelOneIdentifierMetadataNormalizerTestCase(unittest.TestCase):
             result_normalization['platform'],
             OrderedDict([
                 ('Category', 'Earth Observation Satellites'),
-                ('Series_Entity', 'SENTINEL-1'),
-                ('Short_Name', 'SENTINEL-1A'),
-                ('Long_Name', 'SENTINEL-1A')
+                ('Series_Entity', 'Sentinel-1'),
+                ('Short_Name', 'Sentinel-1A'),
+                ('Long_Name', 'Sentinel-1A')
             ])
         )
 

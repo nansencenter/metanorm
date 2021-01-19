@@ -131,9 +131,9 @@ class SentinelSAFEMetadataNormalizerTestCase(unittest.TestCase):
         self.assertEqual(
             self.normalizer.get_platform(attributes),
             OrderedDict([('Category', 'Earth Observation Satellites'),
-                         ('Series_Entity', 'SENTINEL-1'),
-                         ('Short_Name', 'SENTINEL-1B'),
-                         ('Long_Name', 'SENTINEL-1B')])
+                         ('Series_Entity', 'Sentinel-1'),
+                         ('Short_Name', 'Sentinel-1B'),
+                         ('Long_Name', 'Sentinel-1B')])
         )
 
     def test_non_gcmd_platform(self):

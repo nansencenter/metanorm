@@ -70,9 +70,9 @@ class CreodiasEOFinderMetadataNormalizerTestCase(unittest.TestCase):
         self.assertEqual(
             self.normalizer.get_platform({'platform': 'S1A'}),
             OrderedDict([('Category', 'Earth Observation Satellites'),
-                         ('Series_Entity', 'SENTINEL-1'),
-                         ('Short_Name', 'SENTINEL-1A'),
-                         ('Long_Name', 'SENTINEL-1A')]),
+                         ('Series_Entity', 'Sentinel-1'),
+                         ('Short_Name', 'Sentinel-1A'),
+                         ('Long_Name', 'Sentinel-1A')]),
         )
 
     def test_platform_missing_attribute(self):
