@@ -1832,7 +1832,8 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         self.assertEqual(
             self.normalizer.get_summary(attributes),
             'Description: This v2.1 SST_cci Climatology Data Record (CDR) consists of Level 4 daily'
-            ' climatology files gridded on a 0.05 degree grid.;Processing level: 4'
+            ' climatology files gridded on a 0.05 degree grid.;Processing level: 4;'
+            'Product: ESA SST CCI Climatology'
         )
 
     def test_summary_global_analysis_forecast_phy_001_024(self):

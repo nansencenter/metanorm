@@ -127,7 +127,8 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
                     'This v2.1 SST_cci Climatology Data Record (CDR) consists of Level 4 daily'
                     ' climatology files gridded on a 0.05 degree grid.'
                 ),
-                utils.SUMMARY_FIELDS['processing_level']: '4'
+                utils.SUMMARY_FIELDS['processing_level']: '4',
+                utils.SUMMARY_FIELDS['product']: 'ESA SST CCI Climatology'
             }),
         'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L2':
             utils.dict_to_string({
