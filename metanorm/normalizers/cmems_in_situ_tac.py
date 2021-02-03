@@ -1,6 +1,7 @@
 """Normalizer for the Copernicus In Situ TAC metadata convention"""
 
 import logging
+import re
 from collections import OrderedDict
 
 import dateutil.parser
@@ -17,28 +18,34 @@ class CMEMSInSituTACMetadataNormalizer(BaseMetadataNormalizer):
     CMEMS In Situ TAC attributes
     """
 
+    def matches_identifier(self, raw_attributes):
+        """Check that the dataset's id matches CMEMS in situ TAC data"""
+        identifier = raw_attributes.get('id', '')
+        return bool(re.match('^[A-Z]{2}_[A-Z]{2}_[A-Z]{2}(_[^_]+){1,2}$', identifier))
+
     def get_entry_id(self, raw_attributes):
         """Get the dataset's entry ID"""
-        return raw_attributes.get('id')
+        if self.matches_identifier(raw_attributes):
+            return raw_attributes.get('id')
+        return None
 
     def get_summary(self, raw_attributes):
         """Get the dataset's summary"""
-        description = None
-        if 'summary' in raw_attributes:
-            description = raw_attributes['summary']
-        elif (set('author', 'title').issubset(raw_attributes)
-                and raw_attributes['author'] == 'Coriolis and Copernicus data provider'
-                and raw_attributes['title'] == 'Global Ocean - In Situ Observation Copernicus'):
-            description = (
-                'Global Ocean - near real-time (NRT) in situ quality controlled observations, '
-                'hourly updated and distributed by INSTAC within 24-48 hours from acquisition '
-                'in average. Data are collected mainly through global networks '
-                '(Argo, OceanSites, GOSUD, EGO) and through the GTS'
-            )
+        if self.matches_identifier(raw_attributes):
+            description = None
+            raw_summary = raw_attributes.get('summary')
+            if raw_summary:
+                description = raw_summary
+            else:
+                description = (
+                    'Global Ocean - near real-time (NRT) in situ quality controlled observations, '
+                    'hourly updated and distributed by INSTAC within 24-48 hours from acquisition '
+                    'in average. Data are collected mainly through global networks '
+                    '(Argo, OceanSites, GOSUD, EGO) and through the GTS'
+                )
 
-        if description:
             return utils.dict_to_string({
-                utils.SUMMARY_FIELDS['description']: description,
+                utils.SUMMARY_FIELDS['description']: description or '',
                 utils.SUMMARY_FIELDS['processing_level']: '2',
                 utils.SUMMARY_FIELDS['product']: 'INSITU_GLO_NRT_OBSERVATIONS_013_030'
             })
@@ -46,15 +53,19 @@ class CMEMSInSituTACMetadataNormalizer(BaseMetadataNormalizer):
 
     def get_time_coverage_start(self, raw_attributes):
         """Get the start of time coverage from the attributes"""
-        return dateutil.parser.parse(raw_attributes.get('time_coverage_start'))
+        if self.matches_identifier(raw_attributes):
+            return dateutil.parser.parse(raw_attributes.get('time_coverage_start'))
+        return None
 
     def get_time_coverage_end(self, raw_attributes):
         """Get the end of time coverage from the attributes"""
-        return dateutil.parser.parse(raw_attributes.get('time_coverage_end'))
+        if self.matches_identifier(raw_attributes):
+            return dateutil.parser.parse(raw_attributes.get('time_coverage_end'))
+        return None
 
     def get_platform(self, raw_attributes):
         """Get the platform from the attributes"""
-        if raw_attributes.get('author') == 'Coriolis and Copernicus data provider':
+        if self.matches_identifier(raw_attributes):
             return OrderedDict([
                 ('Category', 'In Situ Ocean-based Platforms'),
                 ('Series_Entity', ''),
@@ -65,7 +76,7 @@ class CMEMSInSituTACMetadataNormalizer(BaseMetadataNormalizer):
 
     def get_instrument(self, raw_attributes):
         """Get the instrument from the attributes'"""
-        if raw_attributes.get('author') == 'Coriolis and Copernicus data provider':
+        if self.matches_identifier(raw_attributes):
             return OrderedDict([
                 ('Category', 'In Situ/Laboratory Instruments'),
                 ('Class', ''),
@@ -78,8 +89,12 @@ class CMEMSInSituTACMetadataNormalizer(BaseMetadataNormalizer):
 
     def get_location_geometry(self, raw_attributes):
         """Returns a GeoJSON string corresponding to the location of the dataset"""
-        return raw_attributes.get('geometry')
+        if self.matches_identifier(raw_attributes):
+            return raw_attributes.get('geometry')
+        return None
 
     def get_provider(self, raw_attributes):
         """Returns a GCMD-like provider data structure"""
-        return utils.get_gcmd_provider('cmems')
+        if self.matches_identifier(raw_attributes):
+            return utils.get_gcmd_provider('cmems')
+        return None
