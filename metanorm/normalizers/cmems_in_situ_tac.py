@@ -5,6 +5,7 @@ import re
 from collections import OrderedDict
 
 import dateutil.parser
+import pythesint as pti
 
 import metanorm.utils as utils
 
@@ -66,25 +67,13 @@ class CMEMSInSituTACMetadataNormalizer(BaseMetadataNormalizer):
     def get_platform(self, raw_attributes):
         """Get the platform from the attributes"""
         if self.matches_identifier(raw_attributes):
-            return OrderedDict([
-                ('Category', 'In Situ Ocean-based Platforms'),
-                ('Series_Entity', ''),
-                ('Short_Name', ''),
-                ('Long_Name', '')
-            ])
+            return pti.get_gcmd_platform('In Situ Ocean-based Platforms')
         return None
 
     def get_instrument(self, raw_attributes):
         """Get the instrument from the attributes'"""
         if self.matches_identifier(raw_attributes):
-            return OrderedDict([
-                ('Category', 'In Situ/Laboratory Instruments'),
-                ('Class', ''),
-                ('Type', ''),
-                ('Subtype', ''),
-                ('Short_Name', ''),
-                ('Long_Name', '')
-            ])
+            return pti.get_gcmd_instrument('In Situ/Laboratory Instruments')
         return None
 
     def get_location_geometry(self, raw_attributes):
@@ -96,5 +85,5 @@ class CMEMSInSituTACMetadataNormalizer(BaseMetadataNormalizer):
     def get_provider(self, raw_attributes):
         """Returns a GCMD-like provider data structure"""
         if self.matches_identifier(raw_attributes):
-            return utils.get_gcmd_provider('cmems')
+            return pti.get_gcmd_provider('cmems')
         return None
