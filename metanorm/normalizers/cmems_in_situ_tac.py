@@ -88,7 +88,7 @@ class CMEMSInSituTACMetadataNormalizer(BaseMetadataNormalizer):
         return None
 
     def get_location_geometry(self, raw_attributes):
-        """Returns a GeoJSON string corresponding to the location of the dataset"""
+        """Passes on the "geometry" attribute if it is present"""
         if self.matches_identifier(raw_attributes):
             return raw_attributes.get('geometry')
         return None
