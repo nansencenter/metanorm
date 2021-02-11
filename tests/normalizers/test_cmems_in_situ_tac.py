@@ -19,9 +19,9 @@ class CMEMSInSituTACMetadataNormalizerTestCase(unittest.TestCase):
         """matches_identifier() should return True if the
         id of the dataset is a CMEMS TAC id.
         """
-        self.assertTrue(self.normalizer.matches_identifier({'id': 'AB_CD_EF_foo_20201120'}))
-        self.assertTrue(self.normalizer.matches_identifier({'id': 'AB_CD_EF_Foo-Bar_20201120'}))
-        self.assertTrue(self.normalizer.matches_identifier({'id': 'AB_CD_EF_3EBE3_201812'}))
+        self.assertTrue(self.normalizer.matches_identifier({'id': 'NO_TS_TG_OsloTG_20210124'}))
+        self.assertTrue(self.normalizer.matches_identifier({'id': 'GL_TS_DB_5100628'}))
+        self.assertTrue(self.normalizer.matches_identifier({'id': 'AR_TS_MO_Blakksnes_201812'}))
 
         self.assertFalse(self.normalizer.matches_identifier({'id': 'A_B_C_D_E'}))
         self.assertFalse(self.normalizer.matches_identifier({'id': 'AB_CD_EF'}))
@@ -30,6 +30,8 @@ class CMEMSInSituTACMetadataNormalizerTestCase(unittest.TestCase):
         self.assertFalse(self.normalizer.matches_identifier({'id': 'AB_CD_34_foo_20201120'}))
         self.assertFalse(self.normalizer.matches_identifier({'id': 'AB_CD_EF_foo_20201120_'}))
         self.assertFalse(self.normalizer.matches_identifier({'id': 'AB_CD_EF_foo_20201120_bar'}))
+        self.assertFalse(self.normalizer.matches_identifier({'id': 'NO_AB_TG_OsloTG_20210124'}))
+        self.assertFalse(self.normalizer.matches_identifier({'id': 'NO_TS_AB_OsloTG_20210124'}))
 
     def test_get_entry_id(self):
         """get_entry_id() should return the id of the dataset if it is

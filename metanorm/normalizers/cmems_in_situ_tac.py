@@ -22,7 +22,9 @@ class CMEMSInSituTACMetadataNormalizer(BaseMetadataNormalizer):
     def matches_identifier(self, raw_attributes):
         """Check that the dataset's id matches CMEMS in situ TAC data"""
         identifier = raw_attributes.get('id', '')
-        return bool(re.match('^[A-Z]{2}_[A-Z]{2}_[A-Z]{2}(_[^_]+){1,2}$', identifier))
+        file_types = r'(TS|PR|TV|RV|WS)'
+        data_types = r'(BO|CT|DB|DC|FB|GL|HF|ML|MO|PF|RF|SD|SF|SM|TG|TS|VA|XB|XX)'
+        return bool(re.match(rf'^[A-Z]{{2}}_{file_types}_{data_types}(_[^_]+){{1,2}}$', identifier))
 
     def get_entry_id(self, raw_attributes):
         """Get the dataset's entry ID"""
