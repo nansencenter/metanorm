@@ -2,7 +2,6 @@
 
 import logging
 import re
-from collections import OrderedDict
 
 import dateutil.parser
 import pythesint as pti
