@@ -72,6 +72,7 @@ class CMEMSInSituTACMetadataNormalizerTestCase(unittest.TestCase):
             )
             self.assertEqual(self.normalizer.get_summary({}), default_summary)
             self.assertEqual(self.normalizer.get_summary({'summary': ''}), default_summary)
+            self.assertEqual(self.normalizer.get_summary({'summary': '  '}), default_summary)
 
     def test_get_summary_no_match(self):
         """get_summary() should return None if the id of the dataset
