@@ -73,7 +73,8 @@ class CreodiasEOFinderMetadataNormalizer(BaseMetadataNormalizer):
     def get_instrument(self, raw_attributes):
         """Get the instrument from the attributes'"""
         instrument_names = {
-            'OL': 'OLCI'
+            'OL': 'OLCI',
+            'SL': 'SLSTR'
         }
         if 'instrument' in raw_attributes:
             instrument_name = raw_attributes['instrument']
