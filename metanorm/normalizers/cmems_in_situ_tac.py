@@ -2,7 +2,6 @@
 
 import logging
 import re
-from collections import OrderedDict
 
 import dateutil.parser
 import pythesint as pti
@@ -37,7 +36,7 @@ class CMEMSInSituTACMetadataNormalizer(BaseMetadataNormalizer):
         if self.matches_identifier(raw_attributes):
             description = None
             raw_summary = raw_attributes.get('summary')
-            if raw_summary:
+            if raw_summary and raw_summary.strip():
                 description = raw_summary
             else:
                 description = (
