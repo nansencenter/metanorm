@@ -13,7 +13,6 @@ from .base import BaseMetadataNormalizer
 LOGGER = logging.getLogger(__name__)
 LOGGER.addHandler(logging.NullHandler())
 
-
 class URLMetadataNormalizer(BaseMetadataNormalizer):
     """ Normalizer for hardcoding information based on URLS """
 
@@ -28,6 +27,7 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
         "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013": 'OPERATIONAL MODELS',
         "ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001": 'OPERATIONAL MODELS',
         "ftp://ftp.opc.ncep.noaa.gov/grids/operational/GLOBALHYCOM/Navy/": 'OPERATIONAL MODELS',
+        "ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/rtofs/prod": 'OPERATIONAL MODELS',
     }
 
     urls_instruments = {
@@ -41,6 +41,7 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
         "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013": 'computer',
         "ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001": 'computer',
         "ftp://ftp.opc.ncep.noaa.gov/grids/operational/GLOBALHYCOM/Navy/": 'computer',
+        "ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/rtofs/prod": 'computer',
     }
 
     urls_provider = {
@@ -53,9 +54,36 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
         "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013": 'cmems',
         "ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001": 'cmems',
         "ftp://ftp.opc.ncep.noaa.gov/grids/operational/GLOBALHYCOM/Navy/": 'DOC/NOAA/NWS/NCEP',
+        "ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/rtofs/prod": 'DOC/NOAA/NWS/NCEP',
     }
 
     WORLD_WIDE_COVERAGE_WKT = 'POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))'
+
+    def get_rtofs_geometry(self, url):
+        """Return the right geometry for the possible RTOFS areas"""
+        if 'US_east' in url:
+            return ('POLYGON (('
+                    '-105.193603515625 0, -40.719970703125 0,'
+                    '-40.719970703125 79.74808502197266,'
+                    '-105.193603515625 79.74808502197266,'
+                    '-105.193603515625 0))')
+        elif 'US_west' in url:
+            return ('POLYGON (('
+                    '-157.9200439453125 10.02840137481689,'
+                    '-74.239990234375 10.02840137481689,'
+                    '-74.239990234375 74.57466888427734,'
+                    '-157.9200439453125 74.57466888427734,'
+                    '-157.9200439453125 10.02840137481689))')
+        elif 'alaska' in url:
+            return ('POLYGON (('
+                    '-179.1199951171875 45.77324676513672,'
+                    '-112.6572265625 45.77324676513672,'
+                    '-112.6572265625 78.41667938232422,'
+                    '-179.1199951171875 78.41667938232422,'
+                    '-179.1199951171875 45.77324676513672))')
+        else:
+            return self.WORLD_WIDE_COVERAGE_WKT
+
     urls_geometry = {
         'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/': WORLD_WIDE_COVERAGE_WKT,
         'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_10': WORLD_WIDE_COVERAGE_WKT,
@@ -79,6 +107,7 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
             'POLYGON((-180.04 80.02,-180.04 59.98,-119.96 59.98,-119.96 80.02,-180.04 80.02))',
         'ftp://ftp.opc.ncep.noaa.gov/grids/operational/GLOBALHYCOM/Navy/hycom_glb_sfc_u':
             WORLD_WIDE_COVERAGE_WKT,
+        'ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/rtofs/prod': get_rtofs_geometry,
     }
 
     urls_title = {
@@ -105,6 +134,8 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
             'Atlantic-Iberian Biscay Irish-Ocean Physics Analysis and Forecast',
         "ftp://ftp.opc.ncep.noaa.gov/grids/operational/GLOBALHYCOM/Navy/":
             'Global Hybrid Coordinate Ocean Model (HYCOM)',
+        "ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/rtofs/prod":
+            'Global operational Real-Time Ocean Forecast System',
     }
 
     NC_H5_FILENAME_MATCHER = re.compile(r"([^/]+)\.(nc|h5)(\.gz)?$")
@@ -117,7 +148,9 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
         "ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/":
             NC_H5_FILENAME_MATCHER,
         "ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001": NC_H5_FILENAME_MATCHER,
-        "ftp://ftp.opc.ncep.noaa.gov/grids/operational/GLOBALHYCOM/Navy/": NC_H5_FILENAME_MATCHER
+        "ftp://ftp.opc.ncep.noaa.gov/grids/operational/GLOBALHYCOM/Navy/": NC_H5_FILENAME_MATCHER,
+        "ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/rtofs/prod": re.compile(
+            r"(\d{8}/[^/]+)\.(nc|h5)(\.gz)?$"),
     }
 
     urls_summary = {
@@ -197,8 +230,54 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
                     '40 standard depth levels.',
                 utils.SUMMARY_FIELDS['processing_level']: '4',
                 utils.SUMMARY_FIELDS['product']: 'HYCOM'
+            }),
+        'ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/rtofs/prod':
+            utils.dict_to_string({
+                utils.SUMMARY_FIELDS['description']:
+                    "Real Time Ocean Forecast System (RTOFS) Global is a data-assimilating "
+                    "nowcast-forecast system operated by the National Weather Service's National "
+                    "Centers for Environmental Prediction (NCEP).",
+                utils.SUMMARY_FIELDS['processing_level']: '4',
+                utils.SUMMARY_FIELDS['product']: 'RTOFS'
             })
     }
+
+    def get_rtofs_parameters(self, url):
+        """Return the right parameters for RTOFS URLs"""
+        result = []
+        if 'rtofs_glo_2ds_' in url:
+            if 'diag' in url:
+                result = [
+                    'sea_surface_height_above_geoid',
+                    'barotropic_eastward_sea_water_velocity',
+                    'barotropic_northward_sea_water_velocity',
+                    'surface_boundary_layer_thickness',
+                    'ocean_mixed_layer_thickness'
+                ]
+            elif 'prog' in url:
+                result = [
+                    'eastward_sea_water_velocity',
+                    'northward_sea_water_velocity',
+                    'sea_surface_temperature',
+                    'sea_surface_salinity',
+                    'sea_water_potential_density'
+                ]
+            elif 'ice' in url:
+                result = [
+                    'ice_coverage',
+                    'ice_temperature',
+                    'ice_thickness',
+                    'ice_uvelocity',
+                    'icd_vvelocity',
+                ]
+        elif 'rtofs_glo_3dz_' in url:
+            result = [
+                'eastward_sea_water_velocity',
+                'northward_sea_water_velocity',
+                'sea_surface_temperature',
+                'sea_surface_salinity',
+            ]
+        return result
 
     urls_dataset_parameters = {
         'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/': ['sea_surface_temperature'],
@@ -322,7 +401,8 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
             'sea_surface_height_above_geoid',
             'eastward_sea_water_velocity',
             'northward_sea_water_velocity',
-        ]
+        ],
+        "ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/rtofs/prod": get_rtofs_parameters,
     }
 
     # See the docstring of find_time_coverage() to get
@@ -452,15 +532,49 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
                 lambda time: (time, time + relativedelta(hours=3))
             ),
         ],
+        'ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/rtofs/prod': [
+            (
+                re.compile(
+                    rf'/rtofs\.{utils.YEARMONTHDAY_REGEX}/' +
+                    r'rtofs_glo_3dz_[nf](?P<hours>\d{3})_.*\.nc'),
+                lambda year, month, day, hours: (
+                    utils.create_datetime(year, month, day) + relativedelta(hours=int(hours))),
+                lambda time: (time, time)
+            ),
+            (
+                re.compile(
+                    rf'/rtofs\.{utils.YEARMONTHDAY_REGEX}/' +
+                    r'rtofs_glo_2ds_n(?P<hours>\d{3})_.*\.nc'),
+                # the .../rtofs.20210519/rtofs_glo_2ds_n000_prog.nc
+                # file has the date 2021-05-18 00:00:00
+                lambda year, month, day, hours: (
+                    utils.create_datetime(year, month, day)
+                    - relativedelta(days=1)
+                    + relativedelta(hours=int(hours))),
+                lambda time: (time, time)
+            ),
+            (
+                re.compile(
+                    rf'/rtofs\.{utils.YEARMONTHDAY_REGEX}/' +
+                    r'rtofs_glo_2ds_f(?P<hours>\d{3})_.*\.nc'),
+                lambda year, month, day, hours: (
+                    utils.create_datetime(year, month, day)
+                    + relativedelta(hours=int(hours))),
+                lambda time: (time, time)
+            ),
+        ]
     }
 
-    @staticmethod
-    def find_matching_value(associated_dict, raw_attributes):
+    def find_matching_value(self, associated_dict, raw_attributes):
         """ Loop through <associated_dict> and get the matching value  """
         if 'url' in raw_attributes:
             for url in associated_dict.keys():
                 if raw_attributes['url'].startswith(url):
-                    return associated_dict[url]
+                    attribute = associated_dict[url]
+                    if callable(attribute):
+                        return attribute(self, raw_attributes['url'])
+                    else:
+                        return attribute
         return None
 
     def get_platform(self, raw_attributes):
