@@ -311,17 +311,25 @@ class SentinelSAFEMetadataNormalizerTestCase(unittest.TestCase):
 
     def test_gcmd_provider_from_url(self):
         """GCMD provider from SentinelSAFEMetadataNormalizer"""
-        attributes = {'url': 'https://scihub.copernicus.eu'}
+        expected_provider = OrderedDict([
+            ('Bucket_Level0', 'MULTINATIONAL ORGANIZATIONS'),
+            ('Bucket_Level1', ''),
+            ('Bucket_Level2', ''),
+            ('Bucket_Level3', ''),
+            ('Short_Name', 'ESA/EO'),
+            ('Long_Name', 'Observing the Earth, European Space Agency'),
+            ('Data_Center_URL', 'http://www.esa.int/esaEO/')])
 
+        attributes = {'url': 'https://scihub.copernicus.eu'}
         self.assertEqual(
             self.normalizer.get_provider(attributes),
-            OrderedDict([('Bucket_Level0', 'MULTINATIONAL ORGANIZATIONS'),
-                         ('Bucket_Level1', ''),
-                         ('Bucket_Level2', ''),
-                         ('Bucket_Level3', ''),
-                         ('Short_Name', 'ESA/EO'),
-                         ('Long_Name', 'Observing the Earth, European Space Agency'),
-                         ('Data_Center_URL', 'http://www.esa.int/esaEO/')])
+            expected_provider
+        )
+
+        attributes = {'url': 'https://apihub.copernicus.eu'}
+        self.assertEqual(
+            self.normalizer.get_provider(attributes),
+            expected_provider
         )
 
     def test_provider_is_none_for_non_scihub_url(self):
