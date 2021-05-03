@@ -36,20 +36,39 @@ class CMEMSInSituTACMetadataNormalizer(BaseMetadataNormalizer):
         if self.matches_identifier(raw_attributes):
             description = None
             raw_summary = raw_attributes.get('summary')
+            url = raw_attributes.get('url', '')
+
             if raw_summary and raw_summary.strip():
                 description = raw_summary
+
+            if 'INSITU_GLO_NRT_OBSERVATIONS_013_030' in url:
+                product = 'INSITU_GLO_NRT_OBSERVATIONS_013_030'
+                if not description:
+                    description = (
+                        'Global Ocean - near real-time (NRT) in situ quality controlled '
+                        'observations, hourly updated and distributed by INSTAC within 24-48 hours '
+                        'from acquisition in average. Data are collected mainly through global '
+                        'networks (Argo, OceanSites, GOSUD, EGO) and through the GTS'
+                    )
+            elif 'INSITU_GLO_UV_NRT_OBSERVATIONS_013_048' in url:
+                product = 'INSITU_GLO_UV_NRT_OBSERVATIONS_013_048'
+                if not description:
+                    description = (
+                        'This product is entirely dedicated to ocean current data observed in '
+                        'near-real time. Surface current data from 2 different types of instruments'
+                        ' are distributed: velocities calculated along the trajectories of drifting'
+                        ' buoys from the DBCP’s Global Drifter Program, and velocities measured by '
+                        'High Frequency radars from the European High Frequency radar Network'
+                    )
             else:
-                description = (
-                    'Global Ocean - near real-time (NRT) in situ quality controlled observations, '
-                    'hourly updated and distributed by INSTAC within 24-48 hours from acquisition '
-                    'in average. Data are collected mainly through global networks '
-                    '(Argo, OceanSites, GOSUD, EGO) and through the GTS'
-                )
+                product = utils.UNKNOWN
+                if not description:
+                    description = 'CMEMS in situ TAC data'
 
             return utils.dict_to_string({
                 utils.SUMMARY_FIELDS['description']: description or '',
                 utils.SUMMARY_FIELDS['processing_level']: '2',
-                utils.SUMMARY_FIELDS['product']: 'INSITU_GLO_NRT_OBSERVATIONS_013_030'
+                utils.SUMMARY_FIELDS['product']: product
             })
         return None
 

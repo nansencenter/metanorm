@@ -22,6 +22,8 @@ class CMEMSInSituTACMetadataNormalizerTestCase(unittest.TestCase):
         self.assertTrue(self.normalizer.matches_identifier({'id': 'NO_TS_TG_OsloTG_20210124'}))
         self.assertTrue(self.normalizer.matches_identifier({'id': 'GL_TS_DB_5100628'}))
         self.assertTrue(self.normalizer.matches_identifier({'id': 'AR_TS_MO_Blakksnes_201812'}))
+        self.assertTrue(self.normalizer.matches_identifier({'id': 'GL_TS_DC_7300658_201606'}))
+        self.assertTrue(self.normalizer.matches_identifier({'id': 'GL_TV_HF_HFR-TirLig-Total_201703'}))
 
         self.assertFalse(self.normalizer.matches_identifier({'id': 'A_B_C_D_E'}))
         self.assertFalse(self.normalizer.matches_identifier({'id': 'AB_CD_EF'}))
@@ -47,19 +49,47 @@ class CMEMSInSituTACMetadataNormalizerTestCase(unittest.TestCase):
         with mock.patch.object(self.normalizer, 'matches_identifier', return_value=False):
             self.assertIsNone(self.normalizer.get_entry_id({'id': 'foo'}))
 
-    def test_get_summary_from_raw_attributes(self):
-        """Get the summary from the raw attributes if possible"""
+    def test_get_summary_013_030_from_raw_attributes(self):
+        """Get the summary from the raw attributes for the 013_030
+        product
+        """
+        url = '/foo/INSITU_GLO_NRT_OBSERVATIONS_013_030/dataset.nc'
         with mock.patch.object(self.normalizer, 'matches_identifier', return_value=True):
             self.assertEqual(
-                self.normalizer.get_summary({'summary': 'foo'}),
+                self.normalizer.get_summary({'summary': 'foo', 'url': url}),
                 'Description: foo;Processing level: 2;'
                 'Product: INSITU_GLO_NRT_OBSERVATIONS_013_030'
             )
 
-    def test_get_summary_default(self):
-        """If there is no summary in the attributes (or if it is
-        empty), return the default summary
+    def test_get_summary_013_048_from_raw_attributes(self):
+        """Get the summary from the raw attributes for the 013_048
+        product
         """
+        url = '/foo/INSITU_GLO_UV_NRT_OBSERVATIONS_013_048/dataset.nc'
+        with mock.patch.object(self.normalizer, 'matches_identifier', return_value=True):
+            self.assertEqual(
+                self.normalizer.get_summary({'summary': 'foo', 'url': url}),
+                'Description: foo;Processing level: 2;'
+                'Product: INSITU_GLO_UV_NRT_OBSERVATIONS_013_048'
+            )
+
+    def test_get_summary_unknown_from_raw_attributes(self):
+        """Get the summary from the raw attributes for an unknown
+        product
+        """
+        url = '/foo/bar/dataset.nc'
+        with mock.patch.object(self.normalizer, 'matches_identifier', return_value=True):
+            self.assertEqual(
+                self.normalizer.get_summary({'summary': 'foo', 'url': url}),
+                'Description: foo;Processing level: 2;'
+                'Product: Unknown'
+            )
+
+    def test_get_summary_013_030_default(self):
+        """If there is no summary in the attributes (or if it is
+        empty), return the default summary for the 013_030 product
+        """
+        url = '/foo/INSITU_GLO_NRT_OBSERVATIONS_013_030/dataset.nc'
         with mock.patch.object(self.normalizer, 'matches_identifier', return_value=True):
             default_summary = (
                 'Description: '
@@ -70,9 +100,56 @@ class CMEMSInSituTACMetadataNormalizerTestCase(unittest.TestCase):
                 'Processing level: 2;'
                 'Product: INSITU_GLO_NRT_OBSERVATIONS_013_030'
             )
-            self.assertEqual(self.normalizer.get_summary({}), default_summary)
-            self.assertEqual(self.normalizer.get_summary({'summary': ''}), default_summary)
-            self.assertEqual(self.normalizer.get_summary({'summary': '  '}), default_summary)
+            self.assertEqual(self.normalizer.get_summary({'url': url}), default_summary)
+            self.assertEqual(
+                self.normalizer.get_summary({'summary': '', 'url': url}),
+                default_summary)
+            self.assertEqual(
+                self.normalizer.get_summary({'summary': '  ', 'url': url}),
+                default_summary)
+
+    def test_get_summary_013_048_default(self):
+        """If there is no summary in the attributes (or if it is
+        empty), return the default summary for the 013_048 product
+        """
+        url = '/foo/INSITU_GLO_UV_NRT_OBSERVATIONS_013_048/dataset.nc'
+        with mock.patch.object(self.normalizer, 'matches_identifier', return_value=True):
+            default_summary = (
+                'Description: '
+                    'This product is entirely dedicated to ocean current data observed in '
+                    'near-real time. Surface current data from 2 different types of instruments'
+                    ' are distributed: velocities calculated along the trajectories of drifting'
+                    ' buoys from the DBCP’s Global Drifter Program, and velocities measured by '
+                    'High Frequency radars from the European High Frequency radar Network;'
+                'Processing level: 2;'
+                'Product: INSITU_GLO_UV_NRT_OBSERVATIONS_013_048'
+            )
+            self.assertEqual(self.normalizer.get_summary({'url': url}), default_summary)
+            self.assertEqual(
+                self.normalizer.get_summary({'summary': '', 'url': url}),
+                default_summary)
+            self.assertEqual(
+                self.normalizer.get_summary({'summary': '  ', 'url': url}),
+                default_summary)
+
+    def test_get_summary_unknown_default(self):
+        """If there is no summary in the attributes (or if it is
+        empty), return the default summary for an unknown product
+        """
+        url = '/foo/bar/dataset.nc'
+        with mock.patch.object(self.normalizer, 'matches_identifier', return_value=True):
+            default_summary = (
+                'Description: CMEMS in situ TAC data;'
+                'Processing level: 2;'
+                'Product: Unknown'
+            )
+            self.assertEqual(self.normalizer.get_summary({'url': url}), default_summary)
+            self.assertEqual(
+                self.normalizer.get_summary({'summary': '', 'url': url}),
+                default_summary)
+            self.assertEqual(
+                self.normalizer.get_summary({'summary': '  ', 'url': url}),
+                default_summary)
 
     def test_get_summary_no_match(self):
         """get_summary() should return None if the id of the dataset
