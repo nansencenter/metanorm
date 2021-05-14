@@ -156,8 +156,6 @@ def get_cf_or_wkv_standard_name(keyword):
 
     'standard_name':'sea_ice_area_fraction'
     'canonical_units':'1'
-    'grib':'91'
-    'amip':'sic'
     'description':"X_area_fraction"
 
     as the result_values.

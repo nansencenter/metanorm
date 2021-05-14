@@ -222,9 +222,9 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
             'sea_surface_height_above_geoid',
             'sea_surface_height_above_sea_level',
             'surface_geostrophic_eastward_sea_water_velocity',
-            'surface_geostrophic_eastward_sea_water_velocity_assuming_sea_level_for_geoid',
+            'surface_geostrophic_eastward_sea_water_velocity_assuming_mean_sea_level_for_geoid',
             'surface_geostrophic_northward_sea_water_velocity',
-            'surface_geostrophic_northward_sea_water_velocity_assuming_sea_level_for_geoid'
+            'surface_geostrophic_northward_sea_water_velocity_assuming_mean_sea_level_for_geoid'
         ],
         # based on http://nrt.cmems-du.eu/motu-web/Motu?action=describeProduct&service=MULTIOBS_GLO_PHY_NRT_015_003-TDS
         "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003": [
