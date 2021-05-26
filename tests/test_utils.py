@@ -1,5 +1,6 @@
 import re
 import unittest
+from collections import OrderedDict
 from datetime import datetime
 
 from dateutil.tz import tzutc
@@ -67,3 +68,22 @@ class UtilsTestCase(unittest.TestCase):
     def test_empty_dict_to_string(self):
         """The representation of an empty dict is an empty string"""
         self.assertEqual(utils.dict_to_string({}), '')
+
+    def test_translate_pythesint_keyword(self):
+        """Should return the right keyword given an alias"""
+        translation_dict = {
+            'keyword1': ('alias11', 'alias12'),
+            'keyword2': ('alias21', 'alias22'),
+        }
+        self.assertEqual(utils.translate_pythesint_keyword(translation_dict, 'alias11'), 'keyword1')
+        self.assertEqual(utils.translate_pythesint_keyword(translation_dict, 'alias22'), 'keyword2')
+        self.assertEqual(utils.translate_pythesint_keyword(translation_dict, 'alias3'), 'alias3')
+
+    def test_get_gcmd_metopb_platform(self):
+        """Test getting the right METOP-B platform"""
+        self.assertEqual(
+            utils.get_gcmd_platform('METOP_B'),
+            OrderedDict([('Category', 'Earth Observation Satellites'),
+                         ('Series_Entity', 'METOP'),
+                         ('Short_Name', 'METOP-B'),
+                         ('Long_Name', 'Meteorological Operational Satellite - B')]))
