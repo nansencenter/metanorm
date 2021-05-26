@@ -18,6 +18,25 @@ SUMMARY_FIELDS = {
 }
 
 
+# Key: valid pythesint search keyword
+# Value: iterable of aliases
+PYTHESINT_PLATFORM_TRANSLATION = {
+    'METOP-B': ('METOP_B',),
+    'METEOSAT-8': ('MSG1',),
+    'METEOSAT-9': ('MSG2',),
+    'METEOSAT-10': ('MSG3',),
+    'METEOSAT-11': ('MSG4',),
+}
+
+
+def translate_pythesint_keyword(translation_dict, alias):
+    """Get a valid pythesint search keyword from known aliases"""
+    for valid_keyword, aliases in translation_dict.items():
+        if alias in aliases:
+            return valid_keyword
+    return alias
+
+
 def get_gcmd_provider(potential_provider_attributes, additional_keywords=None):
     """
     Get a GCMD provider from a name and/or URL, otherwise return None
@@ -56,6 +75,7 @@ def get_gcmd_platform(platform_name, additional_keywords=None):
     Gets a GCMD platform from a platform name, otherwise generate a GCMD platform-like data
     structure
     """
+    platform_name = translate_pythesint_keyword(PYTHESINT_PLATFORM_TRANSLATION, platform_name)
     gcmd_platform = gcmd_search('platform', platform_name, additional_keywords)
 
     if not gcmd_platform:  # TODO: find a better way to manage the fallback value
