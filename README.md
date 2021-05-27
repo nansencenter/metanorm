@@ -1,4 +1,5 @@
-[![Build Status](https://travis-ci.org/nansencenter/metanorm.svg?branch=master)](https://travis-ci.org/nansencenter/metanorm) [![Coverage Status](https://coveralls.io/repos/github/nansencenter/metanorm/badge.svg?branch=init)](https://coveralls.io/github/nansencenter/metanorm?branch=master)
+[![Build Status](https://travis-ci.org/nansencenter/metanorm.svg?branch=master)](https://travis-ci.org/nansencenter/metanorm)
+[![Coverage Status](https://coveralls.io/repos/github/nansencenter/metanorm/badge.svg?branch=init)](https://coveralls.io/github/nansencenter/metanorm?branch=master)
 
 # Metadata normalizing tool
 
