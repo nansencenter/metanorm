@@ -105,15 +105,13 @@ class SentinelOneIdentifierMetadataNormalizerTestCase(unittest.TestCase):
         """ Shall return the correct sentinel1 parameter based on the filename """
         result_normalization = self.normalizer.normalize(
             {'Identifier': 'S1A_EW_GRDM_1SDH_20150702T172954_20150702T173054_006635_008DA5_55D1'})
-        self.assertEqual(
+        self.assertListEqual(
             result_normalization['dataset_parameters'],
             [
                 OrderedDict([
                     ('standard_name', 'surface_backwards_scattering_coefficient_of_radar_wave'),
                     ('canonical_units', '1'),
-                    ('grib', ''),
-                    ('amip', ''),
-                    ('description', 'The scattering/absorption/attenuation coefficient is assumed to be an integral over all wavelengths, unless a coordinate of radiation_wavelength is included to specify the wavelength. Scattering of radiation is its deflection from its incident path without loss of energy. Backwards scattering refers to the sum of scattering into all backward angles i.e. scattering_angle exceeding pi/2 radians. A scattering_angle should not be specified with this quantity.')
+                    ('definition', 'The scattering/absorption/attenuation coefficient is assumed to be an integral over all wavelengths, unless a coordinate of radiation_wavelength is included to specify the wavelength. Scattering of radiation is its deflection from its incident path without loss of energy. Backwards scattering refers to the sum of scattering into all backward angles i.e. scattering_angle exceeding pi/2 radians. A scattering_angle should not be specified with this quantity.')
                 ])
             ])
 

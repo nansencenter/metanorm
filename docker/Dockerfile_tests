@@ -1,7 +1,17 @@
-FROM nansencenter/nansat_base:2.0.2-slim
+FROM nansencenter/nansat_base:2.0.3-slim
 
 RUN pip install --no-cache-dir \
     setuptools \
     wheel
+
+RUN python -c 'import pythesint; pythesint.update_all_vocabularies( \
+{ \
+    "gcmd_instrument": "9.1.5", \
+    "gcmd_location": "9.1.5", \
+    "gcmd_platform": "9.1.5", \
+    "gcmd_project": "9.1.5", \
+    "gcmd_provider": "9.1.5", \
+    "gcmd_science_keyword": "9.1.5", \
+})'
 
 WORKDIR /src
