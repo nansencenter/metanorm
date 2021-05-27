@@ -20,12 +20,12 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
             ('definition',
              '"Content" indicates a quantity per unit area. The "atmosphere content"'
              ' of a quantity refers to the vertical integral from the surface to the top of the '
-             'atmosphere. For the content between specified levels in the atmosphere, standard names'
-             ' including content_of_atmosphere_layer are used. "Cloud liquid water" refers to the '
-             'liquid phase of cloud water. A diameter of 0.2 mm has been suggested as an upper limit'
-             ' to the size of drops that shall be regarded as cloud drops; larger drops fall rapidly'
-             ' enough so that only very strong updrafts can sustain them. Any such division is '
-             'somewhat arbitrary, and active cumulus clouds sometimes contain cloud drops much '
+             'atmosphere. For the content between specified levels in the atmosphere, standard '
+             'names including content_of_atmosphere_layer are used. "Cloud liquid water" refers to '
+             'the liquid phase of cloud water. A diameter of 0.2 mm has been suggested as an upper '
+             'limit to the size of drops that shall be regarded as cloud drops; larger drops fall '
+             'rapidly enough so that only very strong updrafts can sustain them. Any such division '
+             'is somewhat arbitrary, and active cumulus clouds sometimes contain cloud drops much '
              'larger than this. '
              'Reference: AMS Glossary http://glossary.ametsoc.org/wiki/Cloud_drop.')]),
         'atmosphere_mass_content_of_water_vapor': OrderedDict([
@@ -71,6 +71,41 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
             ('definition',
              'A velocity is a vector quantity. "Eastward" indicates a vector component which is '
              'positive when directed eastward (negative westward).')]),
+        'ice_coverage': OrderedDict([
+            ('standard_name', 'ice_coverage'),
+            ('long_name', 'Ice coverage'),
+            ('short_name', 'ice_coverage'),
+            ('units', 'na'),
+            ('minmax', '0 1'),
+            ('colormap', 'jet')]),
+        'ice_temperature': OrderedDict([
+            ('standard_name', 'ice_temperature'),
+            ('long_name', 'Ice temperature'),
+            ('short_name', 'ice_temperature'),
+            ('units', 'celsius'),
+            ('minmax', '-100 0'),
+            ('colormap', 'jet')]),
+        'ice_thickness': OrderedDict([
+            ('standard_name', 'ice_thickness'),
+            ('long_name', 'Ice thickness'),
+            ('short_name', 'ice_thickness'),
+            ('units', 'm'),
+            ('minmax', '0 100'),
+            ('colormap', 'jet')]),
+        'ice_uvelocity': OrderedDict([
+            ('standard_name', 'ice_uvelocity'),
+            ('long_name', 'Eastward sea ice velocity'),
+            ('short_name', 'ice_uvelocity'),
+            ('units', 'm s-1'),
+            ('minmax', '-10 10'),
+            ('colormap', 'jet')]),
+        'icd_vvelocity': OrderedDict([
+            ('standard_name', 'icd_vvelocity'),
+            ('long_name', 'Northward sea ice velocity'),
+            ('short_name', 'ice_vvelocity'),
+            ('units', 'm s-1'),
+            ('minmax', '-10 10'),
+            ('colormap', 'jet')]),
         'model_level_number_at_sea_floor': OrderedDict([
             ('standard_name', 'model_level_number_at_sea_floor'),
             ('canonical_units', '1'),
@@ -86,9 +121,9 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
             ('definition',
              'A velocity is a vector quantity. "Northward" indicates a vector '
              'component which is positive when directed northward (negative southward). Sea ice '
-             'velocity is defined as a two-dimensional vector, with no vertical component. "Sea ice"'
-             ' means all ice floating in the sea which has formed from freezing sea water, rather '
-             'than by other processes such as calving of land ice to form icebergs.')]),
+             'velocity is defined as a two-dimensional vector, with no vertical component. '
+             '"Sea ice" means all ice floating in the sea which has formed from freezing sea water,'
+             ' rather than by other processes such as calving of land ice to form icebergs.')]),
         'northward_sea_water_velocity': OrderedDict([
             ('standard_name', 'northward_sea_water_velocity'),
             ('canonical_units', 'm s-1'),
@@ -108,6 +143,14 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
              ' of sea water is the potential density (i.e. the density when moved adiabatically to '
              'a reference pressure) of water having the same temperature and salinity, minus 1000 '
              'kg m-3. "Thickness" means the vertical extent of a layer.')]),
+        'ocean_mixed_layer_thickness': OrderedDict([
+            ('standard_name', 'ocean_mixed_layer_thickness'),
+            ('canonical_units', 'm'),
+            ('definition',
+             'The ocean mixed layer is the upper part of the ocean, regarded as being well-mixed. '
+             'Various criteria are used to define the mixed layer; this can be specified by using a'
+             ' standard name of ocean_mixed_layer_defined_by_X. "Thickness" means the vertical '
+             'extent of a layer.')]),
         'rainfall_rate': OrderedDict([
             ('standard_name', 'rainfall_rate'),
             ('canonical_units', 'm s-1'),
@@ -119,7 +162,15 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         'sea_floor_depth_below_geoid': OrderedDict([
             ('standard_name', 'sea_floor_depth_below_geoid'),
             ('canonical_units', 'm'),
-            ('definition', '"Depth_below_X" means the vertical distance below the named surface X. The geoid is a surface of constant geopotential with which mean sea level would coincide if the ocean were at rest. (The volume enclosed between the geoid and the sea floor equals the mean volume of water in the ocean). In an ocean GCM the geoid is the surface of zero depth, or the rigid lid if the model uses that approximation. To specify which geoid or geopotential datum is being used as a reference level, a grid_mapping variable should be attached to the data variable as described in Chapter 5.6 of the CF Convention.')]),
+            ('definition',
+             '"Depth_below_X" means the vertical distance below the named surface X. The geoid is a'
+             ' surface of constant geopotential with which mean sea level would coincide if the '
+             'ocean were at rest. (The volume enclosed between the geoid and the sea floor equals '
+             'the mean volume of water in the ocean). In an ocean GCM the geoid is the surface of '
+             'zero depth, or the rigid lid if the model uses that approximation. To specify which '
+             'geoid or geopotential datum is being used as a reference level, a grid_mapping '
+             'variable should be attached to the data variable as described in Chapter 5.6 of the '
+             'CF Convention.')]),
         'sea_ice_area_fraction': OrderedDict([
             ('standard_name', 'sea_ice_area_fraction'),
             ('canonical_units', '1'),
@@ -172,6 +223,46 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
              'respectively. For the temperature of sea water at a particular depth or layer, a data'
              ' variable of sea_water_temperature with a vertical coordinate axis should be '
              'used.')]),
+        'sea_surface_salinity': OrderedDict([('standard_name', 'sea_surface_salinity'),
+             ('canonical_units', '1e-3'),
+             ('definition',
+              'Sea surface salinity is the salt content of sea water close to the sea surface, '
+              'often on the Practical Salinity Scale of 1978. However, the unqualified term '
+              '\'salinity\' is generic and does not necessarily imply any particular method of '
+              'calculation. The units of salinity are dimensionless and the units attribute should '
+              'normally be given as 1e-3 or 0.001 i.e. parts per thousand. Sea surface salinity is '
+              'often abbreviated as "SSS". For the salinity of sea water at a particular depth or '
+              'layer, a data variable of "sea_water_salinity" or one of the more precisely defined '
+              'salinities should be used with a vertical coordinate axis. There are standard names '
+              'for the precisely defined salinity quantities: sea_water_knudsen_salinity, S_K (used'
+              ' for salinity observations between 1901 and 1966), sea_water_cox_salinity, S_C (used'
+              ' for salinity observations between 1967 and 1977), sea_water_practical_salinity, S_P'
+              ' (used for salinity observations from 1978 to the present day), '
+              'sea_water_absolute_salinity, S_A, sea_water_preformed_salinity, S_*, and '
+              'sea_water_reference_salinity. Practical Salinity is reported on the Practical '
+              'Salinity Scale of 1978 (PSS-78), and is usually based on the electrical '
+              'conductivity of sea water in observations since the 1960s. Conversion of data '
+              'between the observed scales follows: S_P = (S_K - 0.03) * (1.80655 / 1.805) and '
+              'S_P = S_C, however the accuracy of the latter is dependent on whether chlorinity or '
+              'conductivity was used to determine the S_C value, with this inconsistency driving '
+              'the development of PSS-78. The more precise standard names should be used where '
+              'appropriate for both modelled and observed salinities. In particular, the use of '
+              'sea_water_salinity to describe salinity observations made from 1978 onwards is now '
+              'deprecated in favor of the term sea_water_practical_salinity which is the salinity '
+              'quantity stored by national data centers for post-1978 observations. The only '
+              'exception to this is where the observed salinities are definitely known not to be '
+              'recorded on the Practical Salinity Scale. The unit "parts per thousand" was used for'
+              ' sea_water_knudsen_salinity and sea_water_cox_salinity.')]),
+        'sea_water_potential_density': OrderedDict([
+            ('standard_name', 'sea_water_potential_density'),
+            ('canonical_units', 'kg m-3'),
+            ('definition',
+             'Sea water potential density is the density a parcel of sea water would have if moved '
+             'adiabatically to a reference pressure, by default assumed to be sea level pressure. '
+             'To specify the reference pressure to which the quantity applies, provide a scalar '
+             'coordinate variable with standard name reference_pressure. The density of a substance'
+             ' is its mass per unit volume. For sea water potential density, if 1000 kg m-3 is '
+             'subtracted, the standard name sea_water_sigma_theta should be chosen instead.')]),
         'sea_water_potential_temperature': OrderedDict([
             ('standard_name', 'sea_water_potential_temperature'),
             ('canonical_units', 'K'),
@@ -265,7 +356,8 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
              'variable part, '
              'surface_geostrophic_eastward_sea_water_velocity_assuming_mean_sea_level_for_geoid, '
              'and a constant part due to the stationary component of ocean circulation.')]),
-        'surface_geostrophic_eastward_sea_water_velocity_assuming_mean_sea_level_for_geoid': OrderedDict([
+        'surface_geostrophic_eastward_sea_water_velocity_assuming_mean_sea_level_for_geoid': (
+            OrderedDict([
             ('standard_name',
              'surface_geostrophic_eastward_sea_water_velocity_assuming_mean_sea_level_for_geoid'),
             ('canonical_units', 'm s-1'),
@@ -284,7 +376,7 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
              'surface_geostrophic_eastward_sea_water_velocity_assuming_mean_sea_level_for_geoid is '
              'the variable part of surface_geostrophic_eastward_sea_water_velocity. The assumption '
              'that sea level is equal to the geoid means that the stationary component of ocean '
-             'circulation is equal to zero.')]),
+             'circulation is equal to zero.')])),
         'surface_geostrophic_northward_sea_water_velocity': OrderedDict([
             ('standard_name', 'surface_geostrophic_northward_sea_water_velocity'),
             ('canonical_units', 'm s-1'),
@@ -298,7 +390,8 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
              'variable part, '
              'surface_geostrophic_northward_sea_water_velocity_assuming_mean_sea_level_for_geoid, '
              'and a constant part due to the stationary component of ocean circulation.')]),
-        'surface_geostrophic_northward_sea_water_velocity_assuming_mean_sea_level_for_geoid': OrderedDict([
+        'surface_geostrophic_northward_sea_water_velocity_assuming_mean_sea_level_for_geoid': (
+            OrderedDict([
             ('standard_name',
              'surface_geostrophic_northward_sea_water_velocity_assuming_mean_sea_level_for_geoid'),
             ('canonical_units', 'm s-1'),
@@ -317,7 +410,7 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
              'surface_geostrophic_northward_sea_water_velocity_assuming_mean_sea_level_for_geoid is'
              ' the variable part of surface_geostrophic_northward_sea_water_velocity. The '
              'assumption that sea level is equal to the geoid means that the stationary component '
-             'of ocean circulation is equal to zero.')]),
+             'of ocean circulation is equal to zero.')])),
         'wind_speed': OrderedDict([
             ('standard_name', 'wind_speed'),
             ('canonical_units', 'm s-1'),
@@ -325,7 +418,14 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
              'Speed is the magnitude of velocity. Wind is defined as a two-dimensional (horizontal)'
              ' air velocity vector, with no vertical component. (Vertical motion in the atmosphere '
              'has the standard name upward_air_velocity.) The wind speed is the magnitude of the '
-             'wind velocity.')])
+             'wind velocity.')]),
+        'surface_boundary_layer_thickness': OrderedDict([
+            ('standard_name', 'surface_boundary_layer_thickness'),
+            ('long_name', 'Surface boundary layer thickness'),
+            ('short_name', 'surface_boundary_layer_thickness'),
+            ('units', 'm'),
+            ('minmax', '0 5000'),
+            ('colormap', 'jet')])
     }
 
     def test_time_coverage_start_remss_month_file(self):
@@ -576,6 +676,33 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
             }),
             datetime(year=2020, month=12, day=19, hour=3, minute=0, second=0, tzinfo=tzutc()))
 
+    def test_time_coverage_start_rtofs_3dz_daily(self):
+        """Should return the proper starting time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_start({
+                'url': 'ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/rtofs/prod/rtofs.20210519/'
+                'rtofs_glo_3dz_n024_daily_3zsio.nc'
+            }),
+            datetime(year=2021, month=5, day=20, tzinfo=tzutc()))
+
+    def test_time_coverage_start_rtofs_3dz_6hourly(self):
+        """Should return the proper starting time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_start({
+                'url': 'ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/rtofs/prod/rtofs.20210518/'
+                'rtofs_glo_3dz_f042_6hrly_hvr_US_east.nc'
+            }),
+            datetime(year=2021, month=5, day=19, hour=18, tzinfo=tzutc()))
+
+    def test_time_coverage_start_rtofs_2ds(self):
+        """Should return the proper starting time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_start({
+                'url': 'ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/rtofs/prod/rtofs.20210518/'
+                'rtofs_glo_2ds_f062_prog.nc'
+            }),
+            datetime(year=2021, month=5, day=20, hour=14, tzinfo=tzutc()))
+
     def test_time_coverage_end_remss_single_day_file(self):
         """shall return the propert end time for hardcoded normalizer """
         self.assertEqual(
@@ -816,13 +943,40 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
             datetime(year=2020, month=12, day=20, hour=6, minute=0, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_end_hycom_sfc(self):
-        """Should return the proper starting time"""
+        """Should return the proper ending time"""
         self.assertEqual(
             self.normalizer.get_time_coverage_end({
                 'url': 'ftp://ftp.opc.ncep.noaa.gov/grids/operational/GLOBALHYCOM/Navy/'
                        'hycom_glb_sfc_u_2020121900_t003.nc.gz'
             }),
             datetime(year=2020, month=12, day=19, hour=6, minute=0, second=0, tzinfo=tzutc()))
+
+    def test_time_coverage_end_rtofs_3dz_daily(self):
+        """Should return the proper ending time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_end({
+                'url': 'ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/rtofs/prod/rtofs.20210519/'
+                'rtofs_glo_3dz_n024_daily_3zsio.nc'
+            }),
+            datetime(year=2021, month=5, day=20, tzinfo=tzutc()))
+
+    def test_time_coverage_end_rtofs_3dz_6hourly(self):
+        """Should return the proper ending time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_end({
+                'url': 'ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/rtofs/prod/rtofs.20210518/'
+                'rtofs_glo_3dz_f042_6hrly_hvr_US_east.nc'
+            }),
+            datetime(year=2021, month=5, day=19, hour=18, tzinfo=tzutc()))
+
+    def test_time_coverage_end_rtofs_2ds(self):
+        """Should return the proper ending time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_start({
+                'url': 'ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/rtofs/prod/rtofs.20210518/'
+                'rtofs_glo_2ds_f062_prog.nc'
+            }),
+            datetime(year=2021, month=5, day=20, hour=14, tzinfo=tzutc()))
 
     def test_instrument_jaxa(self):
         """instrument from URLMetadataNormalizer """
@@ -946,6 +1100,19 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
                          ('Long_Name', 'Computer')])
         )
 
+    def test_instrument_rtofs(self):
+        """Should return the proper instrument"""
+        attributes = {'url': 'ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/rtofs/prod/'}
+        self.assertEqual(
+            self.normalizer.get_instrument(attributes),
+            OrderedDict([('Category', 'In Situ/Laboratory Instruments'),
+                         ('Class', 'Data Analysis'),
+                         ('Type', 'Environmental Modeling'),
+                         ('Subtype', ''),
+                         ('Short_Name', 'Computer'),
+                         ('Long_Name', 'Computer')])
+        )
+
     def test_platform_jaxa(self):
         """platform from URLMetadataNormalizer """
         attributes = {
@@ -1042,6 +1209,17 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
     def test_platform_hycom(self):
         """Should return the proper platform"""
         attributes = {'url': 'ftp://ftp.opc.ncep.noaa.gov/grids/operational/GLOBALHYCOM/Navy/'}
+        self.assertEqual(
+            self.normalizer.get_platform(attributes),
+            OrderedDict([('Category', 'Models/Analyses'),
+                         ('Series_Entity', ''),
+                         ('Short_Name', 'OPERATIONAL MODELS'),
+                         ('Long_Name', '')])
+        )
+
+    def test_platform_rtofs(self):
+        """Should return the proper platform"""
+        attributes = {'url': 'ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/rtofs/prod/'}
         self.assertEqual(
             self.normalizer.get_platform(attributes),
             OrderedDict([('Category', 'Models/Analyses'),
@@ -1170,6 +1348,23 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
     def test_provider_hycom(self):
         """Should return the proper provider"""
         attributes = {'url': 'ftp://ftp.opc.ncep.noaa.gov/grids/operational/GLOBALHYCOM/Navy/'}
+        self.assertEqual(
+            self.normalizer.get_provider(attributes),
+            OrderedDict([
+                ('Bucket_Level0', 'GOVERNMENT AGENCIES-U.S. FEDERAL AGENCIES'),
+                ('Bucket_Level1', 'DOC'),
+                ('Bucket_Level2', 'NOAA'),
+                ('Bucket_Level3', ''),
+                ('Short_Name', 'DOC/NOAA/NWS/NCEP'),
+                ('Long_Name',
+                 'National Centers for Environmental Prediction, National Weather Service, NOAA, '
+                 'U.S. Department of Commerce'),
+                ('Data_Center_URL', 'http://www.ncep.noaa.gov/')])
+        )
+
+    def test_provider_rtofs(self):
+        """Should return the proper provider"""
+        attributes = {'url': 'ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/rtofs/prod/'}
         self.assertEqual(
             self.normalizer.get_provider(attributes),
             OrderedDict([
@@ -1424,6 +1619,53 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
             self.DATASET_PARAMETERS['northward_sea_water_velocity'],
         ])
 
+    def test_dataset_parameters_rtofs_2ds_diag(self):
+        """Should return the proper dataset parameters"""
+        attributes = {'url': 'ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/rtofs/prod/'
+                             'rtofs.20210518/rtofs_glo_2ds_f063_diag.nc'}
+        self.assertListEqual(self.normalizer.get_dataset_parameters(attributes), [
+            self.DATASET_PARAMETERS['sea_surface_height_above_geoid'],
+            self.DATASET_PARAMETERS['barotropic_eastward_sea_water_velocity'],
+            self.DATASET_PARAMETERS['barotropic_northward_sea_water_velocity'],
+            self.DATASET_PARAMETERS['surface_boundary_layer_thickness'],
+            self.DATASET_PARAMETERS['ocean_mixed_layer_thickness'],
+        ])
+
+    def test_dataset_parameters_rtofs_2ds_prog(self):
+        """Should return the proper dataset parameters"""
+        attributes = {'url': 'ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/rtofs/prod/'
+                             'rtofs.20210518/rtofs_glo_2ds_f062_prog.nc'}
+        self.assertListEqual(self.normalizer.get_dataset_parameters(attributes), [
+            self.DATASET_PARAMETERS['eastward_sea_water_velocity'],
+            self.DATASET_PARAMETERS['northward_sea_water_velocity'],
+            self.DATASET_PARAMETERS['sea_surface_temperature'],
+            self.DATASET_PARAMETERS['sea_surface_salinity'],
+            self.DATASET_PARAMETERS['sea_water_potential_density'],
+        ])
+
+    def test_dataset_parameters_rtofs_2ds_ice(self):
+        """Should return the proper dataset parameters"""
+        attributes = {'url': 'ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/rtofs/prod/'
+                             'rtofs.20210518/rtofs_glo_2ds_f062_ice.nc'}
+        self.assertListEqual(self.normalizer.get_dataset_parameters(attributes), [
+            self.DATASET_PARAMETERS['ice_coverage'],
+            self.DATASET_PARAMETERS['ice_temperature'],
+            self.DATASET_PARAMETERS['ice_thickness'],
+            self.DATASET_PARAMETERS['ice_uvelocity'],
+            self.DATASET_PARAMETERS['icd_vvelocity'],
+        ])
+
+    def test_dataset_parameters_rtofs_3dz(self):
+        """Should return the proper dataset parameters"""
+        attributes = {'url': 'ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/rtofs/prod/'
+                             'rtofs.20210518/rtofs_glo_3dz_f024_daily_3zsio.nc'}
+        self.assertListEqual(self.normalizer.get_dataset_parameters(attributes), [
+            self.DATASET_PARAMETERS['eastward_sea_water_velocity'],
+            self.DATASET_PARAMETERS['northward_sea_water_velocity'],
+            self.DATASET_PARAMETERS['sea_surface_temperature'],
+            self.DATASET_PARAMETERS['sea_surface_salinity'],
+        ])
+
     def test_entry_title_jaxa(self):
         """entry_title from URLMetadataNormalizer """
         attributes = {
@@ -1487,6 +1729,14 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         self.assertEqual(
             self.normalizer.get_entry_title(attributes),
             'Global Hybrid Coordinate Ocean Model (HYCOM)'
+        )
+
+    def test_entry_title_rtofs(self):
+        """Should return the proper entry_title"""
+        attributes = {'url': 'ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/rtofs/prod/'}
+        self.assertEqual(
+            self.normalizer.get_entry_title(attributes),
+            'Global operational Real-Time Ocean Forecast System'
         )
 
     def test_entry_id_jaxa(self):
@@ -1588,6 +1838,15 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         self.assertEqual(
             self.normalizer.get_entry_id(attributes),
             'hycom_glb_sfc_u_2020121900_t000'
+        )
+
+    def test_entry_id_rtofs(self):
+        """Should return the proper entry_id"""
+        attributes = {'url': 'ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/rtofs/prod/'
+                             'rtofs.20210518/rtofs_glo_3dz_f024_daily_3zsio.nc'}
+        self.assertEqual(
+            self.normalizer.get_entry_id(attributes),
+            '20210518/rtofs_glo_3dz_f024_daily_3zsio'
         )
 
     def test_geometry_jaxa_the_first_type_of_sst(self):
@@ -1714,6 +1973,56 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         self.assertEqual(
             self.normalizer.get_location_geometry(attributes),
             'POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))'
+        )
+
+    def test_geometry_rtofs_global(self):
+        """Should return the proper geometry"""
+        attributes = {'url': 'ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/rtofs/prod/'
+                             'rtofs.20210518/rtofs_glo_3dz_f024_daily_3zsio.nc'}
+        self.assertEqual(
+            self.normalizer.get_location_geometry(attributes),
+            'POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))'
+        )
+
+    def test_geometry_rtofs_us_east(self):
+        """Should return the proper geometry"""
+        attributes = {'url': 'ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/rtofs/prod/'
+                             'rtofs.20210518/rtofs_glo_3dz_f042_6hrly_hvr_US_east.nc'}
+        self.assertEqual(
+            self.normalizer.get_location_geometry(attributes),
+            ('POLYGON (('
+                '-105.193603515625 0, -40.719970703125 0,'
+                '-40.719970703125 79.74808502197266,'
+                '-105.193603515625 79.74808502197266,'
+                '-105.193603515625 0))')
+        )
+
+    def test_geometry_rtofs_us_west(self):
+        """Should return the proper geometry"""
+        attributes = {'url': 'ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/rtofs/prod/'
+                             'rtofs.20210518/rtofs_glo_3dz_f042_6hrly_hvr_US_west.nc'}
+        self.assertEqual(
+            self.normalizer.get_location_geometry(attributes),
+            ('POLYGON (('
+                '-157.9200439453125 10.02840137481689,'
+                '-74.239990234375 10.02840137481689,'
+                '-74.239990234375 74.57466888427734,'
+                '-157.9200439453125 74.57466888427734,'
+                '-157.9200439453125 10.02840137481689))')
+        )
+
+    def test_geometry_rtofs_alaska(self):
+        """Should return the proper geometry"""
+        attributes = {'url': 'ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/rtofs/prod/'
+                             'rtofs.20210518/rtofs_glo_3dz_f042_6hrly_hvr_alaska.nc'}
+        self.assertEqual(
+            self.normalizer.get_location_geometry(attributes),
+            ('POLYGON (('
+                '-179.1199951171875 45.77324676513672,'
+                '-112.6572265625 45.77324676513672,'
+                '-112.6572265625 78.41667938232422,'
+                '-179.1199951171875 78.41667938232422,'
+                '-179.1199951171875 45.77324676513672))')
         )
 
     def test_none_for_incorrect_ftp_resource(self):
@@ -1850,4 +2159,16 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
             'levels.;'
             'Processing level: 4;'
             'Product: HYCOM'
+        )
+
+    def test_summary_rtofs(self):
+        """Should return the proper summary"""
+        attributes = {'url': 'ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/rtofs/prod/'}
+        self.assertEqual(
+            self.normalizer.get_summary(attributes),
+            "Description: Real Time Ocean Forecast System (RTOFS) Global is a data-assimilating "
+            "nowcast-forecast system operated by the National Weather Service's National "
+            "Centers for Environmental Prediction (NCEP).;"
+            'Processing level: 4;'
+            'Product: RTOFS'
         )
