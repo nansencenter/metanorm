@@ -26,7 +26,8 @@ class SentinelSAFEMetadataNormalizer(BaseMetadataNormalizer):
 
     def get_summary(self, raw_attributes):
         """Get the dataset's summary"""
-        description_attributes = ['Date', 'Instrument name', 'Mode', 'Satellite', 'Size']
+        description_attributes = ['Date', 'Instrument name', 'Mode', 'Satellite', 'Size',
+                                  'Timeliness Category']
         summary_fields = {}
         if set(description_attributes).intersection(raw_attributes.keys()):
             description = ', '.join([
