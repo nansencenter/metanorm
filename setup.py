@@ -1,3 +1,4 @@
+import os
 import setuptools
 
 with open("README.md", "r") as fh:
@@ -5,7 +6,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="metanorm",
-    version="3.1.2",
+    version=os.getenv('METANORM_RELEASE', '0.0.0dev'),
     author="Adrien Perrin, Arash Azamifard",
     author_email="adrien.perrin@nersc.no",
     description="Normalizing tool for Geospatial metadata",

@@ -1,4 +1,6 @@
-FROM nansencenter/nansat_base:2.0.3-slim
+
+ARG BASE_IMAGE=nansencenter/nansat_base:latest-slim
+FROM ${BASE_IMAGE}
 
 RUN pip install --no-cache-dir \
     setuptools \
