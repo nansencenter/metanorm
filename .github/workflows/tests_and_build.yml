@@ -73,6 +73,8 @@ jobs:
 
       - name: 'Build Python package'
         if: github.event_name == 'release'
+        env:
+          TAG_REF: ${{ github.ref }}
         run: >
              docker run --rm
              -v "$(pwd):/src"
