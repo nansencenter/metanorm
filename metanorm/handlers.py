@@ -48,6 +48,8 @@ class MetadataHandler():
 class GeospatialMetadataHandler(MetadataHandler):
     """Geospatial metadata handler"""
     NORMALIZERS = [
+        normalizers.CPOMaltimetryMetadataNormalizer,
+        normalizers.AVISOaltimetryMetadataNormalizer,
         normalizers.URLMetadataNormalizer,
         normalizers.CMEMSInSituTACMetadataNormalizer,
         normalizers.NETCDFCFMetadataNormalizer,
