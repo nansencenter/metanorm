@@ -4,7 +4,6 @@ import logging
 from os.path import basename
 
 import metanorm.utils as utils
-import pythesint as pti
 
 from .base import BaseMetadataNormalizer
 
@@ -22,19 +21,14 @@ class AVISOaltimetryMetadataNormalizer(BaseMetadataNormalizer):
     def get_platform(self, raw_attributes):
         """ return 'OPERATIONAL MODELS' platform """
         if self.match_metadata(raw_attributes):
-            return utils.get_gcmd_platform('OPERATIONAL MODELS')
+            return utils.get_gcmd_platform(raw_attributes['platform'])
 
     def get_instrument(self, raw_attributes):
         """ return 'Computer' instrument """
         if self.match_metadata(raw_attributes):
             return utils.get_gcmd_instrument('Computer')
 
-    def get_entry_title(self, raw_attributes):
-        """ return title section of raw attributes """
-        if self.match_metadata(raw_attributes):
-            return raw_attributes['title']
-
     def get_entry_id(self, raw_attributes):
         """ return title section of raw attributes """
         if self.match_metadata(raw_attributes):
-            return raw_attributes['title']
+            return "dt_arctic_multimission_sea_level_20160701_20190429"
