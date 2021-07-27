@@ -18,7 +18,8 @@ class CPOMaltimetryMetadataNormalizer(BaseMetadataNormalizer):
 
     def match_metadata(self, raw_attributes):
         """ Check if the filename exactly correct that fits the normalizer by checking it """
-        return basename(raw_attributes['url']) == "CPOM_DOT.nc"
+        if 'url' in raw_attributes:
+            return basename(raw_attributes['url']) == "CPOM_DOT.nc"
 
     def get_platform(self, raw_attributes):
         """ return 'OPERATIONAL MODELS' platform """

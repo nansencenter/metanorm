@@ -16,7 +16,9 @@ class AVISOaltimetryMetadataNormalizer(BaseMetadataNormalizer):
 
     def match_metadata(self, raw_attributes):
         """ Check if the filename exactly correct that fits the normalizer by checking it """
-        return basename(raw_attributes['url']) == "dt_arctic_multimission_sea_level_20160701_20190429.nc"
+        if 'url' in raw_attributes:
+            return basename(raw_attributes['url']) == "dt_arctic_multimission_sea_level_20160701_20190429.nc"
+
 
     def get_platform(self, raw_attributes):
         """ return 'OPERATIONAL MODELS' platform """
