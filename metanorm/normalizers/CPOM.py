@@ -1,4 +1,4 @@
-"""Normalizer metadat from netcdf file from aviso"""
+"""Normalizer metadat from netcdf file from CPOM"""
 
 import logging
 from datetime import datetime, timezone
@@ -14,7 +14,7 @@ LOGGER.addHandler(logging.NullHandler())
 
 
 class CPOMaltimetryMetadataNormalizer(BaseMetadataNormalizer):
-    """ Normalizer for metadata from local netcdf file from aviso """
+    """ Normalizer for metadata from local netcdf file from CPOM """
 
     def match_metadata(self, raw_attributes):
         """ Check if the filename exactly correct that fits the normalizer by checking it """
@@ -33,7 +33,7 @@ class CPOMaltimetryMetadataNormalizer(BaseMetadataNormalizer):
     def get_entry_id(self, raw_attributes):
         """ return a string """
         if self.match_metadata(raw_attributes):
-            return 'CPOM SLA'
+            return "CPOM_DOT"
 
     def get_entry_title(self, raw_attributes):
         """ return a string """
@@ -48,7 +48,7 @@ class CPOMaltimetryMetadataNormalizer(BaseMetadataNormalizer):
     def get_time_coverage_end(self, raw_attributes):
         """ return end date from Date """
         if self.match_metadata(raw_attributes):
-            return datetime(2014, 12, 31, 23, 59, 59, 999999, tzinfo=timezone.utc)
+            return datetime(2015, 1, 1, tzinfo=timezone.utc)
 
     def get_provider(self, raw_attributes):
         """ return CPOM provider """
