@@ -23,7 +23,7 @@ class AVISOaltimetryMetadataNormalizer(BaseMetadataNormalizer):
     def get_platform(self, raw_attributes):
         """ return 'OPERATIONAL MODELS' platform """
         if self.match_metadata(raw_attributes):
-            return utils.get_gcmd_platform(raw_attributes['platform'])
+            return utils.get_gcmd_platform('OBSERVATION BASED ANALYSES')
 
     def get_instrument(self, raw_attributes):
         """ return 'Computer' instrument """
