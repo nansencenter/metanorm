@@ -154,4 +154,3 @@ class Radarsat2CSVNormalizerTests(unittest.TestCase):
         self.assertEqual(self.normalizer.get_location_geometry(wrong_meta), None)
         self.assertEqual(self.normalizer.get_provider(wrong_meta), None)
         self.assertEqual(self.normalizer.get_instrument(wrong_meta), None)
-
