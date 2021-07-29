@@ -15,7 +15,7 @@ LOGGER.addHandler(logging.NullHandler())
 
 
 class EarthdataCMRMetadataNormalizer(BaseMetadataNormalizer):
-    """Generate the properties of a GeoSPaaS Dataset using Creodias attributes"""
+    """Generate the properties of a GeoSPaaS Dataset using Earthdata CMR attributes"""
 
     warning_message = 'The metadata does not have the expected structure'
 
