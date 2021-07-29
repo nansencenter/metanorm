@@ -19,7 +19,7 @@ class CreodiasEOFinderMetadataNormalizer(BaseMetadataNormalizer):
 
     def get_entry_id(self, raw_attributes):
         """Get the dataset's entry ID"""
-        if ('url'in raw_attributes and
+        if ('url' in raw_attributes and
                 raw_attributes['url'].startswith('https://zipper.creodias.eu/')):
             return raw_attributes.get('title')
         return None
