@@ -20,12 +20,15 @@ SUMMARY_FIELDS = {
 
 # Key: valid pythesint search keyword
 # Value: iterable of aliases
-PYTHESINT_PLATFORM_TRANSLATION = {
+PYTHESINT_KEYWORD_TRANSLATION = {
+    # platforms
     'METOP-B': ('METOP_B',),
     'METEOSAT-8': ('MSG1',),
     'METEOSAT-9': ('MSG2',),
     'METEOSAT-10': ('MSG3',),
     'METEOSAT-11': ('MSG4',),
+    # providers
+    'OB.DAAC': ('OB_DAAC',)
 }
 
 
@@ -75,7 +78,6 @@ def get_gcmd_platform(platform_name, additional_keywords=None):
     Gets a GCMD platform from a platform name, otherwise generate a GCMD platform-like data
     structure
     """
-    platform_name = translate_pythesint_keyword(PYTHESINT_PLATFORM_TRANSLATION, platform_name)
     gcmd_platform = gcmd_search('platform', platform_name, additional_keywords)
 
     if not gcmd_platform:  # TODO: find a better way to manage the fallback value
@@ -117,9 +119,11 @@ def gcmd_search(vocabulary_name, keyword, additional_keywords=None):
     pti_search_method = getattr(pti, f"search_gcmd_{vocabulary_name}_list")
     pti_get_method = getattr(pti, f"get_gcmd_{vocabulary_name}")
 
+    translated_keyword = translate_pythesint_keyword(PYTHESINT_KEYWORD_TRANSLATION, keyword)
+
     gcmd_object = None
     # Try to search for the object name
-    matching_objects = pti_search_method(keyword)
+    matching_objects = pti_search_method(translated_keyword)
     matching_objects_length = len(matching_objects)
 
     if matching_objects_length == 1:
