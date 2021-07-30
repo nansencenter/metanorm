@@ -49,15 +49,14 @@ class EarthdataCMRMetadataNormalizer(BaseMetadataNormalizer):
         if umm:
             summary_fields = {}
             try:
-                description = (
-                    f"Platform={umm['Platforms'][0]['ShortName']}, "
-                    f"Instrument={umm['Platforms'][0]['Instruments'][0]}, "
-                )
                 description = ''
                 for platform in umm['Platforms']:
                     description += (
-                        f"Platform={platform['ShortName']}, "
+                        f"Platform={platform['ShortName']}, " +
                         ', '.join(f"Instrument={i['ShortName']}" for i in platform['Instruments']))
+
+                description += (
+                    f", Start date={umm['TemporalExtent']['RangeDateTime']['BeginningDateTime']}")
                 summary_fields[utils.SUMMARY_FIELDS['description']] = description
 
                 processing_level = re.match(
