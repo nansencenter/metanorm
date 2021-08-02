@@ -21,9 +21,9 @@ class CPOMAltimetryMetadataNormalizerTests(unittest.TestCase):
     def test_get_platform(self):
         """ shall return 'OPERATIONAL MODELS' """
         self.assertEqual(self.normalizer.get_platform(self.metadata),
-            OrderedDict([('Category', 'Models/Analyses'),
+            OrderedDict([('Category', 'Earth Observation Satellites'),
                          ('Series_Entity', ''),
-                         ('Short_Name', 'OPERATIONAL MODELS'),
+                         ('Short_Name', ''),
                          ('Long_Name', '')
                         ])
                         )
