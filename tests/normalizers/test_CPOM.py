@@ -31,12 +31,12 @@ class CPOMAltimetryMetadataNormalizerTests(unittest.TestCase):
     def test_get_instrument(self):
         """ shall return "computer" """
         self.assertEqual(self.normalizer.get_instrument(self.metadata),
-                         OrderedDict([('Category', 'In Situ/Laboratory Instruments'),
-                                      ('Class', 'Data Analysis'),
-                                      ('Type', 'Environmental Modeling'),
+                         OrderedDict([('Category', 'Earth Remote Sensing Instruments'),
+                                      ('Class', 'Active Remote Sensing'),
+                                      ('Type', 'Altimeters'),
                                       ('Subtype', ''),
-                                      ('Short_Name', 'Computer'),
-                                      ('Long_Name', 'Computer')
+                                      ('Short_Name', ''),
+                                      ('Long_Name', '')
                                      ])
                         )
 
