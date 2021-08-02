@@ -56,12 +56,12 @@ class AVISOaltimetryMetadataNormalizerTests(unittest.TestCase):
         """ shall return c-sar """
         self.assertEqual(
             self.normalizer.get_instrument(self.metadata),
-            OrderedDict([('Category', 'In Situ/Laboratory Instruments'),
-             ('Class', 'Data Analysis'),
-             ('Type', 'Environmental Modeling'),
+            OrderedDict([('Category', 'Earth Remote Sensing Instruments'),
+             ('Class', 'Active Remote Sensing'),
+             ('Type', 'Altimeters'),
              ('Subtype', ''),
-             ('Short_Name', 'Computer'),
-             ('Long_Name', 'Computer')]))
+             ('Short_Name', ''),
+             ('Long_Name', '')]))
 
     def test_get_entry_id(self):
         """ shall return the name of the file of aviso SLA file name """
