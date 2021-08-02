@@ -29,7 +29,7 @@ class CPOMaltimetryMetadataNormalizer(BaseMetadataNormalizer):
     def get_instrument(self, raw_attributes):
         """ return 'Altimeters' instrument """
         if self.match_metadata(raw_attributes):
-            return utils.get_gcmd_instrument('Computer')
+            return utils.get_gcmd_instrument('Altimeters')
 
     def get_entry_id(self, raw_attributes):
         """ return a string """
