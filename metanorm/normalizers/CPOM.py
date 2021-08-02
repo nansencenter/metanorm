@@ -22,7 +22,7 @@ class CPOMaltimetryMetadataNormalizer(BaseMetadataNormalizer):
             return basename(raw_attributes['url']) == "CPOM_DOT.nc"
 
     def get_platform(self, raw_attributes):
-        """ return 'OPERATIONAL MODELS' platform """
+        """ return 'Earth Observation Satellites' platform """
         if self.match_metadata(raw_attributes):
             return utils.get_gcmd_platform('OPERATIONAL MODELS')
 
