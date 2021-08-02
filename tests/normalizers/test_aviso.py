@@ -47,10 +47,10 @@ class AVISOaltimetryMetadataNormalizerTests(unittest.TestCase):
         """ shall return 'SARAL/CryoSat2/Sentinel3A' """
         self.assertEqual(
             self.normalizer.get_platform(self.metadata),
-            OrderedDict([('Category', 'Models/Analyses'),
+            OrderedDict([('Category', 'Earth Observation Satellites'),
              ('Series_Entity', ''),
-             ('Short_Name', 'OBSERVATION BASED'),
-             ('Long_Name', 'OBSERVATION BASED ANALYSES')]))
+             ('Short_Name', ''),
+             ('Long_Name', '')]))
 
     def test_get_instrument(self):
         """ shall return c-sar """
