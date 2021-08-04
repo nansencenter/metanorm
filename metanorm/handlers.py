@@ -56,6 +56,7 @@ class GeospatialMetadataHandler(MetadataHandler):
         normalizers.SentinelSAFEMetadataNormalizer,
         normalizers.SentinelOneIdentifierMetadataNormalizer,
         normalizers.CreodiasEOFinderMetadataNormalizer,
+        normalizers.EarthdataCMRMetadataNormalizer,
         normalizers.ACDDMetadataNormalizer,
         normalizers.OSISAFMetadataNormalizer,
         normalizers.GeoSpatialWellKnownMetadataNormalizer,
