@@ -6,10 +6,11 @@ import pkgutil
 import sys
 from collections import OrderedDict
 from datetime import datetime, timedelta
-from dateutil.tz import tzutc
 
 import pythesint as pti
+from dateutil.tz import tzutc
 
+from .errors import MetadataNormalizationError
 
 UNKNOWN = 'Unknown'
 
@@ -25,13 +26,23 @@ SUMMARY_FIELDS = {
 # Key: valid pythesint search keyword
 # Value: iterable of aliases
 PYTHESINT_KEYWORD_TRANSLATION = {
+    # instruments
+    'OLCI': ('OL',),
+    'SLSTR': ('SL',),
     # platforms
-    'METOP-B': ('METOP_B',),
-    'METEOSAT-8': ('MSG1',),
-    'METEOSAT-9': ('MSG2',),
     'METEOSAT-10': ('MSG3',),
     'METEOSAT-11': ('MSG4',),
+    'METEOSAT-8': ('MSG1',),
+    'METEOSAT-9': ('MSG2',),
+    'METOP-B': ('METOP_B',),
+    'Sentinel-1A': ('S1A',),
+    'Sentinel-1B': ('S1B',),
+    'Sentinel-2A': ('S2A',),
+    'Sentinel-2B': ('S2B',),
+    'Sentinel-3A': ('S3A',),
+    'Sentinel-3B': ('S3B',),
     # providers
+    'ESA/EO': ('ESA',),
     'OB.DAAC': ('OB_DAAC',)
 }
 
@@ -72,6 +83,27 @@ def export_subclasses(all, package, package_dir, base_class):
     for cls in base_class.__subclasses__():
         setattr(sys.modules[package], cls.__name__, cls)
         all.append(cls.__name__)
+
+def raises(exceptions):
+    """Decorator for methods which get an attribute from metadata.
+    Makes it possible to declare which exception(s) are thrown when the
+    raw metadata does not have the expected structure.
+    `exceptions` can be an exception class or a tuple of exception
+    classes. If any of these exceptions is raised by the method,
+    a MetadataNormalizationError with a (hopefully) clear error message
+    is raised from this exception.
+    """
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(self, raw_metadata):
+            try:
+                return func(self, raw_metadata)
+            except exceptions as error:
+                raise MetadataNormalizationError(
+                    f"{func.__name__} was unable to process the following metadata: {raw_metadata}"
+                ) from error
+        return wrapper
+    return decorator
 
 def get_gcmd_like_provider(name=None, url=None):
     """Generate a GCMD provider-like data structure using a name and a URL"""
