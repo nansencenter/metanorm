@@ -6,13 +6,13 @@ from datetime import datetime
 from dateutil.tz import tzutc
 
 import metanorm.normalizers as normalizers
-
+from metanorm.errors import MetadataNormalizationError
 
 class CreodiasEOFinderMetadataNormalizerTestCase(unittest.TestCase):
     """Tests for the Creodias API attributes normalizer"""
 
     def setUp(self):
-        self.normalizer = normalizers.CreodiasEOFinderMetadataNormalizer([], [])
+        self.normalizer = normalizers.geospaas.CreodiasEOFinderMetadataNormalizer()
 
     def test_summary_description_only(self):
         """summary from CreodiasEOFinderMetadataNormalizer"""
@@ -42,8 +42,9 @@ class CreodiasEOFinderMetadataNormalizerTestCase(unittest.TestCase):
             'instrument=instrument_value, startDate=2018-04-18T01:02:03Z;Processing level: 2')
 
     def test_summary_missing_attribute(self):
-        """Parameter method must return None if the attribute is missing"""
-        self.assertEqual(self.normalizer.get_summary({}), None)
+        """An exception must be raised if the attribute is missing"""
+        with self.assertRaises(MetadataNormalizationError):
+            self.normalizer.get_summary({})
 
     def test_time_coverage_start(self):
         """time_coverage_start from CreodiasEOFinderMetadataNormalizer"""
@@ -52,8 +53,9 @@ class CreodiasEOFinderMetadataNormalizerTestCase(unittest.TestCase):
             datetime(year=2020, month=12, day=15, hour=11, minute=40, second=38, tzinfo=tzutc()))
 
     def test_time_coverage_start_missing_attribute(self):
-        """Parameter method must return None if the attribute is missing"""
-        self.assertEqual(self.normalizer.get_time_coverage_start({}), None)
+        """An exception must be raised if the attribute is missing"""
+        with self.assertRaises(MetadataNormalizationError):
+            self.normalizer.get_time_coverage_start({})
 
     def test_time_coverage_end(self):
         """time_coverage_end from CreodiasEOFinderMetadataNormalizer"""
@@ -62,8 +64,9 @@ class CreodiasEOFinderMetadataNormalizerTestCase(unittest.TestCase):
             datetime(year=2020, month=12, day=15, hour=11, minute=43, second=38, tzinfo=tzutc()))
 
     def test_time_coverage_end_missing_attribute(self):
-        """Parameter method must return None if the attribute is missing"""
-        self.assertEqual(self.normalizer.get_time_coverage_end({}), None)
+        """An exception must be raised if the attribute is missing"""
+        with self.assertRaises(MetadataNormalizationError):
+            self.normalizer.get_time_coverage_end({})
 
     def test_platform(self):
         """gcmd_platform from CreodiasEOFinderMetadataNormalizer"""
@@ -76,8 +79,9 @@ class CreodiasEOFinderMetadataNormalizerTestCase(unittest.TestCase):
         )
 
     def test_platform_missing_attribute(self):
-        """Parameter method must return None if the attribute is missing"""
-        self.assertEqual(self.normalizer.get_platform({}), None)
+        """An exception must be raised if the attribute is missing"""
+        with self.assertRaises(MetadataNormalizationError):
+            self.normalizer.get_platform({})
 
     def test_gcmd_instrument(self):
         """GCMD instrument from CreodiasEOFinderMetadataNormalizer"""
@@ -93,8 +97,9 @@ class CreodiasEOFinderMetadataNormalizerTestCase(unittest.TestCase):
         )
 
     def test_instrument_missing_attribute(self):
-        """Parameter method must return None if the attribute is missing"""
-        self.assertEqual(self.normalizer.get_instrument({}), None)
+        """An exception must be raised if the attribute is missing"""
+        with self.assertRaises(MetadataNormalizationError):
+            self.normalizer.get_instrument({})
 
     def test_location_geometry(self):
         """location_geometry from CreodiasEOFinderMetadataNormalizer"""
@@ -107,8 +112,9 @@ class CreodiasEOFinderMetadataNormalizerTestCase(unittest.TestCase):
         self.assertEqual(self.normalizer.get_location_geometry(attributes), attributes['geometry'])
 
     def test_location_geometry_missing_attribute(self):
-        """Parameter method must return None if the attribute is missing"""
-        self.assertEqual(self.normalizer.get_location_geometry({}), None)
+        """An exception must be raised if the attribute is missing"""
+        with self.assertRaises(MetadataNormalizationError):
+            self.normalizer.get_location_geometry({})
 
     def test_gcmd_provider_esa(self):
         """GCMD provider from CreodiasEOFinderMetadataNormalizer"""
@@ -126,13 +132,15 @@ class CreodiasEOFinderMetadataNormalizerTestCase(unittest.TestCase):
         )
 
     def test_unknown_provider_returns_none(self):
-        """No provider must be returned if the provider is unknown"""
-        attributes = {'organisationName': 'something'}
-        self.assertIs(self.normalizer.get_provider(attributes), None)
+        """An exception must be raised if the provider is unknown"""
+        with self.assertRaises(MetadataNormalizationError) as raised:
+            self.normalizer.get_provider({'organisationName': 'something'})
+        self.assertEqual(str(raised.exception), 'Unknown provider something')
 
     def test_provider_missing_attribute(self):
-        """Parameter method must return None if the attribute is missing"""
-        self.assertEqual(self.normalizer.get_provider({}), None)
+        """An exception must be raised if the attribute is missing"""
+        with self.assertRaises(MetadataNormalizationError):
+            self.normalizer.get_provider({})
 
     def test_entry_id(self):
         """entry_id from CreodiasEOFinderMetadataNormalizer """
@@ -144,9 +152,5 @@ class CreodiasEOFinderMetadataNormalizerTestCase(unittest.TestCase):
 
     def test_entry_id_missing_attribute(self):
         """entry_id method must return None if the attribute is missing"""
-        self.assertIsNone(self.normalizer.get_entry_id({}))
-
-    def test_entry_id_is_none_for_non_creodias_url(self):
-        """No entry_id must be returned if the URL is not one from Creodias"""
-        attributes = {'url': 'https://random.url', 'title': 'foo'}
-        self.assertIsNone(self.normalizer.get_entry_id(attributes))
+        with self.assertRaises(MetadataNormalizationError):
+            self.normalizer.get_entry_id({})
