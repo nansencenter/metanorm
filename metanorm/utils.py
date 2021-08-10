@@ -66,7 +66,15 @@ def get_gcmd_provider(potential_provider_attributes, additional_keywords=None):
             break
     return provider
 
-def export_subclasses(package__all__, package, package_dir, base_class):
+def get_all_subclasses(base_class):
+    """Recursively get all subclasses of `base_class`"""
+    subclasses = []
+    for subclass in base_class.__subclasses__():
+        subclasses.append(subclass)
+        subclasses.extend(get_all_subclasses(subclass))
+    return subclasses
+
+def export_subclasses(package__all__, package_name, package_dir, base_class):
     """Append `base_class` and all of its subclasses declared in
     modules in `package_dir` to `all`. This is meant to be used in
     __init__.py files to make normalizer classes easily importable.
@@ -75,12 +83,12 @@ def export_subclasses(package__all__, package, package_dir, base_class):
 
     # Import the modules in the package
     for (_, name, _) in pkgutil.iter_modules([package_dir]):
-        importlib.import_module('.' + name, package)
+        importlib.import_module('.' + name, package_name)
 
     # Make the base_class subclasses available
     # in the 'package' namespace
-    for cls in base_class.__subclasses__():
-        setattr(sys.modules[package], cls.__name__, cls)
+    for cls in get_all_subclasses(base_class):
+        setattr(sys.modules[package_name], cls.__name__, cls)
         package__all__.append(cls.__name__)
 
 def raises(exceptions):
