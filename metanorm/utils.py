@@ -67,11 +67,13 @@ def get_gcmd_provider(potential_provider_attributes, additional_keywords=None):
     return provider
 
 def get_all_subclasses(base_class):
-    """Recursively get all subclasses of `base_class`"""
-    subclasses = []
+    """Recursively get all subclasses of `base_class`.
+    Returns a set to ensure uniqueness
+    """
+    subclasses = set()
     for subclass in base_class.__subclasses__():
-        subclasses.append(subclass)
-        subclasses.extend(get_all_subclasses(subclass))
+        subclasses.add(subclass)
+        subclasses = subclasses.union(get_all_subclasses(subclass))
     return subclasses
 
 def export_subclasses(package__all__, package_name, package_dir, base_class):
