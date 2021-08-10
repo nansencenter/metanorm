@@ -19,7 +19,15 @@ class CreodiasEOFinderMetadataNormalizer(GeoSPaaSMetadataNormalizer):
 
     @utils.raises(KeyError)
     def check(self, raw_metadata):
-        return raw_metadata['url'].startswith('https://zipper.creodias.eu')
+        """Looks for a URL in raw_metadata['url'] (added in
+        geospaas_harvesting) and in
+        raw_metadata['services']['download']['url'] (original location)
+        """
+        url = (
+            raw_metadata.get('url', '') or
+            raw_metadata.get('services', {}).get('download', {}).get('url', '')
+        )
+        return url.startswith('https://zipper.creodias.eu')
 
     @utils.raises(KeyError)
     def get_entry_title(self, raw_metadata):
