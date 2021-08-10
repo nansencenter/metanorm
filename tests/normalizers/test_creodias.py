@@ -1,4 +1,4 @@
-"""Tests for the ACDD metadata normalizer"""
+"""Tests for the Creodias metadata normalizer"""
 import unittest
 from collections import OrderedDict
 from datetime import datetime
