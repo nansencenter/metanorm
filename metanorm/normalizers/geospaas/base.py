@@ -47,23 +47,15 @@ class GeoSPaaSMetadataNormalizer(MetadataNormalizer):
         """Get the provider from the raw metadata"""
         raise NotImplementedError
 
+    @utils.raises(IndexError)
     def get_iso_topic_category(self, raw_metadata):
         """Get the ISO topic category from the raw metadata"""
-        try:
-            result = pti.get_iso19115_topic_category('Oceans')
-        except IndexError as pti_error:
-            raise errors.MetadataNormalizationError(
-                "Unable to find a value for the 'iso_topic_category' parameter") from pti_error
-        return result
+        return pti.get_iso19115_topic_category('Oceans')
 
+    @utils.raises(IndexError)
     def get_gcmd_location(self, raw_metadata):
         """Get the GCMD location from the raw metadata"""
-        try:
-            result = pti.get_gcmd_location('SEA SURFACE')
-        except IndexError as pti_error:
-            raise errors.MetadataNormalizationError(
-                "Unable to find a value for the 'gcmd_location' parameter") from pti_error
-        return result
+        return pti.get_gcmd_location('SEA SURFACE')
 
     def get_dataset_parameters(self, raw_metadata):
         """Get the dataset parameters, if any, from the raw metadata"""
