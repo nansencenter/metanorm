@@ -8,21 +8,41 @@ primarily for use with geo-spatial datasets, but can be extend to process any ki
 
 ## Principle
 
-**Input**:
-  - a list of parameter for which values must be found
-  - raw metadata attributes in the form of a dictionary
+**Input**: raw metadata attributes in the form of a dictionary
 
-**Output**: a dictionary in which the parameter names given as input are associated with the values
-found in the raw attributes.
+**Output**: a dictionary in which normalized parameter names are associated with values found in the
+raw metadata.
 
-The actual work of associating attribute values to the parameters is done by **normalizers**. Each
-normalizer is able to fill in the values of some parameters, if the corresponding attribute(s) are
-found in the raw metadata.
+The actual work of extracting attribute values from the raw metadata is done by **normalizers**.
 
-The raw metadata attributes are processed in a chain of normalizers, each of which will attempt to
-find a value for the parameters it knows.
+Each normalizer is a class able to deal with a particular type of metadata. In the case of
+geo-spatial datasets, a normalizer is typically able to deal with the metadata format of a
+particular data provider.
 
-At the end of the chain, if a value was found for all the
-parameters, a dictionary is returned, otherwise an exception is raised. In order to ensure this
-behavior, the last normalizer in the chain **must** inherit from the `BaseDefaultMetadataNormalizer`
-class.
+## Usage
+
+Although normalizers can be used directly, the easiest way to normalize metadata is to use a
+`MetadataHandler`. A metadata handler is initialized using a base normalizer class.
+
+When trying to normalize metadata (using the handler's `get_parameters()` method), the handler tries
+all normalizers which inherit from this base class. The first normalizer which is able to deal with
+the metadata is used.
+
+To determine if a normalizer is able to deal with a dictionary of raw metadata, the handler calls
+its `check()` method.
+
+Example to normalize data for use in
+[django-geo-spaas](https://github.com/nansencenter/django-geo-spaas):
+
+```python
+import metanorm.handlers as handlers
+import metanorm.normalizers as normalizers
+
+metadata_to_normalize = {
+  'foo': 'bar,
+  'baz': 'qux'
+}
+
+m = handlers.MetadataHandler(normalizers.geospaas.GeoSPaaSMetadataNormalizer)
+normalized_metadata = m.get_parameters(metadata_to_normalize)
+```
