@@ -66,13 +66,12 @@ def get_gcmd_provider(potential_provider_attributes, additional_keywords=None):
             break
     return provider
 
-
-def export_subclasses(all, package, package_dir, base_class):
+def export_subclasses(package__all__, package, package_dir, base_class):
     """Append `base_class` and all of its subclasses declared in
     modules in `package_dir` to `all`. This is meant to be used in
     __init__.py files to make normalizer classes easily importable.
     """
-    all.append(base_class.__name__)
+    package__all__.append(base_class.__name__)
 
     # Import the modules in the package
     for (_, name, _) in pkgutil.iter_modules([package_dir]):
@@ -82,7 +81,7 @@ def export_subclasses(all, package, package_dir, base_class):
     # in the 'package' namespace
     for cls in base_class.__subclasses__():
         setattr(sys.modules[package], cls.__name__, cls)
-        all.append(cls.__name__)
+        package__all__.append(cls.__name__)
 
 def raises(exceptions):
     """Decorator for methods which get an attribute from metadata.
