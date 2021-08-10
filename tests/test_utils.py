@@ -7,6 +7,7 @@ from datetime import datetime
 
 from dateutil.tz import tzutc
 
+import metanorm.errors as errors
 import metanorm.utils as utils
 
 class TimeTestCase(unittest.TestCase):
@@ -89,6 +90,49 @@ class UtilsTestCase(unittest.TestCase):
                          ('Series_Entity', 'METOP'),
                          ('Short_Name', 'METOP-B'),
                          ('Long_Name', 'Meteorological Operational Satellite - B')]))
+
+    def test_raises_decorator(self):
+        """Test that the `raises()` decorator raises a
+        MetadataNormalizationError when the function it decorates
+        raises the exception given as argument to the decorator
+        """
+        # the type annotation prevents Pylance from wrongfully marking
+        # the following code as unreachable
+        @utils.raises(KeyError)
+        def get_foo(self, raw_metadata) -> None:
+            raise KeyError
+
+        with self.assertRaises(errors.MetadataNormalizationError) as raised:
+            get_foo(mock.Mock(), {})
+        self.assertIsInstance(raised.exception.__cause__, KeyError)
+
+    def test_raises_decorator_with_tuple(self):
+        """Test that the `raises()` decorator raises a
+        MetadataNormalizationError when the function it decorates
+        raises one of the exceptions given as argument to the decorator
+        """
+        # the type annotation prevents Pylance from wrongfully marking
+        # the following code as unreachable
+        @utils.raises((KeyError, IndexError))
+        def get_foo(self, raw_metadata) -> None:
+            raise IndexError
+
+        with self.assertRaises(errors.MetadataNormalizationError) as raised:
+            get_foo(mock.Mock(), {})
+        self.assertIsInstance(raised.exception.__cause__, IndexError)
+
+    def test_raises_decorator_wrong_exception(self):
+        """Test that the `raises()` decorator does not catch exceptions
+        which are not in its arguments
+        """
+        # the type annotation prevents Pylance from wrongfully marking
+        # the following code as unreachable
+        @utils.raises(KeyError)
+        def get_foo(self, raw_metadata) -> None:
+            raise ValueError
+
+        with self.assertRaises(ValueError):
+            get_foo(mock.Mock(), {})
 
 
 class SubclassesTestCase(unittest.TestCase):
