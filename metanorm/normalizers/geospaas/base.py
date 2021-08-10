@@ -2,7 +2,6 @@
 import pythesint as pti
 
 import metanorm.utils as utils
-import metanorm.errors as errors
 from metanorm.normalizers.base import MetadataNormalizer
 
 
