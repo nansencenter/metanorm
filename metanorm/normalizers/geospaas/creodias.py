@@ -10,9 +10,6 @@ import metanorm.utils as utils
 from .base import GeoSPaaSMetadataNormalizer
 from ...errors import MetadataNormalizationError
 
-LOGGER = logging.getLogger(__name__)
-LOGGER.addHandler(logging.NullHandler())
-
 
 class CreodiasEOFinderMetadataNormalizer(GeoSPaaSMetadataNormalizer):
     """Generate the properties of a GeoSPaaS Dataset using Creodias attributes"""
