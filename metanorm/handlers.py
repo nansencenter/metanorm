@@ -1,64 +1,38 @@
-"""
-Handler class for normalizers. It is possible to create a custom handler which uses a custom list
-of normalizers: just inherit from MetadataHandler and override the NORMALIZERS class attribute.
-
-This is roughly an implementation of the "chain of responsibility" design pattern:
-    - each MetadataNormalizer interprets keywords from a given convention
-    - the MetadataHandler instantiates a chain of normalizers through which the attributes of a
-      dataset can be processed
+"""This module contains handler classes which control how normalizers
+are used
 """
 import logging
 
 import metanorm.normalizers as normalizers
+import metanorm.utils as utils
+from .errors import NoNormalizerFound
 
-LOGGER = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class MetadataHandler():
-    """Base handler"""
-    # This list should be ordered by decreasing priority, and
-    # THE LAST NORMALIZER MUST INHERIT FROM BaseDefaultMetadataNormalizer
-    NORMALIZERS = []
+    """Handler which builds a list of of subclasses of a base
+    normalizer class
+    """
 
-    def __init__(self, output_parameter_names=None, output_cumulative_parameter_names=None):
-        """Builds a chain of normalizers for the given parameter names"""
-        if output_parameter_names is None and output_cumulative_parameter_names is None:
-            raise ValueError((
-                "Either output_parameter_names or output_cumulative_parameter_names "
-                "should be specified"))
+    def __init__(self, base_class=None):
+        """Builds a list of normalizers, instantiating one per subclass
+        of `base_class`
+        """
+        if base_class is None:
+            base_class = normalizers.MetadataNormalizer
 
-        if not isinstance(self.NORMALIZERS[-1]([]), normalizers.base.BaseDefaultMetadataNormalizer):
-            raise ValueError(
-                "The last normalizer must inherit from 'BaseDefaultMetadataNormalizer'")
+        self.normalizers = [
+            normalizer_class()
+            for normalizer_class in utils.get_all_subclasses(base_class)
+        ]
 
-        self._chain = last_normalizer = self.NORMALIZERS[0](
-            output_parameter_names, output_cumulative_parameter_names)
-
-        for normalizer_class in self.NORMALIZERS[1:]:
-            current_normalizer = normalizer_class(
-                output_parameter_names, output_cumulative_parameter_names)
-            last_normalizer.next = current_normalizer
-            last_normalizer = current_normalizer
-
-    def get_parameters(self, raw_attributes):
-        """Loop through normalizers to try and get a value for each parameter"""
-        return self._chain.normalize(raw_attributes)
-
-
-class GeospatialMetadataHandler(MetadataHandler):
-    """Geospatial metadata handler"""
-    NORMALIZERS = [
-        normalizers.CPOMaltimetryMetadataNormalizer,
-        normalizers.AVISOaltimetryMetadataNormalizer,
-        normalizers.URLMetadataNormalizer,
-        normalizers.CMEMSInSituTACMetadataNormalizer,
-        normalizers.NETCDFCFMetadataNormalizer,
-        normalizers.SentinelSAFEMetadataNormalizer,
-        normalizers.SentinelOneIdentifierMetadataNormalizer,
-        normalizers.CreodiasEOFinderMetadataNormalizer,
-        normalizers.EarthdataCMRMetadataNormalizer,
-        normalizers.ACDDMetadataNormalizer,
-        normalizers.OSISAFMetadataNormalizer,
-        normalizers.GeoSpatialWellKnownMetadataNormalizer,
-        normalizers.GeoSpatialDefaultMetadataNormalizer,
-    ]
+    def get_parameters(self, raw_metadata):
+        """Loop through normalizers and uses the first one whose
+        `check()` method returns true to normalize the raw metadata
+        """
+        for normalizer in self.normalizers:
+            if normalizer.check(raw_metadata):
+                logger.debug("%s will be used", normalizer.__class__.__name__)
+                return normalizer.normalize(raw_metadata)
+        raise NoNormalizerFound(f"No matching normalizer was found in {self.normalizers}")
