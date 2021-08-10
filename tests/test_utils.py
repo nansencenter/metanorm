@@ -1,5 +1,7 @@
+"""Tests for the utils module"""
 import re
 import unittest
+import unittest.mock as mock
 from collections import OrderedDict
 from datetime import datetime
 
@@ -87,3 +89,48 @@ class UtilsTestCase(unittest.TestCase):
                          ('Series_Entity', 'METOP'),
                          ('Short_Name', 'METOP-B'),
                          ('Long_Name', 'Meteorological Operational Satellite - B')]))
+
+
+class SubclassesTestCase(unittest.TestCase):
+    """Tests for utility functions dealing with subclasses"""
+
+    class Base():
+        """Base class for tests"""
+
+    class A(Base):
+        """Class for testing"""
+
+    class B(Base):
+        """Class for testing"""
+
+    class C(B):
+        """Class for testing"""
+
+    class D(A, B):
+        """Class for testing"""
+
+
+    def test_get_all_subclasses(self):
+        """Test that get_all_subclasses() returns all subclasses of
+        the base class
+        """
+        self.assertEqual(
+            utils.get_all_subclasses(self.Base),
+            set((self.A, self.B, self.C, self.D)))
+
+    def test_export_subclasses(self):
+        """Test that export_subclasses imports the modules of the
+        package and adds subclasses to __all__
+        """
+        # simulate the output of pkgutil.iter_modules()
+        # see https://docs.python.org/3.7/library/pkgutil.html#pkgutil.iter_modules
+        modules = (
+            (mock.Mock(), 'module1', False),
+            (mock.Mock(), 'module2', False)
+        )
+        with mock.patch('pkgutil.iter_modules', return_value=iter(modules)), \
+             mock.patch('importlib.import_module') as mock_import_module, \
+             mock.patch('sys.modules') as mock_sys_modules:
+            package__all__ = []
+            utils.export_subclasses(package__all__, 'package', '/foo/package', self.Base)
+        self.assertCountEqual(package__all__, ['Base', 'A', 'B', 'C', 'D'])
