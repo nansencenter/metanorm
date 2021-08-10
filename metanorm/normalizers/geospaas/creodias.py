@@ -19,9 +19,10 @@ class CreodiasEOFinderMetadataNormalizer(GeoSPaaSMetadataNormalizer):
 
     @utils.raises(KeyError)
     def check(self, raw_metadata):
-        """Looks for a URL in raw_metadata['url'] (added in
-        geospaas_harvesting) and in
-        raw_metadata['services']['download']['url'] (original location)
+        """Looks for a URL in `raw_metadata['url']`
+        (added in geospaas_harvesting) and in
+        `raw_metadata['services']['download']['url']`
+        (original location)
         """
         url = (
             raw_metadata.get('url', '') or
@@ -39,7 +40,6 @@ class CreodiasEOFinderMetadataNormalizer(GeoSPaaSMetadataNormalizer):
 
     @utils.raises(KeyError)
     def get_summary(self, raw_metadata):
-        """Get the dataset's summary"""
         description_attributes = ('sensorMode', 'platform', 'instrument', 'startDate')
         summary_fields = {}
 

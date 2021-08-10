@@ -1,4 +1,6 @@
-"""Base normalizers. Other normalizers should inherit from one of those classes"""
+"""Base normalizers. Other normalizers should inherit from
+MetadataNormalizer
+"""
 
 import logging
 
