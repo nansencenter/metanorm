@@ -10,7 +10,9 @@ from ...errors import MetadataNormalizationError
 
 
 class CreodiasEOFinderMetadataNormalizer(GeoSPaaSMetadataNormalizer):
-    """Generate the properties of a GeoSPaaS Dataset using Creodias attributes"""
+    """Generate the properties of a GeoSPaaS Dataset using Creodias
+    attributes
+    """
 
     @utils.raises(KeyError)
     def check(self, raw_metadata):
