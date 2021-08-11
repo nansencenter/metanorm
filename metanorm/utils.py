@@ -3,6 +3,7 @@
 import importlib
 import functools
 import pkgutil
+import re
 import sys
 from collections import OrderedDict
 from datetime import datetime, timedelta
@@ -12,8 +13,39 @@ from dateutil.tz import tzutc
 
 from .errors import MetadataNormalizationError
 
-UNKNOWN = 'Unknown'
 
+######################## Class manipulation utilities ########################
+
+def get_all_subclasses(base_class):
+    """Recursively get all subclasses of `base_class`.
+    Returns a set to ensure uniqueness
+    """
+    subclasses = set()
+    for subclass in base_class.__subclasses__():
+        subclasses.add(subclass)
+        subclasses = subclasses.union(get_all_subclasses(subclass))
+    return subclasses
+
+
+def export_subclasses(package__all__, package_name, package_dir, base_class):
+    """Append `base_class` and all of its subclasses declared in
+    modules in `package_dir` to `all`. This is meant to be used in
+    __init__.py files to make normalizer classes easily importable.
+    """
+    package__all__.append(base_class.__name__)
+
+    # Import the modules in the package
+    for (_, name, _) in pkgutil.iter_modules([package_dir]):
+        importlib.import_module('.' + name, package_name)
+
+    # Make the base_class subclasses available
+    # in the 'package' namespace
+    for cls in get_all_subclasses(base_class):
+        setattr(sys.modules[package_name], cls.__name__, cls)
+        package__all__.append(cls.__name__)
+
+
+######################## Pythesint utilities ########################
 
 # Field names commonly used in the 'summary' attribute
 SUMMARY_FIELDS = {
@@ -46,7 +78,6 @@ PYTHESINT_KEYWORD_TRANSLATION = {
     'OB.DAAC': ('OB_DAAC',)
 }
 
-
 def translate_pythesint_keyword(translation_dict, alias):
     """Get a valid pythesint search keyword from known aliases"""
     for valid_keyword, aliases in translation_dict.items():
@@ -66,53 +97,6 @@ def get_gcmd_provider(potential_provider_attributes, additional_keywords=None):
             break
     return provider
 
-def get_all_subclasses(base_class):
-    """Recursively get all subclasses of `base_class`.
-    Returns a set to ensure uniqueness
-    """
-    subclasses = set()
-    for subclass in base_class.__subclasses__():
-        subclasses.add(subclass)
-        subclasses = subclasses.union(get_all_subclasses(subclass))
-    return subclasses
-
-def export_subclasses(package__all__, package_name, package_dir, base_class):
-    """Append `base_class` and all of its subclasses declared in
-    modules in `package_dir` to `all`. This is meant to be used in
-    __init__.py files to make normalizer classes easily importable.
-    """
-    package__all__.append(base_class.__name__)
-
-    # Import the modules in the package
-    for (_, name, _) in pkgutil.iter_modules([package_dir]):
-        importlib.import_module('.' + name, package_name)
-
-    # Make the base_class subclasses available
-    # in the 'package' namespace
-    for cls in get_all_subclasses(base_class):
-        setattr(sys.modules[package_name], cls.__name__, cls)
-        package__all__.append(cls.__name__)
-
-def raises(exceptions):
-    """Decorator for methods which get an attribute from metadata.
-    Makes it possible to declare which exception(s) are thrown when the
-    raw metadata does not have the expected structure.
-    `exceptions` can be an exception class or a tuple of exception
-    classes. If any of these exceptions is raised by the method,
-    a MetadataNormalizationError with a (hopefully) clear error message
-    is raised from this exception.
-    """
-    def decorator(func):
-        @functools.wraps(func)
-        def wrapper(self, raw_metadata):
-            try:
-                return func(self, raw_metadata)
-            except exceptions as error:
-                raise MetadataNormalizationError(
-                    f"{func.__name__} was unable to process the following metadata: {raw_metadata}"
-                ) from error
-        return wrapper
-    return decorator
 
 def get_gcmd_like_provider(name=None, url=None):
     """Generate a GCMD provider-like data structure using a name and a URL"""
@@ -227,14 +211,6 @@ def restrict_gcmd_search(gcmd_objects, keywords):
     return restricted_search
 
 
-def wkt_polygon_from_wgs84_limits(north, south, east, west):
-    """
-    Returns a WKT string representation of a simple boundary box delimited by its northernmost
-    latitude, southernmost latitude, easternmost longitude and westernmost longitude
-    """
-    return f"POLYGON(({west} {south},{east} {south},{east} {north},{west} {north},{west} {south}))"
-
-
 def get_cf_or_wkv_standard_name(keyword):
     """return the values of a dataset parameter in a standard way from the
     standards that are defined in the pti package based on the keyword that has been passed to it.
@@ -252,6 +228,8 @@ def get_cf_or_wkv_standard_name(keyword):
         result_values = pti.get_wkv_variable(keyword)
     return result_values
 
+
+######################## Time utilities ########################
 
 YEARMONTH_REGEX = r'(?P<year>\d{4})(?P<month>\d{2})'
 YEARMONTHDAY_REGEX = YEARMONTH_REGEX + r'(?P<day>\d{2})'
@@ -277,6 +255,19 @@ def create_datetime(year, month=1, day=1, day_of_year=None, hour=0, minute=0, se
         return datetime(year, month, day, hour, minute, second).replace(tzinfo=tzutc())
 
 
+######################## Other utilities ########################
+
+UNKNOWN = 'Unknown'
+
+
+def wkt_polygon_from_wgs84_limits(north, south, east, west):
+    """
+    Returns a WKT string representation of a simple boundary box delimited by its northernmost
+    latitude, southernmost latitude, easternmost longitude and westernmost longitude
+    """
+    return f"POLYGON(({west} {south},{east} {south},{east} {north},{west} {north},{west} {south}))"
+
+
 def dict_to_string(dictionary):
     """Returns a string representation of the dictionary argument.
     The following dictionary:
@@ -288,3 +279,25 @@ def dict_to_string(dictionary):
     for key, value in dictionary.items():
         string += f"{key}: {value};"
     return string.rstrip(';')
+
+
+def raises(exceptions):
+    """Decorator for methods which get an attribute from metadata.
+    Makes it possible to declare which exception(s) are thrown when the
+    raw metadata does not have the expected structure.
+    `exceptions` can be an exception class or a tuple of exception
+    classes. If any of these exceptions is raised by the method,
+    a MetadataNormalizationError with a (hopefully) clear error message
+    is raised from this exception.
+    """
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(self, raw_metadata):
+            try:
+                return func(self, raw_metadata)
+            except exceptions as error:
+                raise MetadataNormalizationError(
+                    f"{func.__name__} was unable to process the following metadata: {raw_metadata}"
+                ) from error
+        return wrapper
+    return decorator
