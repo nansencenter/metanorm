@@ -1,5 +1,9 @@
 """Utility functions for metadata normalizing"""
 
+import importlib
+import functools
+import pkgutil
+import sys
 from collections import OrderedDict
 from datetime import datetime, timedelta
 from dateutil.tz import tzutc
@@ -51,6 +55,23 @@ def get_gcmd_provider(potential_provider_attributes, additional_keywords=None):
             break
     return provider
 
+
+def export_subclasses(all, package, package_dir, base_class):
+    """Append `base_class` and all of its subclasses declared in
+    modules in `package_dir` to `all`. This is meant to be used in
+    __init__.py files to make normalizer classes easily importable.
+    """
+    all.append(base_class.__name__)
+
+    # Import the modules in the package
+    for (_, name, _) in pkgutil.iter_modules([package_dir]):
+        importlib.import_module('.' + name, package)
+
+    # Make the base_class subclasses available
+    # in the 'package' namespace
+    for cls in base_class.__subclasses__():
+        setattr(sys.modules[package], cls.__name__, cls)
+        all.append(cls.__name__)
 
 def get_gcmd_like_provider(name=None, url=None):
     """Generate a GCMD provider-like data structure using a name and a URL"""
