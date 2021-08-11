@@ -1,5 +1,6 @@
 """Tests for the base GeoSPaaS normalizer"""
 
+import logging
 import unittest
 import unittest.mock as mock
 from collections import OrderedDict
@@ -104,6 +105,35 @@ class GeoSPaaSMetadataNormalizerTestCase(unittest.TestCase):
         with mock.patch('pythesint.get_gcmd_location', side_effect=IndexError):
             with self.assertRaises(errors.MetadataNormalizationError):
                 _ = self.normalizer.get_gcmd_location({})
+
+    def test_get_dataset_parameters(self):
+        """Test getting parameters from the 'raw_dataset_parameters'
+        attribute
+        """
+        with mock.patch('metanorm.utils.get_cf_or_wkv_standard_name') as mock_utils_get:
+            mock_utils_get.side_effect = ('foo', 'bar')
+            self.assertCountEqual(
+                self.normalizer.get_dataset_parameters({'raw_dataset_parameters': ['baz', 'qux']}),
+                ['foo', 'bar'])
+
+    def test_get_dataset_parameters_pti_error(self):
+        """get_dataset_parameters() should log a warning and continue
+        processing if no parameter is found using pythesint
+        """
+        with mock.patch('metanorm.utils.get_cf_or_wkv_standard_name') as mock_utils_get:
+            mock_utils_get.side_effect = (IndexError, 'bar')
+            with self.assertLogs(normalizers.geospaas.base.logger, level=logging.WARNING):
+                self.assertCountEqual(
+                    self.normalizer.get_dataset_parameters({
+                        'raw_dataset_parameters': ['baz', 'qux']
+                    }),
+                    ['bar'])
+
+    def test_get_dataset_parameters_no_raw_parameters(self):
+        """get_dataset_parameters() should return an empty string when
+        'raw_dataset_parameters' is not present in the raw metadata
+        """
+        self.assertListEqual(self.normalizer.get_dataset_parameters({}), [])
 
     def test_normalize(self):
         """Test that the normalize method returns the right attributes
