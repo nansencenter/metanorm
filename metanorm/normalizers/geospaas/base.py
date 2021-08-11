@@ -1,8 +1,14 @@
 """Module containing the base class for GeoSPaaS normalizers"""
+import logging
+
 import pythesint as pti
 
 import metanorm.utils as utils
 from metanorm.normalizers.base import MetadataNormalizer
+
+
+logger = logging.getLogger(__name__)
+logger.addHandler(logging.NullHandler())
 
 
 class GeoSPaaSMetadataNormalizer(MetadataNormalizer):
@@ -58,8 +64,20 @@ class GeoSPaaSMetadataNormalizer(MetadataNormalizer):
         return pti.get_gcmd_location('SEA SURFACE')
 
     def get_dataset_parameters(self, raw_metadata):
-        """Get the dataset parameters, if any, from the raw metadata"""
-        return []
+        """Get the dataset's parameters, if any, from the raw metadata
+        Note that if a parameter is not found is pythesint, no error is
+        raised, but a warning is logged
+        """
+        normalized_dataset_parameters = []
+        if 'raw_dataset_parameters' in raw_metadata:
+            for raw_parameter_name in raw_metadata['raw_dataset_parameters']:
+                try:
+                    normalized_parameter = utils.get_cf_or_wkv_standard_name(raw_parameter_name)
+                except IndexError:
+                    logger.warning("'%s' parameter could not be normalized", raw_parameter_name)
+                else:
+                    normalized_dataset_parameters.append(normalized_parameter)
+        return normalized_dataset_parameters
 
     def normalize(self, raw_metadata):
         return {
