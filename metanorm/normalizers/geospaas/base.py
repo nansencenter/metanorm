@@ -15,6 +15,7 @@ class GeoSPaaSMetadataNormalizer(MetadataNormalizer):
 
     def get_entry_id(self, raw_metadata):
         """Get the entry ID from the raw metadata"""
+        raise NotImplementedError
 
     def get_summary(self, raw_metadata):
         """Get the summary from the raw metadata"""
