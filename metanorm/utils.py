@@ -85,7 +85,8 @@ def translate_pythesint_keyword(translation_dict, alias):
             return valid_keyword
     return alias
 
-
+# TODO: rework the utils for provider so that they are
+# consistent with other GCMD fields
 def get_gcmd_provider(potential_provider_attributes, additional_keywords=None):
     """
     Get a GCMD provider from a name and/or URL, otherwise return None
@@ -258,6 +259,7 @@ def create_datetime(year, month=1, day=1, day_of_year=None, hour=0, minute=0, se
 ######################## Other utilities ########################
 
 UNKNOWN = 'Unknown'
+NC_H5_FILENAME_MATCHER = re.compile(r"([^/]+)\.(nc|h5)(\.gz)?$")
 
 
 def wkt_polygon_from_wgs84_limits(north, south, east, west):
