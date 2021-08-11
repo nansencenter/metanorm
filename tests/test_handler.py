@@ -64,10 +64,9 @@ class MetadataHandlerTestCase(unittest.TestCase):
         """Test that the handler builds a list of all normalizers which
         inherit from a base class
         """
-        self.assertIsInstance(self.handler.normalizers[0], self.TestNormalizer1)
-        self.assertIsInstance(self.handler.normalizers[1], self.TestNormalizer2)
-        self.assertIsInstance(self.handler.normalizers[2], self.TestNormalizer3)
-        self.assertEqual(len(self.handler.normalizers), 3)
+        self.assertCountEqual(
+            (self.TestNormalizer1, self.TestNormalizer2, self.TestNormalizer3),
+            (n.__class__ for n in self.handler.normalizers))
 
     def test_get_parameters(self):
         """Test that the metadata is normalized using the right
