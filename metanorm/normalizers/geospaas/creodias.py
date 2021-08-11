@@ -1,7 +1,5 @@
 """Normalizer for the metadata used in the Creodias finder API"""
 
-import logging
-
 import dateutil
 import dateutil.parser
 
