@@ -62,19 +62,11 @@ class CreodiasEOFinderMetadataNormalizer(GeoSPaaSMetadataNormalizer):
 
     @utils.raises(KeyError)
     def get_platform(self, raw_metadata):
-        platform = utils.get_gcmd_platform(raw_metadata['platform'])
-        if platform:
-            return platform
-        else:
-            raise MetadataNormalizationError(f"Unknown platform {platform}")
+        return utils.get_gcmd_platform(raw_metadata['platform'])
 
     @utils.raises(KeyError)
     def get_instrument(self, raw_metadata):
-        instrument = utils.get_gcmd_instrument(raw_metadata['instrument'])
-        if instrument:
-            return instrument
-        else:
-            raise MetadataNormalizationError(f"Unknown instrument {instrument}")
+        return utils.get_gcmd_instrument(raw_metadata['instrument'])
 
     @utils.raises(KeyError)
     def get_location_geometry(self, raw_metadata):
