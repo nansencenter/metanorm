@@ -83,6 +83,7 @@ class ACDDMetadataNormalizerTestCase(unittest.TestCase):
         """Parameter method must return None if the attribute is missing"""
         self.assertEqual(self.normalizer.get_time_coverage_end({}), None)
 
+    # TODO: move tests for utility functions to test_utils
     def test_gcmd_platform(self):
         """gcmd_platform from ACDDMetadataNormalizer"""
         attributes = {'platform': 'SENTINEL-1A'}
