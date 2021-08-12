@@ -42,6 +42,19 @@ class CreodiasEOFinderMetadataNormalizerTestCase(unittest.TestCase):
         with self.assertRaises(MetadataNormalizationError):
             self.normalizer.get_entry_title({})
 
+    def test_entry_id(self):
+        """entry_id from CreodiasEOFinderMetadataNormalizer """
+        attributes = {
+            'url': "https://zipper.creodias.eu/foo",
+            'title': 'id_value'
+        }
+        self.assertEqual(self.normalizer.get_entry_id(attributes), 'id_value')
+
+    def test_entry_id_missing_attribute(self):
+        """entry_id method must return None if the attribute is missing"""
+        with self.assertRaises(MetadataNormalizationError):
+            self.normalizer.get_entry_id({})
+
     def test_summary_description_only(self):
         """summary from CreodiasEOFinderMetadataNormalizer"""
         attributes = {
@@ -169,16 +182,3 @@ class CreodiasEOFinderMetadataNormalizerTestCase(unittest.TestCase):
         """An exception must be raised if the attribute is missing"""
         with self.assertRaises(MetadataNormalizationError):
             self.normalizer.get_provider({})
-
-    def test_entry_id(self):
-        """entry_id from CreodiasEOFinderMetadataNormalizer """
-        attributes = {
-            'url': "https://zipper.creodias.eu/foo",
-            'title': 'id_value'
-        }
-        self.assertEqual(self.normalizer.get_entry_id(attributes), 'id_value')
-
-    def test_entry_id_missing_attribute(self):
-        """entry_id method must return None if the attribute is missing"""
-        with self.assertRaises(MetadataNormalizationError):
-            self.normalizer.get_entry_id({})
