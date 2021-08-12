@@ -31,6 +31,17 @@ class CreodiasEOFinderMetadataNormalizerTestCase(unittest.TestCase):
         self.assertFalse(self.normalizer.check({}))
         self.assertFalse(self.normalizer.check({'foo': 'bar'}))
 
+    def test_entry_title(self):
+        """entry_title from CreodiasEOFinderMetadataNormalizer"""
+        self.assertEqual(self.normalizer.get_entry_title({'title': 'foo'}), 'foo')
+
+    def test_missing_raw_title(self):
+        """A MetadataNormalizationError must be raised if the raw title
+        attribute is absent
+        """
+        with self.assertRaises(MetadataNormalizationError):
+            self.normalizer.get_entry_title({})
+
     def test_summary_description_only(self):
         """summary from CreodiasEOFinderMetadataNormalizer"""
         attributes = {
