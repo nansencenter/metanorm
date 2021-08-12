@@ -2,6 +2,7 @@
 #pylint: disable=protected-access
 
 import unittest
+import unittest.mock as mock
 
 import metanorm.errors as errors
 import metanorm.handlers as handlers
@@ -67,6 +68,14 @@ class MetadataHandlerTestCase(unittest.TestCase):
         self.assertCountEqual(
             (self.TestNormalizer1, self.TestNormalizer2, self.TestNormalizer3),
             (n.__class__ for n in self.handler.normalizers))
+
+    def test_default_instantiation(self):
+        """If no base class is provided, MetadataNormalizer should be
+        used
+        """
+        with mock.patch('metanorm.utils.get_all_subclasses') as mock_get_all_subclasses:
+            handlers.MetadataHandler()
+        mock_get_all_subclasses.assert_called_once_with(normalizers.MetadataNormalizer)
 
     def test_get_parameters(self):
         """Test that the metadata is normalized using the right
