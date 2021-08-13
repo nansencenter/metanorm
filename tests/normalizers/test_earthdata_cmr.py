@@ -6,16 +6,74 @@ from datetime import datetime
 from dateutil.tz import tzutc
 
 import metanorm.normalizers as normalizers
+from metanorm.errors import MetadataNormalizationError
 
 
 class EarthdataCMRMetadataNormalizerTestCase(unittest.TestCase):
     """Tests for the Creodias API attributes normalizer"""
 
     def setUp(self):
-        self.normalizer = normalizers.EarthdataCMRMetadataNormalizer([], [])
+        self.normalizer = normalizers.EarthdataCMRMetadataNormalizer()
+
+    def test_check(self):
+        """Test checking condition"""
+        self.assertTrue(self.normalizer.check({'meta': {}, 'umm': {}}))
+        self.assertTrue(self.normalizer.check({'umm': {}, 'meta': {}, 'url': ''}))
+
+        self.assertFalse(self.normalizer.check({}))
+
+    def test_entry_id(self):
+        """Test getting the ID"""
+        attributes = {
+            'umm': {
+                "DataGranule": {
+                    "Identifiers": [
+                        {
+                            "IdentifierType": "ProducerGranuleId",
+                            "Identifier": "V2020245000600.L2_SNPP_OC.nc"
+                        }
+                    ]
+                }
+            }
+        }
+        self.assertEqual(self.normalizer.get_entry_id(attributes), 'V2020245000600.L2_SNPP_OC')
+
+    def test_entry_id_missing_attribute(self):
+        """A MetadataNormalizationError must be raised if the raw
+        attribute is missing
+        """
+        with self.assertRaises(MetadataNormalizationError):
+            self.normalizer.get_entry_id({})
+        with self.assertRaises(MetadataNormalizationError):
+            self.normalizer.get_entry_id({'umm': {'foo': 'bar'}})
+
+    def test_entry_title(self):
+        """Test getting the title"""
+        attributes = {
+            'umm': {
+                "DataGranule": {
+                    "Identifiers": [
+                        {
+                            "IdentifierType": "ProducerGranuleId",
+                            "Identifier": "V2020245000600.L2_SNPP_OC.nc"
+                        }
+                    ]
+                }
+            }
+        }
+        self.assertEqual(self.normalizer.get_entry_title(attributes), 'V2020245000600.L2_SNPP_OC')
+
+    def test_entry_title_missing_attribute(self):
+        """A MetadataNormalizationError must be raised if the raw
+        attribute is missing
+        """
+        with self.assertRaises(MetadataNormalizationError):
+            self.normalizer.get_entry_title({})
+        with self.assertRaises(MetadataNormalizationError):
+            self.normalizer.get_entry_title({'umm': {'foo': 'bar'}})
 
     def test_summary(self):
-        """summary from EarthdataCMRMetadataNormalizer"""
+        """Test getting the summary"""
         attributes = {
             "umm": {
                 "TemporalExtent": {
@@ -47,12 +105,16 @@ class EarthdataCMRMetadataNormalizerTestCase(unittest.TestCase):
             'Processing level: L2')
 
     def test_summary_missing_attribute(self):
-        """Parameter method must return None if the attribute is missing"""
-        self.assertEqual(self.normalizer.get_summary({}), None)
-        self.assertEqual(self.normalizer.get_summary({"umm": {'foo': 'bar'}}), None)
+        """A MetadataNormalizationError must be raised if the raw
+        attribute is missing
+        """
+        with self.assertRaises(MetadataNormalizationError):
+            self.normalizer.get_summary({})
+        with self.assertRaises(MetadataNormalizationError):
+            self.normalizer.get_summary({"umm": {'foo': 'bar'}})
 
     def test_time_coverage_start(self):
-        """time_coverage_start from EarthdataCMRMetadataNormalizer"""
+        """Test getting the start of the time coverage"""
         self.assertEqual(
             self.normalizer.get_time_coverage_start({
                 "umm": {
@@ -67,12 +129,16 @@ class EarthdataCMRMetadataNormalizerTestCase(unittest.TestCase):
             datetime(year=2020, month=9, day=1, hour=0, minute=6, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_start_missing_attribute(self):
-        """Parameter method must return None if the attribute is missing"""
-        self.assertEqual(self.normalizer.get_time_coverage_start({}), None)
-        self.assertEqual(self.normalizer.get_time_coverage_start({"umm": {'foo': 'bar'}}), None)
+        """A MetadataNormalizationError must be raised if the raw
+        attribute is missing
+        """
+        with self.assertRaises(MetadataNormalizationError):
+            self.normalizer.get_time_coverage_start({})
+        with self.assertRaises(MetadataNormalizationError):
+            self.normalizer.get_time_coverage_start({"umm": {'foo': 'bar'}})
 
     def test_time_coverage_end(self):
-        """time_coverage_end from EarthdataCMRMetadataNormalizer"""
+        """Test getting the end of the time coverage"""
         self.assertEqual(
             self.normalizer.get_time_coverage_end({
                 "umm": {
@@ -87,12 +153,16 @@ class EarthdataCMRMetadataNormalizerTestCase(unittest.TestCase):
             datetime(year=2020, month=9, day=1, hour=0, minute=11, second=59, tzinfo=tzutc()))
 
     def test_time_coverage_end_missing_attribute(self):
-        """Parameter method must return None if the attribute is missing"""
-        self.assertEqual(self.normalizer.get_time_coverage_end({}), None)
-        self.assertEqual(self.normalizer.get_time_coverage_end({'umm': {'foo': 'bar'}}), None)
+        """A MetadataNormalizationError must be raised if the raw
+        attribute is missing
+        """
+        with self.assertRaises(MetadataNormalizationError):
+            self.normalizer.get_time_coverage_end({})
+        with self.assertRaises(MetadataNormalizationError):
+            self.normalizer.get_time_coverage_end({'umm': {'foo': 'bar'}})
 
     def test_platform(self):
-        """gcmd_platform from EarthdataCMRMetadataNormalizer"""
+        """Test getting the platform"""
         self.assertEqual(
             self.normalizer.get_platform({'umm': {
                 "Platforms": [
@@ -113,12 +183,16 @@ class EarthdataCMRMetadataNormalizerTestCase(unittest.TestCase):
         )
 
     def test_platform_missing_attribute(self):
-        """Parameter method must return None if the attribute is missing"""
-        self.assertEqual(self.normalizer.get_platform({}), None)
-        self.assertEqual(self.normalizer.get_platform({'umm': {'foo': 'bar'}}), None)
+        """A MetadataNormalizationError must be raised if the raw
+        attribute is missing
+        """
+        with self.assertRaises(MetadataNormalizationError):
+            self.normalizer.get_platform({})
+        with self.assertRaises(MetadataNormalizationError):
+            self.normalizer.get_platform({'umm': {'foo': 'bar'}})
 
     def test_instrument(self):
-        """GCMD instrument from EarthdataCMRMetadataNormalizer"""
+        """Test getting the instrument"""
         self.assertEqual(
             self.normalizer.get_instrument({'umm': {
                 "Platforms": [
@@ -141,12 +215,16 @@ class EarthdataCMRMetadataNormalizerTestCase(unittest.TestCase):
         )
 
     def test_instrument_missing_attribute(self):
-        """Parameter method must return None if the attribute is missing"""
-        self.assertEqual(self.normalizer.get_instrument({}), None)
-        self.assertEqual(self.normalizer.get_instrument({'umm': {'foo': 'bar'}}), None)
+        """A MetadataNormalizationError must be raised if the raw
+        attribute is missing
+        """
+        with self.assertRaises(MetadataNormalizationError):
+            self.normalizer.get_instrument({})
+        with self.assertRaises(MetadataNormalizationError):
+            self.normalizer.get_instrument({'umm': {'foo': 'bar'}})
 
     def test_location_geometry(self):
-        """location_geometry from EarthdataCMRMetadataNormalizer"""
+        """Test getting the location_geometry"""
 
         attributes = {
             'umm': {
@@ -176,12 +254,16 @@ class EarthdataCMRMetadataNormalizerTestCase(unittest.TestCase):
         self.assertEqual(self.normalizer.get_location_geometry(attributes), expected_wkt)
 
     def test_location_geometry_missing_attribute(self):
-        """Parameter method must return None if the attribute is missing"""
-        self.assertEqual(self.normalizer.get_location_geometry({}), None)
-        self.assertEqual(self.normalizer.get_location_geometry({'umm': {'foo': 'bar'}}), None)
+        """A MetadataNormalizationError must be raised if the raw
+        attribute is missing
+        """
+        with self.assertRaises(MetadataNormalizationError):
+            self.normalizer.get_location_geometry({})
+        with self.assertRaises(MetadataNormalizationError):
+            self.normalizer.get_location_geometry({'umm': {'foo': 'bar'}})
 
-    def test_gcmd_provider(self):
-        """GCMD provider from EarthdataCMRMetadataNormalizer"""
+    def test_get_provider(self):
+        """Test getting the provider"""
         self.assertEqual(
             self.normalizer.get_provider({"meta": {"provider-id": "OB_DAAC"}}),
             OrderedDict([('Bucket_Level0', 'GOVERNMENT AGENCIES-U.S. FEDERAL AGENCIES'),
@@ -198,53 +280,17 @@ class EarthdataCMRMetadataNormalizerTestCase(unittest.TestCase):
         )
 
     def test_unknown_provider_returns_none(self):
-        """No provider must be returned if the provider is unknown"""
-        self.assertIs(self.normalizer.get_provider({"meta": {"provider-id": "something"}}), None)
+        """A MetadataNormalizationError must be raised if the provider
+        is not found using pythesint
+        """
+        with self.assertRaises(MetadataNormalizationError):
+            self.normalizer.get_provider({"meta": {"provider-id": "something"}})
 
     def test_provider_missing_attribute(self):
-        """Parameter method must return None if the attribute is missing"""
-        self.assertEqual(self.normalizer.get_provider({}), None)
-        self.assertEqual(self.normalizer.get_provider({'meta': {'foo': 'bar'}}), None)
-
-    def test_entry_id(self):
-        """entry_id from EarthdataCMRMetadataNormalizer """
-        attributes = {
-            'umm': {
-                "DataGranule": {
-                    "Identifiers": [
-                        {
-                            "IdentifierType": "ProducerGranuleId",
-                            "Identifier": "V2020245000600.L2_SNPP_OC.nc"
-                        }
-                    ]
-                }
-            }
-        }
-        self.assertEqual(self.normalizer.get_entry_id(attributes), 'V2020245000600.L2_SNPP_OC')
-
-    def test_entry_id_missing_attribute(self):
-        """entry_id method must return None if the attribute is missing"""
-        self.assertIsNone(self.normalizer.get_entry_id({}))
-        self.assertIsNone(self.normalizer.get_entry_id({'umm': {'foo': 'bar'}}))
-
-
-    def test_entry_title(self):
-        """entry_title from EarthdataCMRMetadataNormalizer"""
-        attributes = {
-            'umm': {
-                "DataGranule": {
-                    "Identifiers": [
-                        {
-                            "IdentifierType": "ProducerGranuleId",
-                            "Identifier": "V2020245000600.L2_SNPP_OC.nc"
-                        }
-                    ]
-                }
-            }
-        }
-        self.assertEqual(self.normalizer.get_entry_title(attributes), 'V2020245000600.L2_SNPP_OC')
-
-    def test_entry_title_missing_attribute(self):
-        """entry_title method must return None if the attribute is missing"""
-        self.assertIsNone(self.normalizer.get_entry_title({}))
-        self.assertIsNone(self.normalizer.get_entry_title({'umm': {'foo': 'bar'}}))
+        """A MetadataNormalizationError must be raised if the raw
+        attribute is missing
+        """
+        with self.assertRaises(MetadataNormalizationError):
+            self.normalizer.get_provider({})
+        with self.assertRaises(MetadataNormalizationError):
+            self.normalizer.get_provider({'meta': {'foo': 'bar'}})
