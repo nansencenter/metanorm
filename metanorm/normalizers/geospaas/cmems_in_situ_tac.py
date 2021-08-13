@@ -1,6 +1,5 @@
 """Normalizer for the Copernicus In Situ TAC metadata convention"""
 
-import logging
 import re
 
 import dateutil.parser
