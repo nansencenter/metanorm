@@ -102,7 +102,7 @@ class EarthdataCMRMetadataNormalizerTestCase(unittest.TestCase):
             self.normalizer.get_summary(attributes),
             'Description: Platform=SUOMI-NPP, ' +
             'Instrument=VIIRS, Start date=2020-09-01T00:06:00Z;' +
-            'Processing level: L2')
+            'Processing level: 2')
 
     def test_summary_missing_attribute(self):
         """A MetadataNormalizationError must be raised if the raw
