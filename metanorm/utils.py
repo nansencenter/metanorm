@@ -77,6 +77,7 @@ PYTHESINT_KEYWORD_TRANSLATION = {
     'ESA/EO': ('ESA',),
     'OB.DAAC': ('OB_DAAC',),
     'C-SAR': ('SAR-C', 'SAR-C SAR'),
+    'EUMETSAT/OSISAF': ('EUMETSAT OSI SAF',),
 }
 
 def translate_pythesint_keyword(translation_dict, alias):
