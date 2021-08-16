@@ -42,7 +42,7 @@ class EarthdataCMRMetadataNormalizer(GeoSPaaSMetadataNormalizer):
         summary_fields[utils.SUMMARY_FIELDS['description']] = description
 
         processing_level = re.match(
-            r'^.*_(L\d[^_]*)_.*$',
+            r'^.*_L(\d[^_]*)_.*$',
             umm['CollectionReference']['ShortName']).group(1)
         summary_fields[utils.SUMMARY_FIELDS['processing_level']] = processing_level
 
