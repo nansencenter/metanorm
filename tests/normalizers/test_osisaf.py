@@ -18,9 +18,9 @@ class OSISAFMetadataNormalizer(unittest.TestCase):
 
     def test_check(self):
         """Test the checking condition"""
-        self.assertTrue(self.normalizer.check({'institution': 'EUMETSAT OSI SAF'}))
+        self.assertTrue(self.normalizer.check({'project_name': 'EUMETSAT OSI SAF'}))
 
-        self.assertFalse(self.normalizer.check({'institution': 'foo'}))
+        self.assertFalse(self.normalizer.check({'project_name': 'foo'}))
         self.assertFalse(self.normalizer.check({}))
 
     def test_entry_title(self):

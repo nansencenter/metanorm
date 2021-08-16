@@ -18,8 +18,7 @@ class OSISAFMetadataNormalizer(GeoSPaaSMetadataNormalizer):
         self.filename_matcher = re.compile(r"([^/]+)\.nc(\.dods)?$")
 
     def check(self, raw_metadata):
-        #TODO revise the condition
-        return raw_metadata.get('institution', '') == 'EUMETSAT OSI SAF'
+        return raw_metadata.get('project_name', '') == 'EUMETSAT OSI SAF'
 
     @utils.raises(KeyError)
     def get_entry_title(self, raw_metadata):
