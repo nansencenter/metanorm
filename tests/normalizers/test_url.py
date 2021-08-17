@@ -159,6 +159,11 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
              ' parcel cooled by dry adiabatic lifting would reach 100%. A coordinate variable of '
              'original_air_pressure_of_lifted_parcel should be specified to indicate the starting '
              'height of the lifted parcel.')]),
+        'sea_binary_mask': OrderedDict([
+            ('standard_name', 'sea_binary_mask'),
+            ('canonical_units', '1'),
+            ('definition',
+             'X"_binary_mask" has 1 where condition X is met, 0 elsewhere. 1 = sea, 0 = land.')]),
         'sea_floor_depth_below_geoid': OrderedDict([
             ('standard_name', 'sea_floor_depth_below_geoid'),
             ('canonical_units', 'm'),
@@ -556,39 +561,48 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
 
     def test_time_coverage_start_medsea_analysis_forecast_phy_006_013_daily_mean(self):
         """Should return the proper starting time for a daily mean file"""
-        url = ('ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/'
-               'med00-cmcc-cur-an-fc-d/2020/06/'
-               '20200601_d-CMCC--RFVL-MFSeas5-MEDATL-b20200616_an-sv06.00.nc')
+        url = ('ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/'
+               'med-cmcc-cur-an-fc-d/2020/06/'
+               '20200601_d-CMCC--RFVL-MFSeas6-MEDATL-b20210101_an-sv07.00.nc')
         self.assertEqual(
             self.normalizer.get_time_coverage_start({'url': url}),
             datetime(year=2020, month=6, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_start_medsea_analysis_forecast_phy_006_013_hourly_mean(self):
         """Should return the proper starting time for an hourly mean file"""
-        url = ('ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/'
-               'med00-cmcc-cur-an-fc-h/2020/06/'
-               '20200601_h-CMCC--RFVL-MFSeas5-MEDATL-b20200616_an-sv06.00.nc')
+        url = ('ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/'
+               'med-cmcc-cur-an-fc-h/2021/06/'
+               '20210601_h-CMCC--RFVL-MFSeas6-MEDATL-b20210615_an-sv07.00.nc')
         self.assertEqual(
             self.normalizer.get_time_coverage_start({'url': url}),
-            datetime(year=2020, month=6, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
+            datetime(year=2021, month=6, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
+
+    def test_time_coverage_start_medsea_analysis_forecast_phy_006_013_15min_inst(self):
+        """Should return the proper starting time for a 15 min instantaneous file"""
+        url = ('ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/'
+               'med-cmcc-cur-an-fc-qm/2020/05/'
+               '20200502_qm-CMCC--RFVL-MFSeas6-MEDATL-b20210101_an-sv07.00.nc')
+        self.assertEqual(
+            self.normalizer.get_time_coverage_start({'url': url}),
+            datetime(year=2020, month=5, day=2, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_start_medsea_analysis_forecast_phy_006_013_hourly_mean_hts(self):
         """Should return the proper starting time for an hts hourly mean file"""
-        url = ('ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/'
-               'med00-cmcc-cur-an-fc-hts/2020/06/'
-               '20200601_hts-CMCC--RFVL-MFSeas5-MEDATL-b20200616_an-sv06.00.nc')
+        url = ('ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/'
+               'med-cmcc-cur-an-fc-hts/2021/06/'
+               '20210601_hts-CMCC--RFVL-MFSeas6-MEDATL-b20210615_an-sv07.00.nc')
         self.assertEqual(
             self.normalizer.get_time_coverage_start({'url': url}),
-            datetime(year=2020, month=6, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
+            datetime(year=2021, month=6, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_start_medsea_analysis_forecast_phy_006_013_month(self):
         """Should return the proper starting time"""
         self.assertEqual(
             self.normalizer.get_time_coverage_start(
-                {'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/'
-                        'med00-cmcc-cur-an-fc-m/2020/'
-                        '20200601_m-CMCC--RFVL-MFSeas5-MEDATL-b20200714_an-sv06.00.nc'}),
-            datetime(year=2020, month=6, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
+                {'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/'
+                        'med-cmcc-cur-an-fc-m/2021/'
+                        '20210601_m-CMCC--RFVL-MFSeas6-MEDATL-b20210713_an-sv07.00.nc'}),
+            datetime(year=2021, month=6, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_start_ibi_analysis_forecast_phys_005_001_15min(self):
         """Should return the proper starting time"""
@@ -831,39 +845,48 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
 
     def test_time_coverage_end_medsea_analysis_forecast_phy_006_013_daily_mean(self):
         """Should return the proper ending time for a daily mean file"""
-        url = ('ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/'
-               'med00-cmcc-cur-an-fc-d/2020/06/'
-               '20200601_d-CMCC--RFVL-MFSeas5-MEDATL-b20200616_an-sv06.00.nc')
+        url = ('ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/'
+               'med-cmcc-cur-an-fc-d/2020/06/'
+               '20200601_d-CMCC--RFVL-MFSeas6-MEDATL-b20210101_an-sv07.00.nc')
         self.assertEqual(
             self.normalizer.get_time_coverage_end({'url': url}),
             datetime(year=2020, month=6, day=2, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_end_medsea_analysis_forecast_phy_006_013_hourly_mean(self):
         """Should return the proper ending time for an hourly mean file"""
-        url = ('ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/'
-               'med00-cmcc-cur-an-fc-h/2020/06/'
-               '20200601_h-CMCC--RFVL-MFSeas5-MEDATL-b20200616_an-sv06.00.nc')
+        url = ('ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/'
+               'med-cmcc-cur-an-fc-h/2021/06/'
+               '20210601_h-CMCC--RFVL-MFSeas6-MEDATL-b20210615_an-sv07.00.nc')
         self.assertEqual(
             self.normalizer.get_time_coverage_end({'url': url}),
-            datetime(year=2020, month=6, day=2, hour=0, minute=0, second=0, tzinfo=tzutc()))
+            datetime(year=2021, month=6, day=2, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_end_medsea_analysis_forecast_phy_006_013_hourly_mean_hts(self):
         """Should return the proper ending time for an hts hourly mean file"""
-        url = ('ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/'
-               'med00-cmcc-cur-an-fc-hts/2020/06/'
-               '20200601_hts-CMCC--RFVL-MFSeas5-MEDATL-b20200616_an-sv06.00.nc')
+        url = ('ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/'
+               'med-cmcc-cur-an-fc-hts/2021/06/'
+               '20210601_hts-CMCC--RFVL-MFSeas6-MEDATL-b20210615_an-sv07.00.nc')
         self.assertEqual(
             self.normalizer.get_time_coverage_end({'url': url}),
-            datetime(year=2020, month=6, day=2, hour=0, minute=0, second=0, tzinfo=tzutc()))
+            datetime(year=2021, month=6, day=2, hour=0, minute=0, second=0, tzinfo=tzutc()))
+
+    def test_time_coverage_end_medsea_analysis_forecast_phy_006_013_15min_inst(self):
+        """Should return the proper ending time for a 15 min instantaneous file"""
+        url = ('ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/'
+               'med-cmcc-cur-an-fc-qm/2020/05/'
+               '20200502_qm-CMCC--RFVL-MFSeas6-MEDATL-b20210101_an-sv07.00.nc')
+        self.assertEqual(
+            self.normalizer.get_time_coverage_end({'url': url}),
+            datetime(year=2020, month=5, day=3, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_end_medsea_analysis_forecast_phy_006_013_month(self):
         """Should return the proper ending time"""
         self.assertEqual(
             self.normalizer.get_time_coverage_end(
-                {'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/'
-                        'med00-cmcc-cur-an-fc-m/2020/'
-                        '20200601_m-CMCC--RFVL-MFSeas5-MEDATL-b20200714_an-sv06.00.nc'}),
-            datetime(year=2020, month=7, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
+                {'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/'
+                        'med-cmcc-cur-an-fc-m/2021/'
+                        '20210601_m-CMCC--RFVL-MFSeas6-MEDATL-b20210713_an-sv07.00.nc'}),
+            datetime(year=2021, month=7, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_end_ibi_analysis_forecast_phys_005_001_15min(self):
         """Should return the proper ending time"""
@@ -1063,7 +1086,7 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
 
     def test_instrument_medsea_analysis_forecast_phy_006_013(self):
         """Should return the proper instrument"""
-        attributes = {'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/'}
+        attributes = {'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/'}
         self.assertEqual(
             self.normalizer.get_instrument(attributes),
             OrderedDict([('Category', 'In Situ/Laboratory Instruments'),
@@ -1186,7 +1209,7 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
 
     def test_platform_medsea_analysis_forecast_phy_006_013(self):
         """Should return the proper platform"""
-        attributes = {'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/'}
+        attributes = {'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/'}
         self.assertEqual(
             self.normalizer.get_platform(attributes),
             OrderedDict([('Category', 'Models/Analyses'),
@@ -1319,7 +1342,7 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
 
     def test_provider_medsea_analysis_forecast_phy_006_013(self):
         """Should return the proper provider"""
-        attributes = {'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/'}
+        attributes = {'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/'}
         self.assertEqual(
             self.normalizer.get_provider(attributes),
             OrderedDict([('Bucket_Level0','MULTINATIONAL ORGANIZATIONS'),
@@ -1460,7 +1483,7 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
     def test_dataset_parameters_medsea_analysis_forecast_phy_006_013_cur(self):
         """Should return the proper dataset parameters"""
         attributes = {
-            'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/med00-cmcc-cur'}
+            'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/med-cmcc-cur'}
         self.assertEqual(
             self.normalizer.get_dataset_parameters(attributes), [
                 self.DATASET_PARAMETERS['eastward_sea_water_velocity'],
@@ -1471,7 +1494,7 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
     def test_dataset_parameters_medsea_analysis_forecast_phy_006_013_mld(self):
         """Should return the proper dataset parameters"""
         attributes = {
-            'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/med00-cmcc-mld'}
+            'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/med-cmcc-mld'}
         self.assertEqual(
             self.normalizer.get_dataset_parameters(attributes), [
                 self.DATASET_PARAMETERS['ocean_mixed_layer_thickness_defined_by_sigma_theta']
@@ -1481,7 +1504,7 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
     def test_dataset_parameters_medsea_analysis_forecast_phy_006_013_sal(self):
         """Should return the proper dataset parameters"""
         attributes = {
-            'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/med00-cmcc-sal'}
+            'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/med-cmcc-sal'}
         self.assertEqual(
             self.normalizer.get_dataset_parameters(attributes),
             [self.DATASET_PARAMETERS['sea_water_salinity']]
@@ -1490,7 +1513,7 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
     def test_dataset_parameters_medsea_analysis_forecast_phy_006_013_ssh(self):
         """Should return the proper dataset parameters"""
         attributes = {
-            'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/med00-cmcc-ssh'}
+            'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/med-cmcc-ssh'}
         self.assertEqual(
             self.normalizer.get_dataset_parameters(attributes),
             [self.DATASET_PARAMETERS['sea_surface_height_above_geoid']]
@@ -1499,7 +1522,7 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
     def test_dataset_parameters_medsea_analysis_forecast_phy_006_013_tem(self):
         """Should return the proper dataset parameters"""
         attributes = {
-            'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/med00-cmcc-tem'}
+            'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/med-cmcc-tem'}
         self.assertEqual(self.normalizer.get_dataset_parameters(attributes), [
             self.DATASET_PARAMETERS['sea_water_potential_temperature_at_sea_floor'],
             self.DATASET_PARAMETERS['sea_water_potential_temperature']
@@ -1508,24 +1531,35 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
     def test_dataset_parameters_medsea_analysis_forecast_phy_006_013_mask_bathy(self):
         """Should return the proper dataset parameters"""
         attributes = {
-            'url': "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/" +
-                   "MEDSEA_ANALYSIS_FORECAST_PHY_006_013-statics/MED-MFC_006_013_mask_bathy.nc"
+            'url': "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/" +
+                   "MEDSEA_ANALYSISFORECAST_PHY_006_013-statics/MED-MFC_006_013_mask_bathy.nc"
         }
         self.assertEqual(self.normalizer.get_dataset_parameters(attributes), [
             self.DATASET_PARAMETERS['model_level_number_at_sea_floor'],
+            self.DATASET_PARAMETERS['sea_binary_mask'],
             self.DATASET_PARAMETERS['sea_floor_depth_below_geoid'],
         ])
 
     def test_dataset_parameters_medsea_analysis_forecast_phy_006_013_coordinates(self):
         """Should return the proper dataset parameters"""
         attributes = {
-            'url': "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/" +
-                   "MEDSEA_ANALYSIS_FORECAST_PHY_006_013-statics/MED-MFC_006_013_coordinates.nc"
+            'url': "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/" +
+                   "MEDSEA_ANALYSISFORECAST_PHY_006_013-statics/MED-MFC_006_013_coordinates.nc"
         }
         self.assertEqual(
             self.normalizer.get_dataset_parameters(attributes),
             [self.DATASET_PARAMETERS['cell_thickness']]
         )
+
+    def test_dataset_parameters_medsea_analysis_forecast_phy_006_013_mdt(self):
+        """Should return the proper dataset parameters"""
+        attributes = {
+            'url': "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/" +
+                   "MEDSEA_ANALYSISFORECAST_PHY_006_013-statics/MED-MFC_006_013_mdt.nc"
+        }
+        self.assertEqual(self.normalizer.get_dataset_parameters(attributes), [
+            self.DATASET_PARAMETERS['sea_surface_height_above_geoid'],
+        ])
 
     def test_dataset_parameters_ibi_analysis_forecast_phys_005_001_15min(self):
         """Should return the proper dataset parameters"""
@@ -1709,7 +1743,7 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
 
     def test_entry_title_medsea_analysis_forecast_phy_006_013(self):
         """Should return the proper entry_title"""
-        attributes = {'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/'}
+        attributes = {'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/'}
         self.assertEqual(
             self.normalizer.get_entry_title(attributes),
             'Mediterranean Forecasting System (hydrodynamic-wave model)'
@@ -1798,12 +1832,12 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
 
     def test_entry_id_medsea_analysis_forecast_phy_006_013(self):
         """Should return the proper entry_id"""
-        attributes = {'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/'
-                             'med00-cmcc-sal-an-fc-hts/2019/07/'
-                             '20190706_hts-CMCC--PSAL-MFSeas5-MEDATL-b20190101_an-sv06.00.nc'}
+        attributes = {'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/'
+                             'med-cmcc-sal-an-fc-hts/2019/07/'
+                             '20190706_hts-CMCC--PSAL-MFSeas6-MEDATL-b20210101_an-sv07.00.nc'}
         self.assertEqual(
             self.normalizer.get_entry_id(attributes),
-            '20190706_hts-CMCC--PSAL-MFSeas5-MEDATL-b20190101_an-sv06.00'
+            '20190706_hts-CMCC--PSAL-MFSeas6-MEDATL-b20210101_an-sv07.00'
         )
 
     def test_entry_id_ibi_analysis_forecast_phys_005_001(self):
@@ -1906,7 +1940,7 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
 
     def test_geometry_medsea_analysis_forecast_phy_006_013(self):
         """Should return the proper geometry"""
-        attributes = {'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/'}
+        attributes = {'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/'}
         self.assertEqual(
             self.normalizer.get_location_geometry(attributes),
             'POLYGON((-17.29 45.98, -17.29 30.18, 36.30 30.18, 36.30 45.98, -17.29 45.98))'
@@ -2124,14 +2158,14 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
 
     def test_summary_medsea_analysis_forecast_phy_006_013(self):
         """Should return the proper summary"""
-        attributes = {'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSIS_FORECAST_PHY_006_013/'}
+        attributes = {'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/'}
         self.assertEqual(
             self.normalizer.get_summary(attributes),
             'Description: The physical component of the Mediterranean Forecasting System '
             '(Med-Currents) is a coupled hydrodynamic-wave model implemented over the whole '
             'Mediterranean Basin.;'
             'Processing level: 4;'
-            'Product: MEDSEA_ANALYSIS_FORECAST_PHY_006_013'
+            'Product: MEDSEA_ANALYSISFORECAST_PHY_006_013'
         )
 
     def test_summary_ibi_analysis_forecast_phys_005_001(self):
