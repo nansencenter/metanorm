@@ -594,51 +594,51 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         """Should return the proper starting time"""
         self.assertEqual(
             self.normalizer.get_time_coverage_start({
-                'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001/'
-                       'dataset-ibi-analysis-forecast-phys-005-001-15min/2020/03/'
-                       'CMEMS_v4r1_IBI_PHY_NRT_PdE_15minav_20200301_20200301_R20200309_HC05.nc'
+                'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001/'
+                       'cmems_mod_ibi_phy_anfc_0.027deg-2D_PT15M-m/2020/12/'
+                       'CMEMS_v5r1_IBI_PHY_NRT_PdE_15minav_20201212_20201212_R20201221_AN04.nc'
             }),
-            datetime(year=2020, month=3, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
+            datetime(year=2020, month=12, day=12, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_start_ibi_analysis_forecast_phys_005_001_daily(self):
         """Should return the proper starting time"""
         self.assertEqual(
             self.normalizer.get_time_coverage_start({
-                'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001/'
-                       'dataset-ibi-analysis-forecast-phys-005-001-daily/2020/03/'
-                       'CMEMS_v4r1_IBI_PHY_NRT_PdE_01dav_20200301_20200301_R20200309_HC05.nc'
+                'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001/'
+                       'cmems_mod_ibi_phy_anfc_0.027deg-3D_P1D-m/2021/05/'
+                       'CMEMS_v5r1_IBI_PHY_NRT_PdE_01dav_20210503_20210503_R20210510_AN06.nc'
             }),
-            datetime(year=2020, month=3, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
+            datetime(year=2021, month=5, day=3, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_start_ibi_analysis_forecast_phys_005_001_hourly(self):
         """Should return the proper starting time"""
         self.assertEqual(
             self.normalizer.get_time_coverage_start({
-                'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001/'
-                       'dataset-ibi-analysis-forecast-phys-005-001-hourly/2020/03/'
-                       'CMEMS_v4r1_IBI_PHY_NRT_PdE_01hav_20200301_20200301_R20200309_HC05.nc'
+                'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001/'
+                       'cmems_mod_ibi_phy_anfc_0.027deg-2D_PT1H-m/2019/11/'
+                       'CMEMS_v5r1_IBI_PHY_NRT_PdE_01hav_20191112_20191112_R20191113_AN07.nc'
             }),
-            datetime(year=2020, month=3, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
+            datetime(year=2019, month=11, day=12, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_start_ibi_analysis_forecast_phys_005_001_hourly3d(self):
         """Should return the proper starting time"""
         self.assertEqual(
             self.normalizer.get_time_coverage_start({
-                'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001/'
-                       'dataset-ibi-analysis-forecast-phys-005-001-hourly3d/2020/11/'
-                       'CMEMS_v4r1_IBI_PHY_NRT_PdE_01hav3D_20201124_20201124_R20201125_HC01.nc'
+                'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001/'
+                       'cmems_mod_ibi_phy_anfc_0.027deg-3D_PT1H-m/2021/08/'
+                       'CMEMS_v5r1_IBI_PHY_NRT_PdE_01hav3D_20210815_20210815_R20210816_HC01.nc'
             }),
-            datetime(year=2020, month=11, day=24, hour=0, minute=0, second=0, tzinfo=tzutc()))
+            datetime(year=2021, month=8, day=15, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_start_ibi_analysis_forecast_phys_005_001_monthly(self):
         """Should return the proper starting time"""
         self.assertEqual(
             self.normalizer.get_time_coverage_start({
-                'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001/'
-                       'dataset-ibi-analysis-forecast-phys-005-001-monthly/2020/'
-                       'CMEMS_v4r1_IBI_PHY_NRT_PdE_01mav_20200301_20200331_R20200331_HC01.nc'
+                'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001/'
+                       'cmems_mod_ibi_phy_anfc_0.027deg-3D_P1M-m/2019/'
+                       'CMEMS_v5r1_IBI_PHY_NRT_PdE_01mav_20191001_20191031_R20191031_AN01.nc'
             }),
-            datetime(year=2020, month=3, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
+            datetime(year=2019, month=10, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_start_hycom_region_000(self):
         """Should return the proper starting time"""
@@ -869,51 +869,51 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         """Should return the proper ending time"""
         self.assertEqual(
             self.normalizer.get_time_coverage_end({
-                'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001/'
-                       'dataset-ibi-analysis-forecast-phys-005-001-15min/2020/03/'
-                       'CMEMS_v4r1_IBI_PHY_NRT_PdE_15minav_20200301_20200301_R20200309_HC05.nc'
+                'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001/'
+                       'cmems_mod_ibi_phy_anfc_0.027deg-2D_PT15M-m/2020/12/'
+                       'CMEMS_v5r1_IBI_PHY_NRT_PdE_15minav_20201212_20201212_R20201221_AN04.nc'
             }),
-            datetime(year=2020, month=3, day=2, hour=0, minute=0, second=0, tzinfo=tzutc()))
+            datetime(year=2020, month=12, day=13, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_end_ibi_analysis_forecast_phys_005_001_daily(self):
         """Should return the proper ending time"""
         self.assertEqual(
             self.normalizer.get_time_coverage_end({
-                'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001/'
-                       'dataset-ibi-analysis-forecast-phys-005-001-daily/2020/03/'
-                       'CMEMS_v4r1_IBI_PHY_NRT_PdE_01dav_20200301_20200301_R20200309_HC05.nc'
+                'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001/'
+                       'cmems_mod_ibi_phy_anfc_0.027deg-3D_P1D-m/2021/05/'
+                       'CMEMS_v5r1_IBI_PHY_NRT_PdE_01dav_20210503_20210503_R20210510_AN06.nc'
             }),
-            datetime(year=2020, month=3, day=2, hour=0, minute=0, second=0, tzinfo=tzutc()))
+            datetime(year=2021, month=5, day=4, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_end_ibi_analysis_forecast_phys_005_001_hourly(self):
         """Should return the proper ending time"""
         self.assertEqual(
             self.normalizer.get_time_coverage_end({
-                'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001/'
-                       'dataset-ibi-analysis-forecast-phys-005-001-hourly/2020/03/'
-                       'CMEMS_v4r1_IBI_PHY_NRT_PdE_01hav_20200301_20200301_R20200309_HC05.nc'
+                'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001/'
+                       'cmems_mod_ibi_phy_anfc_0.027deg-2D_PT1H-m/2019/11/'
+                       'CMEMS_v5r1_IBI_PHY_NRT_PdE_01hav_20191112_20191112_R20191113_AN07.nc'
             }),
-            datetime(year=2020, month=3, day=2, hour=0, minute=0, second=0, tzinfo=tzutc()))
+            datetime(year=2019, month=11, day=13, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_end_ibi_analysis_forecast_phys_005_001_hourly3d(self):
         """Should return the proper ending time"""
         self.assertEqual(
             self.normalizer.get_time_coverage_end({
-                'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001/'
-                       'dataset-ibi-analysis-forecast-phys-005-001-hourly3d/2020/11/'
-                       'CMEMS_v4r1_IBI_PHY_NRT_PdE_01hav3D_20201124_20201124_R20201125_HC01.nc'
+                'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001/'
+                       'cmems_mod_ibi_phy_anfc_0.027deg-3D_PT1H-m/2021/08/'
+                       'CMEMS_v5r1_IBI_PHY_NRT_PdE_01hav3D_20210815_20210815_R20210816_HC01.nc'
             }),
-            datetime(year=2020, month=11, day=25, hour=0, minute=0, second=0, tzinfo=tzutc()))
+            datetime(year=2021, month=8, day=16, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_end_ibi_analysis_forecast_phys_005_001_monthly(self):
         """Should return the proper ending time"""
         self.assertEqual(
             self.normalizer.get_time_coverage_end({
-                'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001/'
-                       'dataset-ibi-analysis-forecast-phys-005-001-monthly/2020/'
-                       'CMEMS_v4r1_IBI_PHY_NRT_PdE_01mav_20200301_20200331_R20200331_HC01.nc'
+                'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001/'
+                       'cmems_mod_ibi_phy_anfc_0.027deg-3D_P1M-m/2019/'
+                       'CMEMS_v5r1_IBI_PHY_NRT_PdE_01mav_20191001_20191031_R20191031_AN01.nc'
             }),
-            datetime(year=2020, month=4, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
+            datetime(year=2019, month=11, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_end_hycom_region_000(self):
         """Should return the proper ending time"""
@@ -1076,7 +1076,7 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
 
     def test_instrument_ibi_analysis_forecast_phys_005_001(self):
         """Should return the proper instrument"""
-        attributes = {'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001/'}
+        attributes = {'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001/'}
         self.assertEqual(
             self.normalizer.get_instrument(attributes),
             OrderedDict([('Category', 'In Situ/Laboratory Instruments'),
@@ -1197,7 +1197,7 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
 
     def test_platform_ibi_analysis_forecast_phys_005_001(self):
         """Should return the proper platform"""
-        attributes = {'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001/'}
+        attributes = {'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001/'}
         self.assertEqual(
             self.normalizer.get_platform(attributes),
             OrderedDict([('Category', 'Models/Analyses'),
@@ -1333,7 +1333,7 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
 
     def test_provider_ibi_analysis_forecast_phys_005_001(self):
         """Should return the proper provider"""
-        attributes = {'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001/'}
+        attributes = {'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001/'}
         self.assertEqual(
             self.normalizer.get_provider(attributes),
             OrderedDict([('Bucket_Level0', 'MULTINATIONAL ORGANIZATIONS'),
@@ -1530,9 +1530,9 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
     def test_dataset_parameters_ibi_analysis_forecast_phys_005_001_15min(self):
         """Should return the proper dataset parameters"""
         attributes = {
-            'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001/'
-                   'dataset-ibi-analysis-forecast-phys-005-001-15min/2020/03/'
-                   'CMEMS_v4r1_IBI_PHY_NRT_PdE_15minav_20200301_20200301_R20200309_HC05.nc'
+            'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001/'
+                   'cmems_mod_ibi_phy_anfc_0.027deg-2D_PT15M-m/2020/12/'
+                   'CMEMS_v5r1_IBI_PHY_NRT_PdE_15minav_20201212_20201212_R20201221_AN04.nc'
         }
         self.assertListEqual(self.normalizer.get_dataset_parameters(attributes), [
             self.DATASET_PARAMETERS['sea_surface_height_above_geoid'],
@@ -1543,9 +1543,9 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
     def test_dataset_parameters_ibi_analysis_forecast_phys_005_001_daily(self):
         """Should return the proper dataset parameters"""
         attributes = {
-            'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001/'
-                   'dataset-ibi-analysis-forecast-phys-005-001-daily/2020/03/'
-                   'CMEMS_v4r1_IBI_PHY_NRT_PdE_01dav_20200301_20200301_R20200309_HC05.nc'
+            'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001/'
+                    'cmems_mod_ibi_phy_anfc_0.027deg-3D_P1D-m/2021/05/'
+                    'CMEMS_v5r1_IBI_PHY_NRT_PdE_01dav_20210503_20210503_R20210510_AN06.nc'
         }
         self.assertListEqual(self.normalizer.get_dataset_parameters(attributes), [
             self.DATASET_PARAMETERS['sea_water_potential_temperature'],
@@ -1560,9 +1560,9 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
     def test_dataset_parameters_ibi_analysis_forecast_phys_005_001_hourly(self):
         """Should return the proper dataset parameters"""
         attributes = {
-            'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001/'
-                   'dataset-ibi-analysis-forecast-phys-005-001-hourly/2020/03/'
-                   'CMEMS_v4r1_IBI_PHY_NRT_PdE_01hav_20200301_20200301_R20200309_HC05.nc'
+            'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001/'
+                    'cmems_mod_ibi_phy_anfc_0.027deg-2D_PT1H-m/2019/11/'
+                    'CMEMS_v5r1_IBI_PHY_NRT_PdE_01hav_20191112_20191112_R20191113_AN07.nc'
         }
         self.assertListEqual(self.normalizer.get_dataset_parameters(attributes), [
             self.DATASET_PARAMETERS['sea_water_potential_temperature'],
@@ -1578,9 +1578,9 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
     def test_dataset_parameters_ibi_analysis_forecast_phys_005_001_hourly3d(self):
         """Should return the proper dataset parameters"""
         attributes = {
-            'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001/'
-                   'dataset-ibi-analysis-forecast-phys-005-001-hourly3d/2020/11/'
-                   'CMEMS_v4r1_IBI_PHY_NRT_PdE_01hav3D_20201124_20201124_R20201125_HC01.nc'
+            'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001/'
+                    'cmems_mod_ibi_phy_anfc_0.027deg-3D_PT1H-m/2021/08/'
+                    'CMEMS_v5r1_IBI_PHY_NRT_PdE_01hav3D_20210815_20210815_R20210816_HC01.nc'
         }
         self.assertListEqual(self.normalizer.get_dataset_parameters(attributes), [
             self.DATASET_PARAMETERS['sea_water_potential_temperature'],
@@ -1592,9 +1592,9 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
     def test_dataset_parameters_ibi_analysis_forecast_phys_005_001_monthly(self):
         """Should return the proper dataset parameters"""
         attributes = {
-            'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001/'
-                   'dataset-ibi-analysis-forecast-phys-005-001-monthly/2020/'
-                   'CMEMS_v4r1_IBI_PHY_NRT_PdE_01mav_20200301_20200331_R20200331_HC01.nc'
+            'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001/'
+                   'cmems_mod_ibi_phy_anfc_0.027deg-3D_P1M-m/2019/'
+                   'CMEMS_v5r1_IBI_PHY_NRT_PdE_01mav_20191001_20191031_R20191031_AN01.nc'
         }
         self.assertListEqual(self.normalizer.get_dataset_parameters(attributes), [
             self.DATASET_PARAMETERS['sea_water_potential_temperature'],
@@ -1717,7 +1717,7 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
 
     def test_entry_title_ibi_analysis_forecast_phys_005_001(self):
         """Should return the proper entry_title"""
-        attributes = {'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001/'}
+        attributes = {'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001/'}
         self.assertEqual(
             self.normalizer.get_entry_title(attributes),
             'Atlantic-Iberian Biscay Irish-Ocean Physics Analysis and Forecast'
@@ -1809,13 +1809,13 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
     def test_entry_id_ibi_analysis_forecast_phys_005_001(self):
         """Should return the proper entry_id"""
         attributes = {
-            'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001/'
-                   'dataset-ibi-analysis-forecast-phys-005-001-monthly/2020/'
-                   'CMEMS_v4r1_IBI_PHY_NRT_PdE_01mav_20200301_20200331_R20200331_HC01.nc'
+            'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001/'
+                    'cmems_mod_ibi_phy_anfc_0.027deg-3D_PT1H-m/2021/08/'
+                    'CMEMS_v5r1_IBI_PHY_NRT_PdE_01hav3D_20210815_20210815_R20210816_HC01.nc'
         }
         self.assertEqual(
             self.normalizer.get_entry_id(attributes),
-            'CMEMS_v4r1_IBI_PHY_NRT_PdE_01mav_20200301_20200331_R20200331_HC01'
+            'CMEMS_v5r1_IBI_PHY_NRT_PdE_01hav3D_20210815_20210815_R20210816_HC01'
         )
 
     def test_entry_id_hycom_region(self):
@@ -1914,7 +1914,7 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
 
     def test_geometry_ibi_analysis_forecast_phys_005_001(self):
         """Should return the proper geometry"""
-        attributes = {'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001/'}
+        attributes = {'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001/'}
         self.assertEqual(
             self.normalizer.get_location_geometry(attributes),
             'POLYGON((-19 56, 5 56, 5 26, -19 26, -19 56))'
@@ -2136,7 +2136,7 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
 
     def test_summary_ibi_analysis_forecast_phys_005_001(self):
         """Should return the proper summary"""
-        attributes = {'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSIS_FORECAST_PHYS_005_001/'}
+        attributes = {'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001/'}
         self.assertEqual(
             self.normalizer.get_summary(attributes),
             'Description: The operational IBI (Iberian Biscay Irish) Ocean Analysis and Forecasting'
@@ -2144,7 +2144,7 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
             'processes of paramount importance to characterize regional scale marine '
             'processes.;'
             'Processing level: 4;'
-            'Product: IBI_ANALYSIS_FORECAST_PHYS_005_001'
+            'Product: IBI_ANALYSISFORECAST_PHY_005_001'
         )
 
     def test_summary_hycom(self):
