@@ -75,7 +75,8 @@ PYTHESINT_KEYWORD_TRANSLATION = {
     'Sentinel-3B': ('S3B',),
     # providers
     'ESA/EO': ('ESA',),
-    'OB.DAAC': ('OB_DAAC',)
+    'OB.DAAC': ('OB_DAAC',),
+    'C-SAR': ('SAR-C', 'SAR-C SAR'),
 }
 
 def translate_pythesint_keyword(translation_dict, alias):
