@@ -17,7 +17,6 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
     """ Normalizer for hardcoding information based on URLS """
 
     urls_platforms = {
-        "ftp://ftp.remss.com/gmi": 'GPM',
         "ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/": 'Earth Observation Satellites',
         "ftp://ftp.gportal.jaxa.jp/standard/GCOM-W": 'GCOM-W1',
         "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046":
@@ -31,7 +30,6 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
     }
 
     urls_instruments = {
-        'ftp://ftp.remss.com/gmi': 'GMI',
         'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2': 'AMSR2',
         'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/':
             'Imaging Spectrometers/Radiometers',
@@ -46,7 +44,6 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
 
     urls_provider = {
         'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1': 'ESA/CCI',
-        "ftp://ftp.remss.com/": 'Remote Sensing Systems',
         "ftp://ftp.gportal.jaxa.jp/standard": 'JP/JAXA/EOC',
         "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046": 'cmems',
         "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003": 'cmems',
@@ -88,7 +85,6 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
         'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/': WORLD_WIDE_COVERAGE_WKT,
         'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_10': WORLD_WIDE_COVERAGE_WKT,
         'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25': WORLD_WIDE_COVERAGE_WKT,
-        "ftp://ftp.remss.com/gmi/": WORLD_WIDE_COVERAGE_WKT,
         "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046":
             WORLD_WIDE_COVERAGE_WKT,
         "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003": WORLD_WIDE_COVERAGE_WKT,
@@ -113,8 +109,6 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
     urls_title = {
         'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1':
             'ESA SST CCI OSTIA L4 Climatology',
-        "ftp://ftp.remss.com/gmi/":
-            'Atmosphere parameters from Global Precipitation Measurement Microwave Imager',
         "ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L2.SST/":
             'AMSR2-L2 Sea Surface Temperature',
         "ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_10/":
@@ -142,7 +136,6 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
     urls_entry_id = {
         "https://thredds.met.no/thredds/": re.compile(r"([^/]+)\.nc(\.dods)?$"),
         "https://opendap.jpl.nasa.gov/opendap/": NC_H5_FILENAME_MATCHER,
-        "ftp://ftp.remss.com/gmi": re.compile(r"([^/]+)\.gz$"),
         "ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/": NC_H5_FILENAME_MATCHER,
         "ftp://nrt.cmems-du.eu/Core/": NC_H5_FILENAME_MATCHER,
         "ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/":
@@ -169,13 +162,6 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
             }),
         'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3':
             utils.dict_to_string({
-                utils.SUMMARY_FIELDS['processing_level']: '3'
-            }),
-        'ftp://ftp.remss.com/gmi/':
-            utils.dict_to_string({
-                utils.SUMMARY_FIELDS['description']:
-                    'GMI is a dual-polarization, multi-channel, conical-scanning, passive '
-                    'microwave radiometer with frequent revisit times.',
                 utils.SUMMARY_FIELDS['processing_level']: '3'
             }),
         'ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046':
@@ -289,12 +275,6 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
         ],
         'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25': [
             'sea_surface_temperature'
-        ],
-        "ftp://ftp.remss.com/gmi/": [
-            'wind_speed',
-            'atmosphere_mass_content_of_water_vapor',
-            'atmosphere_mass_content_of_cloud_liquid_water',
-            'rainfall_rate'
         ],
         # based on http://nrt.cmems-du.eu/motu-web/Motu?action=describeProduct&service=SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046-TDS
         "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046": [
@@ -413,28 +393,6 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
     # See the docstring of find_time_coverage() to get
     # information about the dictionary structure
     urls_time = {
-        'ftp://ftp.remss.com/gmi': [
-            (
-                re.compile(r'/y\d{4}/m\d{2}/f35_' + utils.YEARMONTHDAY_REGEX + r'v[\d.]+\.gz$'),
-                utils.create_datetime,
-                lambda time: (time, time + relativedelta(days=1))
-            ),
-            (
-                re.compile(r'/y\d{4}/m\d{2}/f35_' + utils.YEARMONTHDAY_REGEX + r'v[\d.]+_d3d\.gz$'),
-                utils.create_datetime,
-                lambda time: (time - relativedelta(days=2), time + relativedelta(days=1))
-            ),
-            (
-                re.compile(r'/weeks/f35_' + utils.YEARMONTHDAY_REGEX + r'v[\d.]+\.gz$'),
-                utils.create_datetime,
-                lambda time: (time - relativedelta(days=6), time + relativedelta(days=1))
-            ),
-            (
-                re.compile(r'/y\d{4}/m\d{2}/f35_' + utils.YEARMONTH_REGEX + r'v[\d.]+\.gz$'),
-                utils.create_datetime,
-                lambda time: (time, time + relativedelta(months=1))
-            ),
-        ],
         'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1': [
             (   # model data over a year, based on observations from 1982 to 2010. TODO: confirm
                 re.compile(r'/D(?P<d>\d{3})-.*\.nc$'),
