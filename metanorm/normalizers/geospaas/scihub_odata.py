@@ -1,4 +1,4 @@
-"""Normalizer for the Sentinel SAFE convention, used by Scihub"""
+"""Normalizer for Scihub's OData API"""
 
 import logging
 import re
