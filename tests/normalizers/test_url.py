@@ -433,34 +433,6 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
             ('colormap', 'jet')])
     }
 
-    def test_time_coverage_start_remss_month_file(self):
-        """shall return the propert starting time for hardcoded normalizer """
-        self.assertEqual(
-            self.normalizer.get_time_coverage_start(
-                {'url': 'ftp://ftp.remss.com/gmi/bmaps_v08.2/y2014/m06/f35_201406v8.2.gz'}),
-            datetime(year=2014, month=6, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
-
-    def test_time_coverage_start_remss_single_day_file(self):
-        """shall return the propert starting time for hardcoded normalizer """
-        self.assertEqual(
-            self.normalizer.get_time_coverage_start(
-                {'url': 'ftp://ftp.remss.com/gmi/bmaps_v08.2/y2014/m06/f35_20140604v8.2.gz'}),
-            datetime(year=2014, month=6, day=4, hour=0, minute=0, second=0, tzinfo=tzutc()))
-
-    def test_time_coverage_start_remss_week_file(self):
-        """shall return the propert starting time for hardcoded normalizer """
-        self.assertEqual(
-            self.normalizer.get_time_coverage_start(
-                {'url': 'ftp://ftp.remss.com/gmi/bmaps_v08.2/weeks/f35_20140614v8.2.gz'}),
-            datetime(year=2014, month=6, day=8, hour=0, minute=0, second=0, tzinfo=tzutc()))
-
-    def test_time_coverage_start_remss_3d3_file(self):
-        """shall return the propert starting time for hardcoded normalizer """
-        self.assertEqual(
-            self.normalizer.get_time_coverage_start(
-                {'url': 'ftp://ftp.remss.com/gmi/bmaps_v08.2/y2014/m06/f35_20140630v8.2_d3d.gz'}),
-            datetime(year=2014, month=6, day=28, hour=0, minute=0, second=0, tzinfo=tzutc()))
-
     def test_time_coverage_start_ceda(self):
         """shall return the propert starting time for hardcoded normalizer """
         self.assertEqual(
@@ -716,34 +688,6 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
                 'rtofs_glo_2ds_f062_prog.nc'
             }),
             datetime(year=2021, month=5, day=20, hour=14, tzinfo=tzutc()))
-
-    def test_time_coverage_end_remss_single_day_file(self):
-        """shall return the propert end time for hardcoded normalizer """
-        self.assertEqual(
-            self.normalizer.get_time_coverage_end(
-                {'url': 'ftp://ftp.remss.com/gmi/bmaps_v08.2/y2014/m06/f35_20140620v8.2.gz'}),
-            datetime(year=2014, month=6, day=21, hour=0, minute=0, second=0, tzinfo=tzutc()))
-
-    def test_time_coverage_end_remss_month_file(self):
-        """shall return the propert end time for hardcoded normalizer """
-        self.assertEqual(
-            self.normalizer.get_time_coverage_end(
-                {'url': 'ftp://ftp.remss.com/gmi/bmaps_v08.2/y2014/m06/f35_201406v8.2.gz'}),
-            datetime(year=2014, month=7, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
-
-    def test_time_coverage_end_remss_week_file(self):
-        """shall return the propert end time for hardcoded normalizer """
-        self.assertEqual(
-            self.normalizer.get_time_coverage_end(
-                {'url': 'ftp://ftp.remss.com/gmi/bmaps_v08.2/weeks/f35_20140614v8.2.gz'}),
-            datetime(year=2014, month=6, day=15, hour=0, minute=0, second=0, tzinfo=tzutc()))
-
-    def test_time_coverage_end_remss_3d3_file(self):
-        """shall return the propert end time for hardcoded normalizer """
-        self.assertEqual(
-            self.normalizer.get_time_coverage_end(
-                {'url': 'ftp://ftp.remss.com/gmi/bmaps_v08.2/y2014/m06/f35_20140630v8.2_d3d.gz'}),
-            datetime(year=2014, month=7, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_end_ceda(self):
         """shall return the propert end time for hardcoded normalizer """
@@ -1015,19 +959,6 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
                          ('Long_Name', 'Advanced Microwave Scanning Radiometer 2')])
         )
 
-    def test_instrument_remss(self):
-        """instrument from URLMetadataNormalizer """
-        attributes = {'url': 'ftp://ftp.remss.com/gmi/bmaps_v08.2/y2014/m06/'}
-        self.assertEqual(
-            self.normalizer.get_instrument(attributes),
-            OrderedDict([('Category', 'Earth Remote Sensing Instruments'),
-                         ('Class', 'Passive Remote Sensing'),
-                         ('Type', 'Spectrometers/Radiometers'),
-                         ('Subtype', 'Imaging Spectrometers/Radiometers'),
-                         ('Short_Name', 'GMI'),
-                         ('Long_Name', 'Global Precipitation Measurement Microwave Imager')])
-        )
-
     def test_instrument_ceda(self):
         """instrument from URLMetadataNormalizer """
         attributes = {
@@ -1148,17 +1079,6 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
                          ('Long_Name', 'Global Change Observation Mission 1st-Water')])
         )
 
-    def test_platform_remss(self):
-        """platform from URLMetadataNormalizer """
-        attributes = {'url': 'ftp://ftp.remss.com/gmi/bmaps_v08.2/y2014/m06/'}
-        self.assertEqual(
-            self.normalizer.get_platform(attributes),
-            OrderedDict([('Category', 'Earth Observation Satellites'),
-                         ('Series_Entity', ''),
-                         ('Short_Name', 'GPM'),
-                         ('Long_Name', 'Global Precipitation Measurement')])
-        )
-
     def test_platform_ceda(self):
         """platform from URLMetadataNormalizer """
         attributes = {
@@ -1265,20 +1185,6 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
                          ('Long_Name', 'Earth Observation Center, Japan Aerospace Exploration Agency, Japan'),
                          ('Data_Center_URL', 'http://www.eorc.jaxa.jp/en/index.html')])
         )
-
-    def test_provider_remss(self):
-        """provider from URLMetadataNormalizer """
-        attributes = {'url': 'ftp://ftp.remss.com/gmi/bmaps_v08.2/y2014/m06/'}
-        self.assertEqual(
-            self.normalizer.get_provider(attributes),
-            OrderedDict([('Bucket_Level0', 'COMMERCIAL'),
-                         ('Bucket_Level1', ''),
-                         ('Bucket_Level2', ''),
-                         ('Bucket_Level3', ''),
-                         ('Short_Name', 'RSS'),
-                         ('Long_Name', 'Remote Sensing Systems'),
-                         ('Data_Center_URL', 'http://www.remss.com/')])
-    )
 
     def test_provider_ceda(self):
         """provider from URLMetadataNormalizer """
@@ -1410,16 +1316,6 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
             self.normalizer.get_dataset_parameters(attributes),
             [self.DATASET_PARAMETERS['sea_surface_temperature']]
         )
-
-    def test_dataset_parameters_remss(self):
-        """dataset_parameters from URLMetadataNormalizer """
-        attributes = {'url': 'ftp://ftp.remss.com/gmi/bmaps_v08.2/y2014/m06/'}
-        self.assertEqual(self.normalizer.get_dataset_parameters(attributes), [
-            self.DATASET_PARAMETERS['wind_speed'],
-            self.DATASET_PARAMETERS['atmosphere_mass_content_of_water_vapor'],
-            self.DATASET_PARAMETERS['atmosphere_mass_content_of_cloud_liquid_water'],
-            self.DATASET_PARAMETERS['rainfall_rate'],
-        ])
 
     def test_dataset_parameters_ceda(self):
         """dataset_parameters from URLMetadataNormalizer """
@@ -1707,12 +1603,6 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         self.assertEqual(
             self.normalizer.get_entry_title(attributes), 'AMSR2-L3 Sea Surface Temperature')
 
-    def test_entry_title_remss(self):
-        """entry_title from URLMetadataNormalizer """
-        attributes = {'url': 'ftp://ftp.remss.com/gmi/bmaps_v08.2/y2014/m06/'}
-        self.assertEqual(self.normalizer.get_entry_title(attributes),
-                         'Atmosphere parameters from Global Precipitation Measurement Microwave Imager')
-
     def test_entry_title_ceda(self):
         """entry_title from URLMetadataNormalizer """
         attributes = {
@@ -1779,12 +1669,6 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
             'url': 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25/3/2012/07/GW1AM2_201207031905_134D_L2SGSSTLB3300300.h5'}
         self.assertEqual(
             self.normalizer.get_entry_id(attributes), 'GW1AM2_201207031905_134D_L2SGSSTLB3300300')
-
-    def test_entry_id_remss(self):
-        """entry_id from URLMetadataNormalizer """
-        attributes = {'url': 'ftp://ftp.remss.com/gmi/bmaps_v08.2/y2014/m06/f35_20140603v8.2.gz'}
-        self.assertEqual(self.normalizer.get_entry_id(attributes),
-                         'f35_20140603v8.2')
 
     def test_entry_id_ceda(self):
         """entry_id from URLMetadataNormalizer """
@@ -1919,13 +1803,6 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         """geometry from URLMetadataNormalizer """
         attributes = {
             'url': 'ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046'}
-        self.assertEqual(
-            self.normalizer.get_location_geometry(attributes),
-            'POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))')
-
-    def test_geometry_remss(self):
-        """geometry from URLMetadataNormalizer """
-        attributes = {'url': 'ftp://ftp.remss.com/gmi/bmaps_v08.2/y2014/m06/'}
         self.assertEqual(
             self.normalizer.get_location_geometry(attributes),
             'POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))')
@@ -2100,15 +1977,6 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
             'url': 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25'}
         self.assertEqual(
             self.normalizer.get_summary(attributes), 'Processing level: 3')
-
-    def test_summary_remss(self):
-        """summary from URLMetadataNormalizer """
-        attributes = {'url': 'ftp://ftp.remss.com/gmi/bmaps_v08.2/y2014/m06/'}
-        self.assertEqual(
-            self.normalizer.get_summary(attributes),
-            'Description: GMI is a dual-polarization, multi-channel, conical-scanning, passive '
-            'microwave radiometer with frequent revisit times.;Processing level: 3'
-        )
 
     def test_summary_ceda(self):
         """summary from URLMetadataNormalizer """
