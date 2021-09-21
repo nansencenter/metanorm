@@ -19,7 +19,7 @@ class REMSSGMIMetadataNormalizer(GeoSPaaSMetadataNormalizer):
     def get_entry_title(self, raw_metadata):
         return 'Atmosphere parameters from Global Precipitation Measurement Microwave Imager'
 
-    @utils.raises(KeyError)
+    @utils.raises((KeyError, AttributeError))
     def get_entry_id(self, raw_metadata):
         return re.search(r'([^/]+)\.gz$', raw_metadata['url']).group(1)
 
