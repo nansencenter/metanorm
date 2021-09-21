@@ -17,7 +17,6 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
     """ Normalizer for hardcoding information based on URLS """
 
     urls_platforms = {
-        "ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/": 'Earth Observation Satellites',
         "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046":
             'Earth Observation satellites',
         "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003": 'Earth Observation satellites',
@@ -27,8 +26,6 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
     }
 
     urls_instruments = {
-        'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/':
-            'Imaging Spectrometers/Radiometers',
         "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046": 'altimeters',
         "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003": 'altimeters',
         "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024": 'computer',
@@ -39,7 +36,6 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
     }
 
     urls_provider = {
-        'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1': 'ESA/CCI',
         "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046": 'cmems',
         "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003": 'cmems',
         "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024": 'cmems',
@@ -50,7 +46,6 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
     WORLD_WIDE_COVERAGE_WKT = 'POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))'
 
     urls_geometry = {
-        'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/': WORLD_WIDE_COVERAGE_WKT,
         "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046":
             WORLD_WIDE_COVERAGE_WKT,
         "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003": WORLD_WIDE_COVERAGE_WKT,
@@ -62,8 +57,6 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
     }
 
     urls_title = {
-        'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1':
-            'ESA SST CCI OSTIA L4 Climatology',
         "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046":
             'GLOBAL OCEAN GRIDDED L4 SEA SURFACE HEIGHTS AND DERIVED VARIABLES NRT',
         "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003":
@@ -82,21 +75,10 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
         "https://thredds.met.no/thredds/": re.compile(r"([^/]+)\.nc(\.dods)?$"),
         "https://opendap.jpl.nasa.gov/opendap/": NC_H5_FILENAME_MATCHER,
         "ftp://nrt.cmems-du.eu/Core/": NC_H5_FILENAME_MATCHER,
-        "ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/":
-            NC_H5_FILENAME_MATCHER,
         "ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001": NC_H5_FILENAME_MATCHER,
     }
 
     urls_summary = {
-        'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4':
-            utils.dict_to_string({
-                utils.SUMMARY_FIELDS['description']: (
-                    'This v2.1 SST_cci Climatology Data Record (CDR) consists of Level 4 daily'
-                    ' climatology files gridded on a 0.05 degree grid.'
-                ),
-                utils.SUMMARY_FIELDS['processing_level']: '4',
-                utils.SUMMARY_FIELDS['product']: 'ESA SST CCI Climatology'
-            }),
         'ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046':
             utils.dict_to_string({
                 utils.SUMMARY_FIELDS['description']:
@@ -142,7 +124,6 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
     }
 
     urls_dataset_parameters = {
-        'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/': ['sea_surface_temperature'],
         # based on http://nrt.cmems-du.eu/motu-web/Motu?action=describeProduct&service=SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046-TDS
         "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046": [
             'sea_surface_height_above_geoid',
@@ -250,13 +231,6 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
     # See the docstring of find_time_coverage() to get
     # information about the dictionary structure
     urls_time = {
-        'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1': [
-            (   # model data over a year, based on observations from 1982 to 2010. TODO: confirm
-                re.compile(r'/D(?P<d>\d{3})-.*\.nc$'),
-                lambda d: utils.create_datetime(1982, day_of_year=d),
-                lambda time: (time, datetime(2010, time.month, time.day).replace(tzinfo=tzutc()))
-            )
-        ],
         'ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046/' +
         'dataset-duacs-nrt-global-merged-allsat-phy-l4': [
             (
