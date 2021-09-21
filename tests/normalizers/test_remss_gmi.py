@@ -6,6 +6,7 @@ from dateutil.tz import tzutc
 
 import metanorm.normalizers as normalizers
 from .data import DATASET_PARAMETERS
+from metanorm.errors import MetadataNormalizationError
 
 
 class REMSSGMIMetadataNormalizerTestCase(unittest.TestCase):
@@ -32,6 +33,15 @@ class REMSSGMIMetadataNormalizerTestCase(unittest.TestCase):
         attributes = {'url': 'ftp://ftp.remss.com/gmi/bmaps_v08.2/y2014/m06/f35_20140603v8.2.gz'}
         self.assertEqual(self.normalizer.get_entry_id(attributes),
                          'f35_20140603v8.2')
+
+    def test_entry_id_error(self):
+        """a MetadataNormalizationError must be raised when an entry_id cannot be found"""
+        # wrong file format
+        with self.assertRaises(MetadataNormalizationError):
+            self.normalizer.get_entry_id({'url': 'ftp://foo/bar.txt'})
+        # no url attribute
+        with self.assertRaises(MetadataNormalizationError):
+            self.normalizer.get_entry_id({})
 
     def test_summary(self):
         """summary from REMSSGMIMetadataNormalizer """
