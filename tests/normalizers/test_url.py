@@ -433,13 +433,6 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
             ('colormap', 'jet')])
     }
 
-    def test_time_coverage_start_ceda(self):
-        """shall return the propert starting time for hardcoded normalizer """
-        self.assertEqual(
-            self.normalizer.get_time_coverage_start(
-                {'url': 'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1/D365-ESACCI-L4_GHRSST-SSTdepth-OSTIA-GLOB_CDR2.1-v02.0-fv01.0.nc'}),
-            datetime(year=1982, month=12, day=31, hour=0, minute=0, second=0, tzinfo=tzutc()))
-
     def test_time_coverage_start_phy_001_024(self):
         """shall return the propert starting time for hardcoded normalizer """
         self.assertEqual(
@@ -611,13 +604,6 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
                        'CMEMS_v5r1_IBI_PHY_NRT_PdE_01mav_20191001_20191031_R20191031_AN01.nc'
             }),
             datetime(year=2019, month=10, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
-
-    def test_time_coverage_end_ceda(self):
-        """shall return the propert end time for hardcoded normalizer """
-        self.assertEqual(
-            self.normalizer.get_time_coverage_end(
-                {'url': 'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1/D365-ESACCI-L4_GHRSST-SSTdepth-OSTIA-GLOB_CDR2.1-v02.0-fv01.0.nc'}),
-            datetime(year=2010, month=12, day=31, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_end_phy_001_024(self):
         """shall return the propert starting time for hardcoded normalizer """
@@ -791,20 +777,6 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
             }),
             datetime(year=2019, month=11, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
-    def test_instrument_ceda(self):
-        """instrument from URLMetadataNormalizer """
-        attributes = {
-            'url': 'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1/D365-ESACCI-L4_GHRSST-SSTdepth-OSTIA-GLOB_CDR2.1-v02.0-fv01.0.nc'}
-        self.assertEqual(
-            self.normalizer.get_instrument(attributes),
-            OrderedDict([('Category', 'Earth Remote Sensing Instruments'),
-                         ('Class', 'Passive Remote Sensing'),
-                         ('Type', 'Spectrometers/Radiometers'),
-                         ('Subtype', 'Imaging Spectrometers/Radiometers'),
-                         ('Short_Name', ''),
-                         ('Long_Name', '')])
-        )
-
     def test_instrument_global_analysis_forecast_phy_001_024(self):
         """instrument from URLMetadataNormalizer """
         attributes = {
@@ -873,18 +845,6 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
                          ('Long_Name', 'Computer')])
         )
 
-    def test_platform_ceda(self):
-        """platform from URLMetadataNormalizer """
-        attributes = {
-            'url': 'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1/D365-ESACCI-L4_GHRSST-SSTdepth-OSTIA-GLOB_CDR2.1-v02.0-fv01.0.nc'}
-        self.assertEqual(
-            self.normalizer.get_platform(attributes),
-            OrderedDict([('Category', 'Earth Observation Satellites'),
-                         ('Series_Entity', ''),
-                         ('Short_Name', ''),
-                         ('Long_Name', '')])
-        )
-
     def test_platform_global_analysis_forecast_phy_001_024(self):
         """platform from URLMetadataNormalizer """
         attributes = {
@@ -944,21 +904,6 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         )
 
 
-
-    def test_provider_ceda(self):
-        """provider from URLMetadataNormalizer """
-        attributes = {
-            'url': 'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1/D365-ESACCI-L4_GHRSST-SSTdepth-OSTIA-GLOB_CDR2.1-v02.0-fv01.0.nc'}
-        self.assertEqual(
-            self.normalizer.get_provider(attributes),
-            OrderedDict([('Bucket_Level0', 'MULTINATIONAL ORGANIZATIONS'),
-                         ('Bucket_Level1', ''),
-                         ('Bucket_Level2', ''),
-                         ('Bucket_Level3', ''),
-                         ('Short_Name', 'ESA/CCI'),
-                         ('Long_Name', 'Climate Change Initiative, European Space Agency'),
-                         ('Data_Center_URL', '')])
-        )
 
     def test_provider_global_analysis_forecast_phy_001_024(self):
         """provider from URLMetadataNormalizer """
@@ -1033,14 +978,6 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
                          ('Data_Center_URL', '')])
         )
 
-
-    def test_dataset_parameters_ceda(self):
-        """dataset_parameters from URLMetadataNormalizer """
-        attributes = {
-            'url': 'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1/D365-ESACCI-L4_GHRSST-SSTdepth-OSTIA-GLOB_CDR2.1-v02.0-fv01.0.nc'}
-        self.assertEqual(self.normalizer.get_dataset_parameters(attributes), [
-            self.DATASET_PARAMETERS['sea_surface_temperature']
-        ])
 
     def test_dataset_parameters_phy_001_024(self):
         """dataset_parameters from URLMetadataNormalizer """
@@ -1253,13 +1190,6 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
             self.DATASET_PARAMETERS['sea_water_potential_temperature_at_sea_floor'],
         ])
 
-    def test_entry_title_ceda(self):
-        """entry_title from URLMetadataNormalizer """
-        attributes = {
-            'url': 'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1/D365-ESACCI-L4_GHRSST-SSTdepth-OSTIA-GLOB_CDR2.1-v02.0-fv01.0.nc'}
-        self.assertEqual(self.normalizer.get_entry_title(
-            attributes), 'ESA SST CCI OSTIA L4 Climatology')
-
     def test_entry_title_global_analysis_forecast_phy_001_024(self):
         """entry_title from URLMetadataNormalizer """
         attributes = {
@@ -1296,20 +1226,6 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
             self.normalizer.get_entry_title(attributes),
             'Atlantic-Iberian Biscay Irish-Ocean Physics Analysis and Forecast'
         )
-
-    def test_entry_id_ceda(self):
-        """entry_id from URLMetadataNormalizer """
-        attributes = {
-            'url': 'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1/D365-ESACCI-L4_GHRSST-SSTdepth-OSTIA-GLOB_CDR2.1-v02.0-fv01.0.nc'}
-        self.assertEqual(self.normalizer.get_entry_id(
-            attributes), 'D365-ESACCI-L4_GHRSST-SSTdepth-OSTIA-GLOB_CDR2.1-v02.0-fv01.0')
-
-    def test_entry_id_for_unkown_file_type(self):
-        """entry_id shall equal to None for an unknown fileformat """
-        attributes = {
-            'url': 'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1/D365-ESACCI-L4_GHRSST-SSTdepth-OSTIA-GLOB_CDR2.1-v02.0-fv01.0.bb'}
-        self.assertEqual(self.normalizer.get_entry_id(
-            attributes), None)
 
     def test_entry_id_for_thredds_met_no_dods(self):
         """entry_id from URLMetadataNormalizer for a dods URL from thredds.met.no"""
@@ -1387,14 +1303,6 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
             self.normalizer.get_location_geometry(attributes),
             'POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))')
 
-    def test_geometry_ceda(self):
-        """geometry from URLMetadataNormalizer """
-        attributes = {
-            'url': 'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1/D365-ESACCI-L4_GHRSST-SSTdepth-OSTIA-GLOB_CDR2.1-v02.0-fv01.0.nc'}
-        self.assertEqual(
-            self.normalizer.get_location_geometry(attributes),
-            'POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))')
-
     def test_geometry_medsea_analysis_forecast_phy_006_013(self):
         """Should return the proper geometry"""
         attributes = {'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/'}
@@ -1438,17 +1346,6 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         self.assertIsNone(self.normalizer.get_time_coverage_start({'none-url': 'ftp://test/'}))
         self.assertIsNone(self.normalizer.get_location_geometry({'none-url': 'ftp://test/'}))
         self.assertIsNone(self.normalizer.get_entry_id({'none-url': 'ftp://test/'}))
-
-    def test_summary_ceda(self):
-        """summary from URLMetadataNormalizer """
-        attributes = {
-            'url': 'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1/D365-ESACCI-L4_GHRSST-SSTdepth-OSTIA-GLOB_CDR2.1-v02.0-fv01.0.nc'}
-        self.assertEqual(
-            self.normalizer.get_summary(attributes),
-            'Description: This v2.1 SST_cci Climatology Data Record (CDR) consists of Level 4 daily'
-            ' climatology files gridded on a 0.05 degree grid.;Processing level: 4;'
-            'Product: ESA SST CCI Climatology'
-        )
 
     def test_summary_global_analysis_forecast_phy_001_024(self):
         """summary from URLMetadataNormalizer """
