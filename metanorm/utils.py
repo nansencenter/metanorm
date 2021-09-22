@@ -292,7 +292,7 @@ def find_time_coverage(time_patterns, url):
         if match:
             file_time = get_time(**match.groupdict())
             return (get_coverage(file_time)[0], get_coverage(file_time)[1])
-    return (None, None)
+    raise MetadataNormalizationError(f"Could not extract the time coverage from {url}")
 
 
 ######################## Other utilities ########################
