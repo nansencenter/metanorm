@@ -17,8 +17,6 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
     """ Normalizer for hardcoding information based on URLS """
 
     urls_platforms = {
-        "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046":
-            'Earth Observation satellites',
         "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003": 'Earth Observation satellites',
         "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024": 'OPERATIONAL MODELS',
         "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013": 'OPERATIONAL MODELS',
@@ -26,7 +24,6 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
     }
 
     urls_instruments = {
-        "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046": 'altimeters',
         "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003": 'altimeters',
         "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024": 'computer',
         "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013": 'computer',
@@ -35,19 +32,11 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
         "ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/rtofs/prod": 'computer',
     }
 
-    urls_provider = {
-        "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046": 'cmems',
-        "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003": 'cmems',
-        "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024": 'cmems',
-        "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013": 'cmems',
-        "ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001": 'cmems',
-    }
+    urls_provider = {}
 
     WORLD_WIDE_COVERAGE_WKT = 'POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))'
 
     urls_geometry = {
-        "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046":
-            WORLD_WIDE_COVERAGE_WKT,
         "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003": WORLD_WIDE_COVERAGE_WKT,
         "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024": WORLD_WIDE_COVERAGE_WKT,
         "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013":
@@ -57,8 +46,6 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
     }
 
     urls_title = {
-        "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046":
-            'GLOBAL OCEAN GRIDDED L4 SEA SURFACE HEIGHTS AND DERIVED VARIABLES NRT',
         "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003":
             'GLOBAL TOTAL SURFACE AND 15M CURRENT FROM ALTIMETRIC '
             'GEOSTROPHIC CURRENT AND MODELED EKMAN CURRENT PROCESSING',
@@ -79,14 +66,6 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
     }
 
     urls_summary = {
-        'ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046':
-            utils.dict_to_string({
-                utils.SUMMARY_FIELDS['description']:
-                    'Altimeter satellite gridded Sea Level Anomalies (SLA) computed with '
-                    'respect to a twenty-year mean.',
-                utils.SUMMARY_FIELDS['processing_level']: '4',
-                utils.SUMMARY_FIELDS['product']: 'SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046'
-            }),
         'ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003':
             utils.dict_to_string({
                 utils.SUMMARY_FIELDS['description']:
@@ -124,15 +103,6 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
     }
 
     urls_dataset_parameters = {
-        # based on http://nrt.cmems-du.eu/motu-web/Motu?action=describeProduct&service=SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046-TDS
-        "ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046": [
-            'sea_surface_height_above_geoid',
-            'sea_surface_height_above_sea_level',
-            'surface_geostrophic_eastward_sea_water_velocity',
-            'surface_geostrophic_eastward_sea_water_velocity_assuming_mean_sea_level_for_geoid',
-            'surface_geostrophic_northward_sea_water_velocity',
-            'surface_geostrophic_northward_sea_water_velocity_assuming_mean_sea_level_for_geoid'
-        ],
         # based on http://nrt.cmems-du.eu/motu-web/Motu?action=describeProduct&service=MULTIOBS_GLO_PHY_NRT_015_003-TDS
         "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003": [
             'eastward_sea_water_velocity',
@@ -231,14 +201,6 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
     # See the docstring of find_time_coverage() to get
     # information about the dictionary structure
     urls_time = {
-        'ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046/' +
-        'dataset-duacs-nrt-global-merged-allsat-phy-l4': [
-            (
-                re.compile(r'/nrt_global_allsat_phy_l4_' + utils.YEARMONTHDAY_REGEX + r'_.*\.nc$'),
-                utils.create_datetime,
-                lambda time: (time - relativedelta(hours=12), time + relativedelta(hours=12))
-            )
-        ],
         'ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003': [
             (
                 re.compile(r'/dataset-uv-nrt-(daily|hourly)_' +
