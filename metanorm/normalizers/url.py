@@ -25,7 +25,6 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
         "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024": 'OPERATIONAL MODELS',
         "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013": 'OPERATIONAL MODELS',
         "ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001": 'OPERATIONAL MODELS',
-        "ftp://ftp.opc.ncep.noaa.gov/grids/operational/GLOBALHYCOM/Navy/": 'OPERATIONAL MODELS',
     }
 
     urls_instruments = {
@@ -38,6 +37,7 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
         "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013": 'computer',
         "ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001": 'computer',
         "ftp://ftp.opc.ncep.noaa.gov/grids/operational/GLOBALHYCOM/Navy/": 'computer',
+        "ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/rtofs/prod": 'computer',
     }
 
     urls_provider = {
@@ -48,7 +48,6 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
         "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024": 'cmems',
         "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013": 'cmems',
         "ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001": 'cmems',
-        "ftp://ftp.opc.ncep.noaa.gov/grids/operational/GLOBALHYCOM/Navy/": 'DOC/NOAA/NWS/NCEP',
     }
 
     WORLD_WIDE_COVERAGE_WKT = 'POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))'
@@ -65,16 +64,6 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
             'POLYGON((-17.29 45.98, -17.29 30.18, 36.30 30.18, 36.30 45.98, -17.29 45.98))',
         "ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001":
             'POLYGON((-19 56, 5 56, 5 26, -19 26, -19 56))',
-        'ftp://ftp.opc.ncep.noaa.gov/grids/operational/GLOBALHYCOM/Navy/hycom_glb_regp01':
-            'POLYGON((-100.04 70.04, -100.04 -0.04, -49.96 -0.04, -49.96 70.04, -100.04 70.04))',
-        'ftp://ftp.opc.ncep.noaa.gov/grids/operational/GLOBALHYCOM/Navy/hycom_glb_regp06':
-            'POLYGON((149.96 70.04, 149.96 9.96, 210.04 9.96, 210.04 70.04, 149.96 70.04))',
-        'ftp://ftp.opc.ncep.noaa.gov/grids/operational/GLOBALHYCOM/Navy/hycom_glb_regp07':
-            'POLYGON((-150.04 60.04, -150.04 9.96, -99.96 9.96, -99.96 60.04, -150.04 60.04))',
-        'ftp://ftp.opc.ncep.noaa.gov/grids/operational/GLOBALHYCOM/Navy/hycom_glb_regp17':
-            'POLYGON((-180.04 80.02,-180.04 59.98,-119.96 59.98,-119.96 80.02,-180.04 80.02))',
-        'ftp://ftp.opc.ncep.noaa.gov/grids/operational/GLOBALHYCOM/Navy/hycom_glb_sfc_u':
-            WORLD_WIDE_COVERAGE_WKT,
     }
 
     urls_title = {
@@ -97,8 +86,6 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
             'Mediterranean Forecasting System (hydrodynamic-wave model)',
         "ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001":
             'Atlantic-Iberian Biscay Irish-Ocean Physics Analysis and Forecast',
-        "ftp://ftp.opc.ncep.noaa.gov/grids/operational/GLOBALHYCOM/Navy/":
-            'Global Hybrid Coordinate Ocean Model (HYCOM)',
     }
 
     NC_H5_FILENAME_MATCHER = re.compile(r"([^/]+)\.(nc|h5)(\.gz)?$")
@@ -110,7 +97,6 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
         "ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/":
             NC_H5_FILENAME_MATCHER,
         "ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001": NC_H5_FILENAME_MATCHER,
-        "ftp://ftp.opc.ncep.noaa.gov/grids/operational/GLOBALHYCOM/Navy/": NC_H5_FILENAME_MATCHER,
     }
 
     urls_summary = {
@@ -172,17 +158,6 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
                     'processes.',
                 utils.SUMMARY_FIELDS['processing_level']: '4',
                 utils.SUMMARY_FIELDS['product']: 'IBI_ANALYSISFORECAST_PHY_005_001'
-            }),
-        'ftp://ftp.opc.ncep.noaa.gov/grids/operational/GLOBALHYCOM/Navy/':
-            utils.dict_to_string({
-                utils.SUMMARY_FIELDS['description']:
-                    'This system provides 4-day forecasts at 3-hour time steps, updated at 00Z '
-                    'daily. Navy Global HYCOM has a resolution of 1/12 degree in the horizontal '
-                    'and uses hybrid (isopycnal/sigma/z-level) coordinates in the vertical. The '
-                    'output is interpolated onto a regular 1/12-degree grid horizontally and '
-                    '40 standard depth levels.',
-                utils.SUMMARY_FIELDS['processing_level']: '4',
-                utils.SUMMARY_FIELDS['product']: 'HYCOM'
             }),
     }
 
@@ -299,15 +274,6 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
             'ocean_mixed_layer_thickness_defined_by_sigma_theta',
             'sea_water_potential_temperature_at_sea_floor'
         ],
-        "ftp://ftp.opc.ncep.noaa.gov/grids/operational/GLOBALHYCOM/Navy/": [
-            'sea_water_salinity',
-            'sea_water_temperature',
-            'sea_water_salinity_at_bottom',
-            'sea_water_temperature_at_bottom',
-            'sea_surface_height_above_geoid',
-            'eastward_sea_water_velocity',
-            'northward_sea_water_velocity',
-        ],
     }
 
     # See the docstring of find_time_coverage() to get
@@ -402,17 +368,6 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
                     r'/CMEMS_v5r1_IBI_PHY_NRT_PdE_01mav_' + utils.YEARMONTHDAY_REGEX + r'_.*\.nc$'),
                 utils.create_datetime,
                 lambda time: (time, time + relativedelta(months=1))
-            ),
-        ],
-        'ftp://ftp.opc.ncep.noaa.gov/grids/operational/GLOBALHYCOM/Navy/': [
-            (
-                re.compile(
-                    r'/hycom_glb_\w+_' +
-                    utils.YEARMONTHDAY_REGEX +
-                    r'00_t(?P<hours>\d{3})\.nc\.gz'),
-                lambda year, month, day, hours: (
-                    utils.create_datetime(year, month, day) + relativedelta(hours=int(hours))),
-                lambda time: (time, time + relativedelta(hours=3))
             ),
         ],
     }
