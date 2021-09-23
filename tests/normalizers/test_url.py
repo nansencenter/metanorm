@@ -433,55 +433,6 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
             ('colormap', 'jet')])
     }
 
-    def test_time_coverage_start_phy_001_024(self):
-        """shall return the propert starting time for hardcoded normalizer """
-        self.assertEqual(
-            self.normalizer.get_time_coverage_start(
-                {'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/global-analysis-forecast-phy-001-024/2016/03/mercatorpsy4v3r1_gl12_mean_20160303_R20160316.nc'}),
-            datetime(year=2016, month=3, day=3, hour=0, minute=0, second=0, tzinfo=tzutc()))
-
-    def test_time_coverage_start_phy_001_024_3dinst_so(self):
-        """shall return the propert starting time for hardcoded normalizer """
-        self.assertEqual(
-            self.normalizer.get_time_coverage_start(
-                {'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/global-analysis-forecast-phy-001-024-3dinst-so/2019/04/mercatorpsy4v3r1_gl12_so_20190403_18h_R20190404.nc'}),
-            datetime(year=2019, month=4, day=3, hour=18, minute=0, second=0, tzinfo=tzutc()))
-
-    def test_time_coverage_start_phy_001_024_3dinst_thetao(self):
-        """shall return the propert starting time for hardcoded normalizer """
-        self.assertEqual(
-            self.normalizer.get_time_coverage_start(
-                {'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/global-analysis-forecast-phy-001-024-3dinst-thetao/2020/04/mercatorpsy4v3r1_gl12_thetao_20200404_18h_R20200405.nc'}),
-            datetime(year=2020, month=4, day=4, hour=18, minute=0, second=0, tzinfo=tzutc()))
-
-    def test_time_coverage_start_phy_001_024_3dinst_uovo(self):
-        """shall return the propert starting time for hardcoded normalizer """
-        self.assertEqual(
-            self.normalizer.get_time_coverage_start(
-                {'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/global-analysis-forecast-phy-001-024-3dinst-uovo/2020/04/mercatorpsy4v3r1_gl12_uovo_20200403_06h_R20200404.nc'}),
-            datetime(year=2020, month=4, day=3, hour=6, minute=0, second=0, tzinfo=tzutc()))
-
-    def test_time_coverage_start_phy_001_024_hourly_merged_uv(self):
-        """shall return the propert starting time for hardcoded normalizer """
-        self.assertEqual(
-            self.normalizer.get_time_coverage_start(
-                {'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/global-analysis-forecast-phy-001-024-hourly-merged-uv/2019/05/SMOC_20190515_R20190516.nc'}),
-            datetime(year=2019, month=5, day=15, hour=0, minute=0, second=0, tzinfo=tzutc()))
-
-    def test_time_coverage_start_phy_001_024_hourly_t_u_v_ssh(self):
-        """shall return the propert starting time for hardcoded normalizer """
-        self.assertEqual(
-            self.normalizer.get_time_coverage_start(
-                {'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/global-analysis-forecast-phy-001-024-hourly-t-u-v-ssh/2020/05/mercatorpsy4v3r1_gl12_hrly_20200511_R20200520.nc'}),
-            datetime(year=2020, month=5, day=11, hour=0, minute=0, second=0, tzinfo=tzutc()))
-
-    def test_time_coverage_start_phy_001_024_monthly(self):
-        """shall return the propert starting time for hardcoded normalizer """
-        self.assertEqual(
-            self.normalizer.get_time_coverage_start(
-                {'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/global-analysis-forecast-phy-001-024-monthly/2018/mercatorpsy4v3r1_gl12_mean_201807.nc'}),
-            datetime(year=2018, month=7, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
-
     def test_time_coverage_start_medsea_analysis_forecast_phy_006_013_daily_mean(self):
         """Should return the proper starting time for a daily mean file"""
         url = ('ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/'
@@ -576,55 +527,6 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
                        'CMEMS_v5r1_IBI_PHY_NRT_PdE_01mav_20191001_20191031_R20191031_AN01.nc'
             }),
             datetime(year=2019, month=10, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
-
-    def test_time_coverage_end_phy_001_024(self):
-        """shall return the propert starting time for hardcoded normalizer """
-        self.assertEqual(
-            self.normalizer.get_time_coverage_end(
-                {'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/global-analysis-forecast-phy-001-024/2016/03/mercatorpsy4v3r1_gl12_mean_20160303_R20160316.nc'}),
-            datetime(year=2016, month=3, day=4, hour=0, minute=0, second=0, tzinfo=tzutc()))
-
-    def test_time_coverage_end_phy_001_024_3dinst_so(self):
-        """shall return the propert starting time for hardcoded normalizer """
-        self.assertEqual(
-            self.normalizer.get_time_coverage_end(
-                {'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/global-analysis-forecast-phy-001-024-3dinst-so/2019/04/mercatorpsy4v3r1_gl12_so_20190403_18h_R20190404.nc'}),
-            datetime(year=2019, month=4, day=3, hour=18, minute=0, second=0, tzinfo=tzutc()))
-
-    def test_time_coverage_end_phy_001_024_3dinst_thetao(self):
-        """shall return the propert starting time for hardcoded normalizer """
-        self.assertEqual(
-            self.normalizer.get_time_coverage_end(
-                {'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/global-analysis-forecast-phy-001-024-3dinst-thetao/2020/04/mercatorpsy4v3r1_gl12_thetao_20200404_18h_R20200405.nc'}),
-            datetime(year=2020, month=4, day=4, hour=18, minute=0, second=0, tzinfo=tzutc()))
-
-    def test_time_coverage_end_phy_001_024_3dinst_uovo(self):
-        """shall return the propert starting time for hardcoded normalizer """
-        self.assertEqual(
-            self.normalizer.get_time_coverage_end(
-                {'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/global-analysis-forecast-phy-001-024-3dinst-uovo/2020/04/mercatorpsy4v3r1_gl12_uovo_20200403_06h_R20200404.nc'}),
-            datetime(year=2020, month=4, day=3, hour=6, minute=0, second=0, tzinfo=tzutc()))
-
-    def test_time_coverage_end_phy_001_024_hourly_merged_uv(self):
-        """shall return the propert starting time for hardcoded normalizer """
-        self.assertEqual(
-            self.normalizer.get_time_coverage_end(
-                {'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/global-analysis-forecast-phy-001-024-hourly-merged-uv/2019/05/SMOC_20190515_R20190516.nc'}),
-            datetime(year=2019, month=5, day=16, hour=0, minute=0, second=0, tzinfo=tzutc()))
-
-    def test_time_coverage_end_phy_001_024_hourly_t_u_v_ssh(self):
-        """shall return the propert starting time for hardcoded normalizer """
-        self.assertEqual(
-            self.normalizer.get_time_coverage_end(
-                {'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/global-analysis-forecast-phy-001-024-hourly-t-u-v-ssh/2020/05/mercatorpsy4v3r1_gl12_hrly_20200511_R20200520.nc'}),
-            datetime(year=2020, month=5, day=12, hour=0, minute=0, second=0, tzinfo=tzutc()))
-
-    def test_time_coverage_end_phy_001_024_monthly(self):
-        """shall return the propert starting time for hardcoded normalizer """
-        self.assertEqual(
-            self.normalizer.get_time_coverage_end(
-                {'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/global-analysis-forecast-phy-001-024-monthly/2018/mercatorpsy4v3r1_gl12_mean_201807.nc'}),
-            datetime(year=2018, month=8, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
     def test_time_coverage_end_medsea_analysis_forecast_phy_006_013_daily_mean(self):
         """Should return the proper ending time for a daily mean file"""
@@ -721,20 +623,6 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
             }),
             datetime(year=2019, month=11, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
-    def test_instrument_global_analysis_forecast_phy_001_024(self):
-        """instrument from URLMetadataNormalizer """
-        attributes = {
-            'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024'}
-        self.assertEqual(
-            self.normalizer.get_instrument(attributes),
-            OrderedDict([('Category', 'In Situ/Laboratory Instruments'),
-                         ('Class', 'Data Analysis'),
-                         ('Type', 'Environmental Modeling'),
-                         ('Subtype', ''),
-                         ('Short_Name', 'Computer'),
-                         ('Long_Name', 'Computer')])
-        )
-
     def test_instrument_medsea_analysis_forecast_phy_006_013(self):
         """Should return the proper instrument"""
         attributes = {'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/'}
@@ -761,18 +649,6 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
                          ('Long_Name', 'Computer')])
         )
 
-    def test_platform_global_analysis_forecast_phy_001_024(self):
-        """platform from URLMetadataNormalizer """
-        attributes = {
-            'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024'}
-        self.assertEqual(
-            self.normalizer.get_platform(attributes),
-            OrderedDict([('Category','Models/Analyses'),
-                        ('Series_Entity',''),
-                        ('Short_Name','OPERATIONAL MODELS'),
-                        ('Long_Name','')])
-        )
-
     def test_platform_medsea_analysis_forecast_phy_006_013(self):
         """Should return the proper platform"""
         attributes = {'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/'}
@@ -796,21 +672,6 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         )
 
 
-
-    def test_provider_global_analysis_forecast_phy_001_024(self):
-        """provider from URLMetadataNormalizer """
-        attributes = {
-            'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024'}
-        self.assertEqual(
-            self.normalizer.get_provider(attributes),
-            OrderedDict([('Bucket_Level0','MULTINATIONAL ORGANIZATIONS'),
-                         ('Bucket_Level1',''),
-                         ('Bucket_Level2',''),
-                         ('Bucket_Level3',''),
-                         ('Short_Name','CMEMS'),
-                         ('Long_Name','Copernicus - Marine Environment Monitoring Service'),
-                         ('Data_Center_URL','')])
-        )
 
     def test_provider_medsea_analysis_forecast_phy_006_013(self):
         """Should return the proper provider"""
@@ -840,27 +701,6 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
                          ('Data_Center_URL', '')])
         )
 
-
-    def test_dataset_parameters_phy_001_024(self):
-        """dataset_parameters from URLMetadataNormalizer """
-        attributes = {
-            'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024'}
-        self.assertEqual(
-            self.normalizer.get_dataset_parameters(attributes),
-            [
-                self.DATASET_PARAMETERS['sea_water_potential_temperature_at_sea_floor'],
-                self.DATASET_PARAMETERS['ocean_mixed_layer_thickness_defined_by_sigma_theta'],
-                self.DATASET_PARAMETERS['sea_ice_area_fraction'],
-                self.DATASET_PARAMETERS['sea_ice_thickness'],
-                self.DATASET_PARAMETERS['sea_water_salinity'],
-                self.DATASET_PARAMETERS['sea_water_potential_temperature'],
-                self.DATASET_PARAMETERS['eastward_sea_water_velocity'],
-                self.DATASET_PARAMETERS['eastward_sea_ice_velocity'],
-                self.DATASET_PARAMETERS['northward_sea_water_velocity'],
-                self.DATASET_PARAMETERS['northward_sea_ice_velocity'],
-                self.DATASET_PARAMETERS['sea_surface_height_above_geoid']
-            ]
-        )
 
     def test_dataset_parameters_medsea_analysis_forecast_phy_006_013_cur(self):
         """Should return the proper dataset parameters"""
@@ -1022,13 +862,6 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
             self.DATASET_PARAMETERS['sea_water_potential_temperature_at_sea_floor'],
         ])
 
-    def test_entry_title_global_analysis_forecast_phy_001_024(self):
-        """entry_title from URLMetadataNormalizer """
-        attributes = {
-            'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024'}
-        self.assertEqual(
-            self.normalizer.get_entry_title(attributes),'GLOBAL OCEAN 1_12 PHYSICS ANALYSIS AND FORECAST UPDATED DAILY')
-
     def test_entry_title_medsea_analysis_forecast_phy_006_013(self):
         """Should return the proper entry_title"""
         attributes = {'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/'}
@@ -1097,14 +930,6 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
             'CMEMS_v5r1_IBI_PHY_NRT_PdE_01hav3D_20210815_20210815_R20210816_HC01'
         )
 
-    def test_geometry_phy_001_024(self):
-        """geometry from URLMetadataNormalizer """
-        attributes = {
-            'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024'}
-        self.assertEqual(
-            self.normalizer.get_location_geometry(attributes),
-            'POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))')
-
     def test_geometry_medsea_analysis_forecast_phy_006_013(self):
         """Should return the proper geometry"""
         attributes = {'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/'}
@@ -1148,18 +973,6 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         self.assertIsNone(self.normalizer.get_time_coverage_start({'none-url': 'ftp://test/'}))
         self.assertIsNone(self.normalizer.get_location_geometry({'none-url': 'ftp://test/'}))
         self.assertIsNone(self.normalizer.get_entry_id({'none-url': 'ftp://test/'}))
-
-    def test_summary_global_analysis_forecast_phy_001_024(self):
-        """summary from URLMetadataNormalizer """
-        attributes = {
-            'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024'}
-        self.assertEqual(
-            self.normalizer.get_summary(attributes),
-            'Description: The Operational Mercator global ocean analysis and forecast system at '
-            '1/12 degree is providing 10 days of 3D global ocean forecasts updated daily.;'
-            'Processing level: 4;'
-            'Product: GLOBAL_ANALYSIS_FORECAST_PHY_001_024'
-        )
 
     def test_summary_medsea_analysis_forecast_phy_006_013(self):
         """Should return the proper summary"""
