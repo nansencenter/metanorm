@@ -17,12 +17,10 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
     """ Normalizer for hardcoding information based on URLS """
 
     urls_platforms = {
-        "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013": 'OPERATIONAL MODELS',
         "ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001": 'OPERATIONAL MODELS',
     }
 
     urls_instruments = {
-        "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013": 'computer',
         "ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001": 'computer',
         "ftp://ftp.opc.ncep.noaa.gov/grids/operational/GLOBALHYCOM/Navy/": 'computer',
         "ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/rtofs/prod": 'computer',
@@ -33,15 +31,11 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
     WORLD_WIDE_COVERAGE_WKT = 'POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))'
 
     urls_geometry = {
-        "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013":
-            'POLYGON((-17.29 45.98, -17.29 30.18, 36.30 30.18, 36.30 45.98, -17.29 45.98))',
         "ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001":
             'POLYGON((-19 56, 5 56, 5 26, -19 26, -19 56))',
     }
 
     urls_title = {
-        "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013":
-            'Mediterranean Forecasting System (hydrodynamic-wave model)',
         "ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001":
             'Atlantic-Iberian Biscay Irish-Ocean Physics Analysis and Forecast',
     }
@@ -55,15 +49,6 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
     }
 
     urls_summary = {
-        'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013':
-            utils.dict_to_string({
-                utils.SUMMARY_FIELDS['description']:
-                'The physical component of the Mediterranean Forecasting System '
-                '(Med-Currents) is a coupled hydrodynamic-wave model implemented over the whole '
-                'Mediterranean Basin.',
-                utils.SUMMARY_FIELDS['processing_level']: '4',
-                utils.SUMMARY_FIELDS['product']: 'MEDSEA_ANALYSISFORECAST_PHY_006_013'
-            }),
         'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001':
             utils.dict_to_string({
                 utils.SUMMARY_FIELDS['description']:
@@ -77,37 +62,6 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
     }
 
     urls_dataset_parameters = {
-        "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/med-cmcc-cur": [
-            'eastward_sea_water_velocity',
-            'northward_sea_water_velocity',
-        ],
-        "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/med-cmcc-mld": [
-            'ocean_mixed_layer_thickness_defined_by_sigma_theta'
-        ],
-        "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/med-cmcc-sal": [
-            'sea_water_salinity'
-        ],
-        "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/med-cmcc-ssh": [
-            'sea_surface_height_above_geoid'
-        ],
-        "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/med-cmcc-tem": [
-            'sea_water_potential_temperature_at_sea_floor',
-            'sea_water_potential_temperature'
-        ],
-        "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/" +
-        "MEDSEA_ANALYSISFORECAST_PHY_006_013-statics/MED-MFC_006_013_mask_bathy.nc": [
-            'model_level_number_at_sea_floor',
-            'sea_binary_mask',
-            'sea_floor_depth_below_geoid'
-        ],
-        "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/" +
-        "MEDSEA_ANALYSISFORECAST_PHY_006_013-statics/MED-MFC_006_013_coordinates.nc": [
-            'cell_thickness'
-        ],
-        "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/" +
-        "MEDSEA_ANALYSISFORECAST_PHY_006_013-statics/MED-MFC_006_013_mdt.nc": [
-            'sea_surface_height_above_geoid'
-        ],
         "ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001/" +
         "cmems_mod_ibi_phy_anfc_0.027deg-2D_PT15M-m/": [
             'sea_surface_height_above_geoid',
@@ -156,18 +110,6 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
     # See the docstring of find_time_coverage() to get
     # information about the dictionary structure
     urls_time = {
-        'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013': [
-            (
-                re.compile(utils.YEARMONTHDAY_REGEX + r'_(d|h|hts|qm)-.*\.nc$'),
-                utils.create_datetime,
-                lambda time: (time, time + relativedelta(days=1))
-            ),
-            (
-                re.compile(utils.YEARMONTHDAY_REGEX + r'_m-.*\.nc$'),
-                utils.create_datetime,
-                lambda time: (time, time + relativedelta(months=1))
-            ),
-        ],
         'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001': [
             (
                 re.compile(
