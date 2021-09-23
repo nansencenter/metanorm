@@ -16,12 +16,9 @@ LOGGER.addHandler(logging.NullHandler())
 class URLMetadataNormalizer(BaseMetadataNormalizer):
     """ Normalizer for hardcoding information based on URLS """
 
-    urls_platforms = {
-        "ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001": 'OPERATIONAL MODELS',
-    }
+    urls_platforms = {}
 
     urls_instruments = {
-        "ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001": 'computer',
         "ftp://ftp.opc.ncep.noaa.gov/grids/operational/GLOBALHYCOM/Navy/": 'computer',
         "ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/rtofs/prod": 'computer',
     }
@@ -30,103 +27,24 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
 
     WORLD_WIDE_COVERAGE_WKT = 'POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))'
 
-    urls_geometry = {
-        "ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001":
-            'POLYGON((-19 56, 5 56, 5 26, -19 26, -19 56))',
-    }
+    urls_geometry = {}
 
-    urls_title = {
-        "ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001":
-            'Atlantic-Iberian Biscay Irish-Ocean Physics Analysis and Forecast',
-    }
+    urls_title = {}
 
     NC_H5_FILENAME_MATCHER = re.compile(r"([^/]+)\.(nc|h5)(\.gz)?$")
     urls_entry_id = {
         "https://thredds.met.no/thredds/": re.compile(r"([^/]+)\.nc(\.dods)?$"),
         "https://opendap.jpl.nasa.gov/opendap/": NC_H5_FILENAME_MATCHER,
         "ftp://nrt.cmems-du.eu/Core/": NC_H5_FILENAME_MATCHER,
-        "ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001": NC_H5_FILENAME_MATCHER,
     }
 
-    urls_summary = {
-        'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001':
-            utils.dict_to_string({
-                utils.SUMMARY_FIELDS['description']:
-                    'The operational IBI (Iberian Biscay Irish) Ocean Analysis and Forecasting'
-                    ' system provides a 5-day hydrodynamic forecast including high frequency '
-                    'processes of paramount importance to characterize regional scale marine '
-                    'processes.',
-                utils.SUMMARY_FIELDS['processing_level']: '4',
-                utils.SUMMARY_FIELDS['product']: 'IBI_ANALYSISFORECAST_PHY_005_001'
-            }),
-    }
+    urls_summary = {}
 
-    urls_dataset_parameters = {
-        "ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001/" +
-        "cmems_mod_ibi_phy_anfc_0.027deg-2D_PT15M-m/": [
-            'sea_surface_height_above_geoid',
-            'eastward_sea_water_velocity',
-            'northward_sea_water_velocity'
-        ],
-        "ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001/" +
-        "cmems_mod_ibi_phy_anfc_0.027deg-3D_P1D-m/": [
-            'sea_water_potential_temperature',
-            'sea_water_salinity',
-            'eastward_sea_water_velocity',
-            'northward_sea_water_velocity',
-            'sea_surface_height_above_geoid',
-            'ocean_mixed_layer_thickness_defined_by_sigma_theta',
-            'sea_water_potential_temperature_at_sea_floor'
-        ],
-        "ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001/" +
-        "cmems_mod_ibi_phy_anfc_0.027deg-2D_PT1H-m/": [
-            'sea_water_potential_temperature',
-            'eastward_sea_water_velocity',
-            'northward_sea_water_velocity',
-            'barotropic_eastward_sea_water_velocity',
-            'barotropic_northward_sea_water_velocity',
-            'sea_surface_height_above_geoid',
-            'ocean_mixed_layer_thickness_defined_by_sigma_theta'
-        ],
-        "ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001/" +
-        "cmems_mod_ibi_phy_anfc_0.027deg-3D_PT1H-m/": [
-            'sea_water_potential_temperature',
-            'sea_water_salinity',
-            'eastward_sea_water_velocity',
-            'northward_sea_water_velocity'
-        ],
-        "ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001/" +
-        "cmems_mod_ibi_phy_anfc_0.027deg-3D_P1M-m/": [
-            'sea_water_potential_temperature',
-            'sea_water_salinity',
-            'eastward_sea_water_velocity',
-            'northward_sea_water_velocity',
-            'sea_surface_height_above_geoid',
-            'ocean_mixed_layer_thickness_defined_by_sigma_theta',
-            'sea_water_potential_temperature_at_sea_floor'
-        ],
-    }
+    urls_dataset_parameters = {}
 
     # See the docstring of find_time_coverage() to get
     # information about the dictionary structure
-    urls_time = {
-        'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001': [
-            (
-                re.compile(
-                    r'/CMEMS_v5r1_IBI_PHY_NRT_PdE_(15minav|01dav|01hav(3D)?)_' +
-                    utils.YEARMONTHDAY_REGEX + r'_.*\.nc$'
-                ),
-                utils.create_datetime,
-                lambda time: (time, time + relativedelta(days=1))
-            ),
-            (
-                re.compile(
-                    r'/CMEMS_v5r1_IBI_PHY_NRT_PdE_01mav_' + utils.YEARMONTHDAY_REGEX + r'_.*\.nc$'),
-                utils.create_datetime,
-                lambda time: (time, time + relativedelta(months=1))
-            ),
-        ],
-    }
+    urls_time = {}
 
     def find_matching_value(self, associated_dict, raw_attributes):
         """ Loop through <associated_dict> and get the matching value  """

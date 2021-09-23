@@ -275,3 +275,98 @@ class CMEMS006013MetadataNormalizer(CMEMSMetadataNormalizer):
             if raw_metadata['url'].startswith(f"{self.url_prefix}/{prefix}"):
                 return utils.create_parameter_list(parameter_list)
         return []
+
+
+class CMEMS005001MetadataNormalizer(CMEMSMetadataNormalizer):
+    """Normalizer for the IBI_ANALYSISFORECAST_PHY_005_001 product"""
+
+    url_prefix = 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001'
+    time_patterns = (
+        (
+            re.compile(
+                r'/CMEMS_v5r1_IBI_PHY_NRT_PdE_(15minav|01dav|01hav(3D)?)_' +
+                utils.YEARMONTHDAY_REGEX + r'_.*\.nc$'
+            ),
+            utils.create_datetime,
+            lambda time: (time, time + relativedelta(days=1))
+        ),
+        (
+            re.compile(
+                r'/CMEMS_v5r1_IBI_PHY_NRT_PdE_01mav_' + utils.YEARMONTHDAY_REGEX + r'_.*\.nc$'),
+            utils.create_datetime,
+            lambda time: (time, time + relativedelta(months=1))
+        )
+    )
+
+    def check(self, raw_metadata):
+        return raw_metadata.get('url', '').startswith(self.url_prefix)
+
+    def get_entry_title(self, raw_metadata):
+        return 'Atlantic-Iberian Biscay Irish-Ocean Physics Analysis and Forecast'
+
+    def get_summary(self, raw_metadata):
+        return utils.dict_to_string({
+            utils.SUMMARY_FIELDS['description']:
+                'The operational IBI (Iberian Biscay Irish) Ocean Analysis and Forecasting'
+                ' system provides a 5-day hydrodynamic forecast including high frequency '
+                'processes of paramount importance to characterize regional scale marine '
+                'processes.',
+            utils.SUMMARY_FIELDS['processing_level']: '4',
+            utils.SUMMARY_FIELDS['product']: 'IBI_ANALYSISFORECAST_PHY_005_001'
+        })
+
+    def get_platform(self, raw_metadata):
+        return utils.get_gcmd_platform('OPERATIONAL MODELS')
+
+    def get_instrument(self, raw_metadata):
+        return utils.get_gcmd_instrument('Computer')
+
+    def get_location_geometry(self, raw_metadata):
+        return 'POLYGON((-19 56, 5 56, 5 26, -19 26, -19 56))'
+
+    def get_dataset_parameters(self, raw_metadata):
+        parameters = {
+            "cmems_mod_ibi_phy_anfc_0.027deg-2D_PT15M-m/": (
+                'sea_surface_height_above_geoid',
+                'eastward_sea_water_velocity',
+                'northward_sea_water_velocity'
+            ),
+            "cmems_mod_ibi_phy_anfc_0.027deg-3D_P1D-m/": (
+                'sea_water_potential_temperature',
+                'sea_water_salinity',
+                'eastward_sea_water_velocity',
+                'northward_sea_water_velocity',
+                'sea_surface_height_above_geoid',
+                'ocean_mixed_layer_thickness_defined_by_sigma_theta',
+                'sea_water_potential_temperature_at_sea_floor'
+            ),
+            "cmems_mod_ibi_phy_anfc_0.027deg-2D_PT1H-m/": (
+                'sea_water_potential_temperature',
+                'eastward_sea_water_velocity',
+                'northward_sea_water_velocity',
+                'barotropic_eastward_sea_water_velocity',
+                'barotropic_northward_sea_water_velocity',
+                'sea_surface_height_above_geoid',
+                'ocean_mixed_layer_thickness_defined_by_sigma_theta'
+            ),
+            "cmems_mod_ibi_phy_anfc_0.027deg-3D_PT1H-m/": (
+                'sea_water_potential_temperature',
+                'sea_water_salinity',
+                'eastward_sea_water_velocity',
+                'northward_sea_water_velocity'
+            ),
+            "cmems_mod_ibi_phy_anfc_0.027deg-3D_P1M-m/": (
+                'sea_water_potential_temperature',
+                'sea_water_salinity',
+                'eastward_sea_water_velocity',
+                'northward_sea_water_velocity',
+                'sea_surface_height_above_geoid',
+                'ocean_mixed_layer_thickness_defined_by_sigma_theta',
+                'sea_water_potential_temperature_at_sea_floor'
+            )
+        }
+
+        for prefix, parameter_list in parameters.items():
+            if raw_metadata['url'].startswith(f"{self.url_prefix}/{prefix}"):
+                return utils.create_parameter_list(parameter_list)
+        return []
