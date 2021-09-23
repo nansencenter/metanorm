@@ -5,6 +5,7 @@ from dateutil.relativedelta import relativedelta
 
 import metanorm.utils as utils
 from .base import GeoSPaaSMetadataNormalizer
+from ...errors import MetadataNormalizationError
 
 
 class CMEMSMetadataNormalizer(GeoSPaaSMetadataNormalizer):
@@ -199,3 +200,78 @@ class CMEMS001024MetadataNormalizer(CMEMSMetadataNormalizer):
             'northward_sea_ice_velocity',
             'sea_surface_height_above_geoid'
         ))
+
+
+class CMEMS006013MetadataNormalizer(CMEMSMetadataNormalizer):
+    """Normalizer for the MEDSEA_ANALYSISFORECAST_PHY_006_013 product
+    """
+
+    url_prefix = 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013'
+    time_patterns = (
+        (
+            re.compile(utils.YEARMONTHDAY_REGEX + r'_(d|h|hts|qm)-.*\.nc$'),
+            utils.create_datetime,
+            lambda time: (time, time + relativedelta(days=1))
+        ),
+        (
+            re.compile(utils.YEARMONTHDAY_REGEX + r'_m-.*\.nc$'),
+            utils.create_datetime,
+            lambda time: (time, time + relativedelta(months=1))
+        )
+    )
+
+    def check(self, raw_metadata):
+        return raw_metadata.get('url', '').startswith(self.url_prefix)
+
+    def get_entry_title(self, raw_metadata):
+        return 'Mediterranean Forecasting System (hydrodynamic-wave model)'
+
+    def get_summary(self, raw_metadata):
+        return utils.dict_to_string({
+            utils.SUMMARY_FIELDS['description']:
+                'The physical component of the Mediterranean Forecasting System '
+                '(Med-Currents) is a coupled hydrodynamic-wave model implemented over the whole '
+                'Mediterranean Basin.',
+            utils.SUMMARY_FIELDS['processing_level']: '4',
+            utils.SUMMARY_FIELDS['product']: 'MEDSEA_ANALYSISFORECAST_PHY_006_013'
+        })
+
+    def get_platform(self, raw_metadata):
+        return utils.get_gcmd_platform('OPERATIONAL MODELS')
+
+    def get_instrument(self, raw_metadata):
+        return utils.get_gcmd_instrument('Computer')
+
+    def get_location_geometry(self, raw_metadata):
+        return 'POLYGON((-17.29 45.98, -17.29 30.18, 36.30 30.18, 36.30 45.98, -17.29 45.98))'
+
+    def get_dataset_parameters(self, raw_metadata):
+        parameters = {
+            "med-cmcc-cur": (
+                'eastward_sea_water_velocity',
+                'northward_sea_water_velocity',
+            ),
+            "med-cmcc-mld": ('ocean_mixed_layer_thickness_defined_by_sigma_theta',),
+            "med-cmcc-sal": ('sea_water_salinity',),
+            "med-cmcc-ssh": ('sea_surface_height_above_geoid',),
+            "med-cmcc-tem": (
+                'sea_water_potential_temperature_at_sea_floor',
+                'sea_water_potential_temperature'
+            ),
+            "MEDSEA_ANALYSISFORECAST_PHY_006_013-statics/MED-MFC_006_013_mask_bathy.nc": (
+                'model_level_number_at_sea_floor',
+                'sea_binary_mask',
+                'sea_floor_depth_below_geoid'
+            ),
+            "MEDSEA_ANALYSISFORECAST_PHY_006_013-statics/MED-MFC_006_013_coordinates.nc": (
+                'cell_thickness',
+            ),
+            "MEDSEA_ANALYSISFORECAST_PHY_006_013-statics/MED-MFC_006_013_mdt.nc": (
+                'sea_surface_height_above_geoid',
+            )
+        }
+
+        for prefix, parameter_list in parameters.items():
+            if raw_metadata['url'].startswith(f"{self.url_prefix}/{prefix}"):
+                return utils.create_parameter_list(parameter_list)
+        return []
