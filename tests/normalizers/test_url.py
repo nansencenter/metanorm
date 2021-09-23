@@ -456,13 +456,6 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         self.assertEqual(self.normalizer.get_entry_id(
             attributes), '20180110000000-OSPO-L2P_GHRSST-SSTsubskin-VIIRS_NPP-ACSPO_V2.61-v02.0-fv01.0')
 
-    def test_entry_id_for_marine_copernicus(self):
-        """entry_id from URLMetadataNormalizer for marine copernicus metadata"""
-        attributes = {
-            'url': "ftp://nrt.cmems-du.eu/Core/Some/path/to/file/20180110000000-OSPO-L2P_GHRSST-SSTsubskin-VIIRS_NPP-ACSPO_V2.61-v02.0-fv01.0.nc"}
-        self.assertEqual(self.normalizer.get_entry_id(
-            attributes), '20180110000000-OSPO-L2P_GHRSST-SSTsubskin-VIIRS_NPP-ACSPO_V2.61-v02.0-fv01.0')
-
     def test_none_for_incorrect_ftp_resource(self):
         """shall return None in the case of incorrect ftp resource (incorrect 'ftp_domain_name')
         and [] for the cumulative ones """
