@@ -77,3 +77,54 @@ class CMEMS008046MetadataNormalizer(CMEMSMetadataNormalizer):
             'surface_geostrophic_northward_sea_water_velocity',
             'surface_geostrophic_northward_sea_water_velocity_assuming_mean_sea_level_for_geoid'
         ))
+
+
+class CMEMS015003MetadataNormalizer(CMEMSMetadataNormalizer):
+    """Normalizer for the MULTIOBS_GLO_PHY_NRT_015_003 product"""
+
+    time_patterns = (
+        (
+            re.compile(r'/dataset-uv-nrt-(daily|hourly)_' +
+                       utils.YEARMONTHDAY_REGEX + r'T.*\.nc$'),
+            utils.create_datetime,
+            lambda time: (time, time + relativedelta(days=1))
+        ),
+        (
+            re.compile(r'/dataset-uv-nrt-monthly_' + utils.YEARMONTH_REGEX + r'T.*\.nc$'),
+            utils.create_datetime,
+            lambda time: (time, time + relativedelta(months=1))
+        )
+    )
+
+    def check(self, raw_metadata):
+        return raw_metadata.get('url', '').startswith(
+            'ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003')
+
+    def get_entry_title(self, raw_metadata):
+        return ('GLOBAL TOTAL SURFACE AND 15M CURRENT FROM ALTIMETRIC '
+                'GEOSTROPHIC CURRENT AND MODELED EKMAN CURRENT PROCESSING')
+
+    def get_summary(self, raw_metadata):
+        return utils.dict_to_string({
+            utils.SUMMARY_FIELDS['description']:
+            'This product is a NRT L4 global total velocity field at 0m and 15m.',
+            utils.SUMMARY_FIELDS['processing_level']: '4',
+            utils.SUMMARY_FIELDS['product']: 'MULTIOBS_GLO_PHY_NRT_015_003'
+        })
+
+    def get_platform(self, raw_metadata):
+        return utils.get_gcmd_platform('Earth Observation satellites')
+
+    def get_instrument(self, raw_metadata):
+        return utils.get_gcmd_instrument('altimeters')
+
+    def get_location_geometry(self, raw_metadata):
+        return utils.WORLD_WIDE_COVERAGE_WKT
+
+    def get_dataset_parameters(self, raw_metadata):
+        # based on "http://nrt.cmems-du.eu/motu-web/Motu?
+        #           action=describeProduct&service=MULTIOBS_GLO_PHY_NRT_015_003-TDS"
+        return utils.create_parameter_list((
+            'eastward_sea_water_velocity',
+            'northward_sea_water_velocity'
+        ))
