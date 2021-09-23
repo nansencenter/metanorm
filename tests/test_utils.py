@@ -5,6 +5,7 @@ import unittest.mock as mock
 from collections import OrderedDict
 from datetime import datetime
 
+from dateutil.relativedelta import relativedelta
 from dateutil.tz import tzutc
 
 import metanorm.errors as errors
@@ -58,6 +59,38 @@ class TimeTestCase(unittest.TestCase):
             re.match(utils.YEARMONTHDAY_REGEX, '20201017').groupdict(),
             {'year': '2020', 'month': '10', 'day': '17'}
         )
+
+    def test_find_time_coverage(self):
+        """find_time_coverage() should extract the time coverage from a
+        URL using the given regexes and functions
+        """
+        time_patterns = (
+            (
+                re.compile(rf"dataset_{utils.YEARMONTHDAY_REGEX}.nc$"),
+                utils.create_datetime,
+                lambda time: (time, time + relativedelta(days=1))
+            ),
+            (
+                re.compile(rf"dataset_{utils.YEARMONTH_REGEX}.nc$"),
+                utils.create_datetime,
+                lambda time: (time, time + relativedelta(months=1))
+            )
+        )
+        self.assertTupleEqual(
+            utils.find_time_coverage(time_patterns, 'ftp://foo/dataset_20200205.nc'),
+            (datetime(2020, 2, 5, tzinfo=tzutc()), datetime(2020, 2, 6, tzinfo=tzutc())))
+        self.assertTupleEqual(
+            utils.find_time_coverage(time_patterns, 'ftp://foo/dataset_202002.nc'),
+            (datetime(2020, 2, 1, tzinfo=tzutc()), datetime(2020, 3, 1, tzinfo=tzutc())))
+
+    def test_find_time_coverage_not_found(self):
+        """A MetadataNormalizationError must be raised when no time
+        coverage can be extracted
+        """
+        time_patterns = ((re.compile(r'foo'), None, None),)
+        with self.assertRaises(errors.MetadataNormalizationError):
+            utils.find_time_coverage(time_patterns, 'bar')
+
 
 class UtilsTestCase(unittest.TestCase):
     """Test case for utils functions"""
