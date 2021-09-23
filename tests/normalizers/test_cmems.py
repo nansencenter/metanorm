@@ -7,7 +7,6 @@ from datetime import datetime, timezone
 
 import metanorm.normalizers as normalizers
 from .data import DATASET_PARAMETERS
-from metanorm.errors import MetadataNormalizationError
 
 
 class CMEMSMetadataNormalizerTestCase(unittest.TestCase):
@@ -470,3 +469,218 @@ class CMEMS001024MetadataNormalizerTestCase(unittest.TestCase):
                 DATASET_PARAMETERS['northward_sea_ice_velocity'],
                 DATASET_PARAMETERS['sea_surface_height_above_geoid']
             ])
+
+
+class CMEMS006013MetadataNormalizerTestCase(unittest.TestCase):
+    """Tests for the CMEMS006013MetadataNormalizer class"""
+
+    def setUp(self):
+        self.normalizer = normalizers.geospaas.CMEMS006013MetadataNormalizer()
+
+    def test_entry_title(self):
+        """entry_title from CMEMS006013MetadataNormalizer """
+        self.assertEqual(
+            self.normalizer.get_entry_title({}),
+            'Mediterranean Forecasting System (hydrodynamic-wave model)')
+
+    def test_summary(self):
+        """summary from CMEMS006013MetadataNormalizer"""
+        self.assertEqual(
+            self.normalizer.get_summary({}),
+            'Description: The physical component of the Mediterranean Forecasting System '
+            '(Med-Currents) is a coupled hydrodynamic-wave model implemented over the whole '
+            'Mediterranean Basin.;'
+            'Processing level: 4;'
+            'Product: MEDSEA_ANALYSISFORECAST_PHY_006_013')
+
+    def test_time_coverage_start_daily_mean(self):
+        """Should return the proper starting time for a daily mean file"""
+        url = ('ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/'
+               'med-cmcc-cur-an-fc-d/2020/06/'
+               '20200601_d-CMCC--RFVL-MFSeas6-MEDATL-b20210101_an-sv07.00.nc')
+        self.assertEqual(
+            self.normalizer.get_time_coverage_start({'url': url}),
+            datetime(year=2020, month=6, day=1, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_start_hourly_mean(self):
+        """Should return the proper starting time for an hourly mean file"""
+        url = ('ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/'
+               'med-cmcc-cur-an-fc-h/2021/06/'
+               '20210601_h-CMCC--RFVL-MFSeas6-MEDATL-b20210615_an-sv07.00.nc')
+        self.assertEqual(
+            self.normalizer.get_time_coverage_start({'url': url}),
+            datetime(year=2021, month=6, day=1, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_start_15min_inst(self):
+        """Should return the proper starting time for a 15 min instantaneous file"""
+        url = ('ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/'
+               'med-cmcc-cur-an-fc-qm/2020/05/'
+               '20200502_qm-CMCC--RFVL-MFSeas6-MEDATL-b20210101_an-sv07.00.nc')
+        self.assertEqual(
+            self.normalizer.get_time_coverage_start({'url': url}),
+            datetime(year=2020, month=5, day=2, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_start_hourly_mean_hts(self):
+        """Should return the proper starting time for an hts hourly mean file"""
+        url = ('ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/'
+               'med-cmcc-cur-an-fc-hts/2021/06/'
+               '20210601_hts-CMCC--RFVL-MFSeas6-MEDATL-b20210615_an-sv07.00.nc')
+        self.assertEqual(
+            self.normalizer.get_time_coverage_start({'url': url}),
+            datetime(year=2021, month=6, day=1, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_start_month(self):
+        """Should return the proper starting time"""
+        url = ('ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/'
+               'med-cmcc-cur-an-fc-m/2021/'
+               '20210601_m-CMCC--RFVL-MFSeas6-MEDATL-b20210713_an-sv07.00.nc')
+        self.assertEqual(
+            self.normalizer.get_time_coverage_start({'url': url}),
+            datetime(year=2021, month=6, day=1, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_end_daily_mean(self):
+        """Should return the proper ending time for a daily mean file"""
+        url = ('ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/'
+               'med-cmcc-cur-an-fc-d/2020/06/'
+               '20200601_d-CMCC--RFVL-MFSeas6-MEDATL-b20210101_an-sv07.00.nc')
+        self.assertEqual(
+            self.normalizer.get_time_coverage_end({'url': url}),
+            datetime(year=2020, month=6, day=2, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_end_hourly_mean(self):
+        """Should return the proper ending time for an hourly mean file"""
+        url = ('ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/'
+               'med-cmcc-cur-an-fc-h/2021/06/'
+               '20210601_h-CMCC--RFVL-MFSeas6-MEDATL-b20210615_an-sv07.00.nc')
+        self.assertEqual(
+            self.normalizer.get_time_coverage_end({'url': url}),
+            datetime(year=2021, month=6, day=2, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_end_hourly_mean_hts(self):
+        """Should return the proper ending time for an hts hourly mean file"""
+        url = ('ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/'
+               'med-cmcc-cur-an-fc-hts/2021/06/'
+               '20210601_hts-CMCC--RFVL-MFSeas6-MEDATL-b20210615_an-sv07.00.nc')
+        self.assertEqual(
+            self.normalizer.get_time_coverage_end({'url': url}),
+            datetime(year=2021, month=6, day=2, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_end_15min_inst(self):
+        """Should return the proper ending time for a 15 min instantaneous file"""
+        url = ('ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/'
+               'med-cmcc-cur-an-fc-qm/2020/05/'
+               '20200502_qm-CMCC--RFVL-MFSeas6-MEDATL-b20210101_an-sv07.00.nc')
+        self.assertEqual(
+            self.normalizer.get_time_coverage_end({'url': url}),
+            datetime(year=2020, month=5, day=3, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_end_month(self):
+        """Should return the proper ending time"""
+        url = ('ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/'
+               'med-cmcc-cur-an-fc-m/2021/'
+               '20210601_m-CMCC--RFVL-MFSeas6-MEDATL-b20210713_an-sv07.00.nc')
+        self.assertEqual(
+            self.normalizer.get_time_coverage_end({'url': url}),
+            datetime(year=2021, month=7, day=1, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_platform(self):
+        """platform from CMEMS006013MetadataNormalizer """
+        self.assertEqual(
+            self.normalizer.get_platform({}),
+            OrderedDict([('Category', 'Models/Analyses'),
+                         ('Series_Entity', ''),
+                         ('Short_Name', 'OPERATIONAL MODELS'),
+                         ('Long_Name', '')]))
+
+    def test_instrument(self):
+        """instrument from CMEMS006013MetadataNormalizer """
+        self.assertEqual(
+            self.normalizer.get_instrument({}),
+            OrderedDict([('Category', 'In Situ/Laboratory Instruments'),
+                         ('Class', 'Data Analysis'),
+                         ('Type', 'Environmental Modeling'),
+                         ('Subtype', ''),
+                         ('Short_Name', 'Computer'),
+                         ('Long_Name', 'Computer')]))
+
+    def test_location_geometry(self):
+        """geometry from CMEMS006013MetadataNormalizer """
+        self.assertEqual(
+            self.normalizer.get_location_geometry({}),
+            'POLYGON((-17.29 45.98, -17.29 30.18, 36.30 30.18, 36.30 45.98, -17.29 45.98))')
+
+    def test_dataset_parameters_cur(self):
+        """Should return the proper dataset parameters"""
+        attributes = {
+            'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/med-cmcc-cur'}
+        self.assertEqual(
+            self.normalizer.get_dataset_parameters(attributes), [
+                DATASET_PARAMETERS['eastward_sea_water_velocity'],
+                DATASET_PARAMETERS['northward_sea_water_velocity']
+            ])
+
+    def test_dataset_parameters_mld(self):
+        """Should return the proper dataset parameters"""
+        attributes = {
+            'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/med-cmcc-mld'}
+        self.assertEqual(
+            self.normalizer.get_dataset_parameters(attributes), [
+                DATASET_PARAMETERS['ocean_mixed_layer_thickness_defined_by_sigma_theta']
+            ])
+
+    def test_dataset_parameters_sal(self):
+        """Should return the proper dataset parameters"""
+        attributes = {
+            'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/med-cmcc-sal'}
+        self.assertEqual(
+            self.normalizer.get_dataset_parameters(attributes),
+            [DATASET_PARAMETERS['sea_water_salinity']])
+
+    def test_dataset_parameters_ssh(self):
+        """Should return the proper dataset parameters"""
+        attributes = {
+            'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/med-cmcc-ssh'}
+        self.assertEqual(
+            self.normalizer.get_dataset_parameters(attributes),
+            [DATASET_PARAMETERS['sea_surface_height_above_geoid']])
+
+    def test_dataset_parameters_tem(self):
+        """Should return the proper dataset parameters"""
+        attributes = {
+            'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/med-cmcc-tem'}
+        self.assertEqual(self.normalizer.get_dataset_parameters(attributes), [
+            DATASET_PARAMETERS['sea_water_potential_temperature_at_sea_floor'],
+            DATASET_PARAMETERS['sea_water_potential_temperature']
+        ])
+
+    def test_dataset_parameters_mask_bathy(self):
+        """Should return the proper dataset parameters"""
+        attributes = {
+            'url': "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/" +
+                   "MEDSEA_ANALYSISFORECAST_PHY_006_013-statics/MED-MFC_006_013_mask_bathy.nc"
+        }
+        self.assertEqual(self.normalizer.get_dataset_parameters(attributes), [
+            DATASET_PARAMETERS['model_level_number_at_sea_floor'],
+            DATASET_PARAMETERS['sea_binary_mask'],
+            DATASET_PARAMETERS['sea_floor_depth_below_geoid'],
+        ])
+
+    def test_dataset_parameters_coordinates(self):
+        """Should return the proper dataset parameters"""
+        attributes = {
+            'url': "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/" +
+                   "MEDSEA_ANALYSISFORECAST_PHY_006_013-statics/MED-MFC_006_013_coordinates.nc"
+        }
+        self.assertEqual(
+            self.normalizer.get_dataset_parameters(attributes),
+            [DATASET_PARAMETERS['cell_thickness']])
+
+    def test_dataset_parameters_mdt(self):
+        """Should return the proper dataset parameters"""
+        attributes = {
+            'url': "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/" +
+                   "MEDSEA_ANALYSISFORECAST_PHY_006_013-statics/MED-MFC_006_013_mdt.nc"
+        }
+        self.assertEqual(self.normalizer.get_dataset_parameters(attributes), [
+            DATASET_PARAMETERS['sea_surface_height_above_geoid'],
+        ])
