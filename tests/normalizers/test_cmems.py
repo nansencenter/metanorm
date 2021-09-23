@@ -136,3 +136,126 @@ class CMEMS008046MetadataNormalizerTestCase(unittest.TestCase):
                 DATASET_PARAMETERS['surface_geostrophic_northward_sea_water_velocity_'
                                         'assuming_mean_sea_level_for_geoid'],
             ])
+
+
+class CMEMS015003MetadataNormalizerTestCase(unittest.TestCase):
+    """Tests for the CMEMS015003MetadataNormalizer class"""
+
+    def setUp(self):
+        self.normalizer = normalizers.geospaas.CMEMS015003MetadataNormalizer()
+
+    def test_entry_title(self):
+        """entry_title from CMEMS015003MetadataNormalizer """
+        self.assertEqual(
+            self.normalizer.get_entry_title({}),
+            'GLOBAL TOTAL SURFACE AND 15M CURRENT FROM ALTIMETRIC '
+            'GEOSTROPHIC CURRENT AND MODELED EKMAN CURRENT PROCESSING')
+
+    def test_summary(self):
+        """summary from CMEMS015003MetadataNormalizer"""
+        self.assertEqual(
+            self.normalizer.get_summary({}),
+            'Description: This product is a NRT L4 global total velocity field at 0m and 15m.;'
+            'Processing level: 4;'
+            'Product: MULTIOBS_GLO_PHY_NRT_015_003')
+
+    def test_time_coverage_start_daily(self):
+        """time_coverage_start from CMEMS015003MetadataNormalizer for a
+        daily file
+        """
+        self.assertEqual(
+            self.normalizer.get_time_coverage_start({
+                'url': 'ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003/'
+                       'dataset-uv-nrt-daily/2020/03/'
+                       'dataset-uv-nrt-daily_20200301T0000Z_P20200307T0000.nc'}),
+            datetime(year=2020, month=3, day=1, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_start_monthly(self):
+        """time_coverage_start from CMEMS015003MetadataNormalizer for a
+        monthly file
+        """
+        self.assertEqual(
+            self.normalizer.get_time_coverage_start({
+                'url': 'ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003/'
+                       'dataset-uv-nrt-monthly/2020/'
+                       'dataset-uv-nrt-monthly_202004T0000Z_P20200506T0000.nc'}),
+            datetime(year=2020, month=4, day=1, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_start_hourly(self):
+        """time_coverage_start from CMEMS015003MetadataNormalizer for a
+        hourly file
+        """
+        self.assertEqual(
+            self.normalizer.get_time_coverage_start({
+                'url': 'ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003/'
+                       'dataset-uv-nrt-hourly/2020/09/'
+                       'dataset-uv-nrt-hourly_20200906T0000Z_P20200912T0000.nc'}),
+            datetime(year=2020, month=9, day=6, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_end_daily(self):
+        """time_coverage_end from CMEMS015003MetadataNormalizer for a
+        daily file
+        """
+        self.assertEqual(
+            self.normalizer.get_time_coverage_end({
+                'url': 'ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003/'
+                       'dataset-uv-nrt-daily/2020/03/'
+                       'dataset-uv-nrt-daily_20200302T0000Z_P20200307T0000.nc'}),
+            datetime(year=2020, month=3, day=3, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_end_monthly(self):
+        """time_coverage_end from CMEMS015003MetadataNormalizer for a
+        monthly file
+        """
+        self.assertEqual(
+            self.normalizer.get_time_coverage_end({
+                'url': 'ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003/'
+                       'dataset-uv-nrt-monthly/2020/'
+                       'dataset-uv-nrt-monthly_202004T0000Z_P20200506T0000.nc'}),
+            datetime(year=2020, month=5, day=1, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_end_hourly(self):
+        """time_coverage_end from CMEMS015003MetadataNormalizer for a
+        hourly file
+        """
+        self.assertEqual(
+            self.normalizer.get_time_coverage_end({
+                'url': 'ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003/'
+                       'dataset-uv-nrt-hourly/2020/09/'
+                       'dataset-uv-nrt-hourly_20200906T0000Z_P20200918T0000.nc'}),
+            datetime(year=2020, month=9, day=7, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_platform(self):
+        """platform from CMEMS015003MetadataNormalizer """
+        self.assertEqual(
+            self.normalizer.get_platform({}),
+            OrderedDict([('Category', 'Earth Observation Satellites'),
+                        ('Series_Entity', ''),
+                        ('Short_Name', ''),
+                        ('Long_Name', '')]))
+
+    def test_instrument(self):
+        """instrument from CMEMS015003MetadataNormalizer """
+        self.assertEqual(
+            self.normalizer.get_instrument({}),
+            OrderedDict([('Category', 'Earth Remote Sensing Instruments'),
+                         ('Class', 'Active Remote Sensing'),
+                         ('Type', 'Altimeters'),
+                         ('Subtype', ''),
+                         ('Short_Name', ''),
+                         ('Long_Name', '')]))
+
+    def test_location_geometry(self):
+        """geometry from CMEMS015003MetadataNormalizer """
+        self.assertEqual(
+            self.normalizer.get_location_geometry({}),
+            'POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))')
+
+    def test_dataset_parameters(self):
+        """dataset_parameters from CMEMS015003MetadataNormalizer """
+        self.assertEqual(
+            self.normalizer.get_dataset_parameters({}),
+            [
+                DATASET_PARAMETERS['eastward_sea_water_velocity'],
+                DATASET_PARAMETERS['northward_sea_water_velocity']
+            ])
