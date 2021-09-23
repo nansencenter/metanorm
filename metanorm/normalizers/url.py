@@ -17,14 +17,12 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
     """ Normalizer for hardcoding information based on URLS """
 
     urls_platforms = {
-        "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003": 'Earth Observation satellites',
         "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024": 'OPERATIONAL MODELS',
         "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013": 'OPERATIONAL MODELS',
         "ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001": 'OPERATIONAL MODELS',
     }
 
     urls_instruments = {
-        "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003": 'altimeters',
         "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024": 'computer',
         "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013": 'computer',
         "ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001": 'computer',
@@ -37,7 +35,6 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
     WORLD_WIDE_COVERAGE_WKT = 'POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))'
 
     urls_geometry = {
-        "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003": WORLD_WIDE_COVERAGE_WKT,
         "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024": WORLD_WIDE_COVERAGE_WKT,
         "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013":
             'POLYGON((-17.29 45.98, -17.29 30.18, 36.30 30.18, 36.30 45.98, -17.29 45.98))',
@@ -46,9 +43,6 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
     }
 
     urls_title = {
-        "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003":
-            'GLOBAL TOTAL SURFACE AND 15M CURRENT FROM ALTIMETRIC '
-            'GEOSTROPHIC CURRENT AND MODELED EKMAN CURRENT PROCESSING',
         "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024":
             'GLOBAL OCEAN 1_12 PHYSICS ANALYSIS AND FORECAST UPDATED DAILY',
         "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013":
@@ -66,13 +60,6 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
     }
 
     urls_summary = {
-        'ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003':
-            utils.dict_to_string({
-                utils.SUMMARY_FIELDS['description']:
-                    'This product is a NRT L4 global total velocity field at 0m and 15m.',
-                utils.SUMMARY_FIELDS['processing_level']: '4',
-                utils.SUMMARY_FIELDS['product']: 'MULTIOBS_GLO_PHY_NRT_015_003'
-            }),
         'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024':
             utils.dict_to_string({
                 utils.SUMMARY_FIELDS['description']:
@@ -103,11 +90,6 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
     }
 
     urls_dataset_parameters = {
-        # based on http://nrt.cmems-du.eu/motu-web/Motu?action=describeProduct&service=MULTIOBS_GLO_PHY_NRT_015_003-TDS
-        "ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003": [
-            'eastward_sea_water_velocity',
-            'northward_sea_water_velocity'
-        ],
         # based on http://nrt.cmems-du.eu/motu-web/Motu?action=describeProduct&service=GLOBAL_ANALYSIS_FORECAST_PHY_001_024-TDS
         "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024": [
             'sea_water_potential_temperature_at_sea_floor',
@@ -201,19 +183,6 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
     # See the docstring of find_time_coverage() to get
     # information about the dictionary structure
     urls_time = {
-        'ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003': [
-            (
-                re.compile(r'/dataset-uv-nrt-(daily|hourly)_' +
-                    utils.YEARMONTHDAY_REGEX + r'T.*\.nc$'),
-                utils.create_datetime,
-                lambda time: (time, time + relativedelta(days=1))
-            ),
-            (
-                re.compile(r'/dataset-uv-nrt-monthly_' + utils.YEARMONTH_REGEX + r'T.*\.nc$'),
-                utils.create_datetime,
-                lambda time: (time, time + relativedelta(months=1))
-            )
-        ],
         'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/': [
             (
                 re.compile(
