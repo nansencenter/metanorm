@@ -17,13 +17,11 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
     """ Normalizer for hardcoding information based on URLS """
 
     urls_platforms = {
-        "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024": 'OPERATIONAL MODELS',
         "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013": 'OPERATIONAL MODELS',
         "ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001": 'OPERATIONAL MODELS',
     }
 
     urls_instruments = {
-        "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024": 'computer',
         "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013": 'computer',
         "ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001": 'computer',
         "ftp://ftp.opc.ncep.noaa.gov/grids/operational/GLOBALHYCOM/Navy/": 'computer',
@@ -35,7 +33,6 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
     WORLD_WIDE_COVERAGE_WKT = 'POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))'
 
     urls_geometry = {
-        "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024": WORLD_WIDE_COVERAGE_WKT,
         "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013":
             'POLYGON((-17.29 45.98, -17.29 30.18, 36.30 30.18, 36.30 45.98, -17.29 45.98))',
         "ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001":
@@ -43,8 +40,6 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
     }
 
     urls_title = {
-        "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024":
-            'GLOBAL OCEAN 1_12 PHYSICS ANALYSIS AND FORECAST UPDATED DAILY',
         "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013":
             'Mediterranean Forecasting System (hydrodynamic-wave model)',
         "ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001":
@@ -60,14 +55,6 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
     }
 
     urls_summary = {
-        'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024':
-            utils.dict_to_string({
-                utils.SUMMARY_FIELDS['description']:
-                    'The Operational Mercator global ocean analysis and forecast system at '
-                    '1/12 degree is providing 10 days of 3D global ocean forecasts updated daily.',
-                utils.SUMMARY_FIELDS['processing_level']: '4',
-                utils.SUMMARY_FIELDS['product']: 'GLOBAL_ANALYSIS_FORECAST_PHY_001_024'
-            }),
         'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013':
             utils.dict_to_string({
                 utils.SUMMARY_FIELDS['description']:
@@ -90,20 +77,6 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
     }
 
     urls_dataset_parameters = {
-        # based on http://nrt.cmems-du.eu/motu-web/Motu?action=describeProduct&service=GLOBAL_ANALYSIS_FORECAST_PHY_001_024-TDS
-        "ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024": [
-            'sea_water_potential_temperature_at_sea_floor',
-            'ocean_mixed_layer_thickness_defined_by_sigma_theta',
-            'sea_ice_area_fraction',
-            'sea_ice_thickness',
-            'sea_water_salinity',
-            'sea_water_potential_temperature',
-            'eastward_sea_water_velocity',
-            'eastward_sea_ice_velocity',
-            'northward_sea_water_velocity',
-            'northward_sea_ice_velocity',
-            'sea_surface_height_above_geoid'
-        ],
         "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/med-cmcc-cur": [
             'eastward_sea_water_velocity',
             'northward_sea_water_velocity',
@@ -183,29 +156,6 @@ class URLMetadataNormalizer(BaseMetadataNormalizer):
     # See the docstring of find_time_coverage() to get
     # information about the dictionary structure
     urls_time = {
-        'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/': [
-            (
-                re.compile(
-                    r'/(SMOC|mercatorpsy4v3r1_gl12_(mean|hrly))_' +
-                    utils.YEARMONTHDAY_REGEX +
-                    r'_R.*\.nc$'),
-                utils.create_datetime,
-                lambda time: (time, time + relativedelta(days=1))
-            ),
-            (
-                re.compile(r'/mercatorpsy4v3r1_gl12_mean_' + utils.YEARMONTH_REGEX + r'.*\.nc$'),
-                utils.create_datetime,
-                lambda time: (time, time + relativedelta(months=1))
-            ),
-            (
-                re.compile(
-                    r'/mercatorpsy4v3r1_gl12_(thetao|so|uovo)_' +
-                    utils.YEARMONTHDAY_REGEX +
-                    r'_(?P<hour>\d{2})h_R.*\.nc$'),
-                utils.create_datetime,
-                lambda time: (time, time)
-            ),
-        ],
         'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013': [
             (
                 re.compile(utils.YEARMONTHDAY_REGEX + r'_(d|h|hts|qm)-.*\.nc$'),
