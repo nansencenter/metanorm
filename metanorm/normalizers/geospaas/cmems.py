@@ -128,3 +128,74 @@ class CMEMS015003MetadataNormalizer(CMEMSMetadataNormalizer):
             'eastward_sea_water_velocity',
             'northward_sea_water_velocity'
         ))
+
+
+class CMEMS001024MetadataNormalizer(CMEMSMetadataNormalizer):
+    """Normalizer for the GLOBAL_ANALYSIS_FORECAST_PHY_001_024 product
+    """
+
+    time_patterns = (
+        (
+            re.compile(
+                r'/(SMOC|mercatorpsy4v3r1_gl12_(mean|hrly))_' +
+                utils.YEARMONTHDAY_REGEX +
+                r'_R.*\.nc$'),
+            utils.create_datetime,
+            lambda time: (time, time + relativedelta(days=1))
+        ),
+        (
+            re.compile(r'/mercatorpsy4v3r1_gl12_mean_' + utils.YEARMONTH_REGEX + r'.*\.nc$'),
+            utils.create_datetime,
+            lambda time: (time, time + relativedelta(months=1))
+        ),
+        (
+            re.compile(
+                r'/mercatorpsy4v3r1_gl12_(thetao|so|uovo)_' +
+                utils.YEARMONTHDAY_REGEX +
+                r'_(?P<hour>\d{2})h_R.*\.nc$'),
+            utils.create_datetime,
+            lambda time: (time, time)
+        )
+    )
+
+    def check(self, raw_metadata):
+        return raw_metadata.get('url', '').startswith(
+            'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024')
+
+    def get_entry_title(self, raw_metadata):
+        return 'GLOBAL OCEAN 1_12 PHYSICS ANALYSIS AND FORECAST UPDATED DAILY'
+
+    def get_summary(self, raw_metadata):
+        return utils.dict_to_string({
+            utils.SUMMARY_FIELDS['description']:
+                'The Operational Mercator global ocean analysis and forecast system at '
+                '1/12 degree is providing 10 days of 3D global ocean forecasts updated daily.',
+            utils.SUMMARY_FIELDS['processing_level']: '4',
+            utils.SUMMARY_FIELDS['product']: 'GLOBAL_ANALYSIS_FORECAST_PHY_001_024'
+        })
+
+    def get_platform(self, raw_metadata):
+        return utils.get_gcmd_platform('OPERATIONAL MODELS')
+
+    def get_instrument(self, raw_metadata):
+        return utils.get_gcmd_instrument('Computer')
+
+    def get_location_geometry(self, raw_metadata):
+        return utils.WORLD_WIDE_COVERAGE_WKT
+
+    def get_dataset_parameters(self, raw_metadata):
+        # based on "http://nrt.cmems-du.eu/motu-web/Motu?
+        #           action=describeProduct&service=GLOBAL_ANALYSIS_FORECAST_PHY_001_024-TDS"
+        return utils.create_parameter_list((
+            'sea_water_potential_temperature_at_sea_floor',
+            'ocean_mixed_layer_thickness_defined_by_sigma_theta',
+            'sea_ice_area_fraction',
+            'sea_ice_thickness',
+            'sea_water_salinity',
+            'sea_water_potential_temperature',
+            'eastward_sea_water_velocity',
+            'eastward_sea_ice_velocity',
+            'northward_sea_water_velocity',
+            'northward_sea_ice_velocity',
+            'sea_surface_height_above_geoid'
+        ))
