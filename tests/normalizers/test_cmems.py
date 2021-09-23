@@ -684,3 +684,232 @@ class CMEMS006013MetadataNormalizerTestCase(unittest.TestCase):
         self.assertEqual(self.normalizer.get_dataset_parameters(attributes), [
             DATASET_PARAMETERS['sea_surface_height_above_geoid'],
         ])
+
+
+class CMEMS005001MetadataNormalizerTestCase(unittest.TestCase):
+    """Tests for the CMEMS005001MetadataNormalizer class"""
+
+    def setUp(self):
+        self.normalizer = normalizers.geospaas.CMEMS005001MetadataNormalizer()
+
+    def test_entry_title(self):
+        """entry_title from CMEMS005001MetadataNormalizer """
+        self.assertEqual(
+            self.normalizer.get_entry_title({}),
+            'Atlantic-Iberian Biscay Irish-Ocean Physics Analysis and Forecast')
+
+    def test_summary(self):
+        """summary from CMEMS005001MetadataNormalizer"""
+        self.assertEqual(
+            self.normalizer.get_summary({}),
+            'Description: The operational IBI (Iberian Biscay Irish) Ocean Analysis and Forecasting'
+            ' system provides a 5-day hydrodynamic forecast including high frequency '
+            'processes of paramount importance to characterize regional scale marine '
+            'processes.;'
+            'Processing level: 4;'
+            'Product: IBI_ANALYSISFORECAST_PHY_005_001')
+
+    def test_time_coverage_start_15min(self):
+        """Should return the proper starting time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_start({
+                'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001/'
+                       'cmems_mod_ibi_phy_anfc_0.027deg-2D_PT15M-m/2020/12/'
+                       'CMEMS_v5r1_IBI_PHY_NRT_PdE_15minav_20201212_20201212_R20201221_AN04.nc'
+            }),
+            datetime(year=2020, month=12, day=12, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_start_daily(self):
+        """Should return the proper starting time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_start({
+                'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001/'
+                       'cmems_mod_ibi_phy_anfc_0.027deg-3D_P1D-m/2021/05/'
+                       'CMEMS_v5r1_IBI_PHY_NRT_PdE_01dav_20210503_20210503_R20210510_AN06.nc'
+            }),
+            datetime(year=2021, month=5, day=3, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_start_hourly(self):
+        """Should return the proper starting time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_start({
+                'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001/'
+                       'cmems_mod_ibi_phy_anfc_0.027deg-2D_PT1H-m/2019/11/'
+                       'CMEMS_v5r1_IBI_PHY_NRT_PdE_01hav_20191112_20191112_R20191113_AN07.nc'
+            }),
+            datetime(year=2019, month=11, day=12, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_start_hourly3d(self):
+        """Should return the proper starting time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_start({
+                'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001/'
+                       'cmems_mod_ibi_phy_anfc_0.027deg-3D_PT1H-m/2021/08/'
+                       'CMEMS_v5r1_IBI_PHY_NRT_PdE_01hav3D_20210815_20210815_R20210816_HC01.nc'
+            }),
+            datetime(year=2021, month=8, day=15, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_start_monthly(self):
+        """Should return the proper starting time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_start({
+                'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001/'
+                       'cmems_mod_ibi_phy_anfc_0.027deg-3D_P1M-m/2019/'
+                       'CMEMS_v5r1_IBI_PHY_NRT_PdE_01mav_20191001_20191031_R20191031_AN01.nc'
+            }),
+            datetime(year=2019, month=10, day=1, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_end_15min(self):
+        """Should return the proper ending time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_end({
+                'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001/'
+                       'cmems_mod_ibi_phy_anfc_0.027deg-2D_PT15M-m/2020/12/'
+                       'CMEMS_v5r1_IBI_PHY_NRT_PdE_15minav_20201212_20201212_R20201221_AN04.nc'
+            }),
+            datetime(year=2020, month=12, day=13, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_end_daily(self):
+        """Should return the proper ending time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_end({
+                'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001/'
+                       'cmems_mod_ibi_phy_anfc_0.027deg-3D_P1D-m/2021/05/'
+                       'CMEMS_v5r1_IBI_PHY_NRT_PdE_01dav_20210503_20210503_R20210510_AN06.nc'
+            }),
+            datetime(year=2021, month=5, day=4, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_end_hourly(self):
+        """Should return the proper ending time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_end({
+                'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001/'
+                       'cmems_mod_ibi_phy_anfc_0.027deg-2D_PT1H-m/2019/11/'
+                       'CMEMS_v5r1_IBI_PHY_NRT_PdE_01hav_20191112_20191112_R20191113_AN07.nc'
+            }),
+            datetime(year=2019, month=11, day=13, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_end_hourly3d(self):
+        """Should return the proper ending time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_end({
+                'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001/'
+                       'cmems_mod_ibi_phy_anfc_0.027deg-3D_PT1H-m/2021/08/'
+                       'CMEMS_v5r1_IBI_PHY_NRT_PdE_01hav3D_20210815_20210815_R20210816_HC01.nc'
+            }),
+            datetime(year=2021, month=8, day=16, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_end_monthly(self):
+        """Should return the proper ending time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_end({
+                'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001/'
+                       'cmems_mod_ibi_phy_anfc_0.027deg-3D_P1M-m/2019/'
+                       'CMEMS_v5r1_IBI_PHY_NRT_PdE_01mav_20191001_20191031_R20191031_AN01.nc'
+            }),
+            datetime(year=2019, month=11, day=1, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_platform(self):
+        """platform from CMEMS005001MetadataNormalizer """
+        self.assertEqual(
+            self.normalizer.get_platform({}),
+            OrderedDict([('Category', 'Models/Analyses'),
+                         ('Series_Entity', ''),
+                         ('Short_Name', 'OPERATIONAL MODELS'),
+                         ('Long_Name', '')]))
+
+    def test_instrument(self):
+        """instrument from CMEMS005001MetadataNormalizer """
+        self.assertEqual(
+            self.normalizer.get_instrument({}),
+            OrderedDict([('Category', 'In Situ/Laboratory Instruments'),
+                         ('Class', 'Data Analysis'),
+                         ('Type', 'Environmental Modeling'),
+                         ('Subtype', ''),
+                         ('Short_Name', 'Computer'),
+                         ('Long_Name', 'Computer')]))
+
+    def test_location_geometry(self):
+        """geometry from CMEMS005001MetadataNormalizer """
+        self.assertEqual(
+            self.normalizer.get_location_geometry({}),
+            'POLYGON((-19 56, 5 56, 5 26, -19 26, -19 56))')
+
+    def test_dataset_parameters_15min(self):
+        """Should return the proper dataset parameters"""
+        attributes = {
+            'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001/'
+                   'cmems_mod_ibi_phy_anfc_0.027deg-2D_PT15M-m/2020/12/'
+                   'CMEMS_v5r1_IBI_PHY_NRT_PdE_15minav_20201212_20201212_R20201221_AN04.nc'
+        }
+        self.assertListEqual(self.normalizer.get_dataset_parameters(attributes), [
+            DATASET_PARAMETERS['sea_surface_height_above_geoid'],
+            DATASET_PARAMETERS['eastward_sea_water_velocity'],
+            DATASET_PARAMETERS['northward_sea_water_velocity']
+        ])
+
+    def test_dataset_parameters_daily(self):
+        """Should return the proper dataset parameters"""
+        attributes = {
+            'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001/'
+            'cmems_mod_ibi_phy_anfc_0.027deg-3D_P1D-m/2021/05/'
+            'CMEMS_v5r1_IBI_PHY_NRT_PdE_01dav_20210503_20210503_R20210510_AN06.nc'
+        }
+        self.assertListEqual(self.normalizer.get_dataset_parameters(attributes), [
+            DATASET_PARAMETERS['sea_water_potential_temperature'],
+            DATASET_PARAMETERS['sea_water_salinity'],
+            DATASET_PARAMETERS['eastward_sea_water_velocity'],
+            DATASET_PARAMETERS['northward_sea_water_velocity'],
+            DATASET_PARAMETERS['sea_surface_height_above_geoid'],
+            DATASET_PARAMETERS['ocean_mixed_layer_thickness_defined_by_sigma_theta'],
+            DATASET_PARAMETERS['sea_water_potential_temperature_at_sea_floor'],
+        ])
+
+    def test_dataset_parameters_hourly(self):
+        """Should return the proper dataset parameters"""
+        attributes = {
+            'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001/'
+            'cmems_mod_ibi_phy_anfc_0.027deg-2D_PT1H-m/2019/11/'
+            'CMEMS_v5r1_IBI_PHY_NRT_PdE_01hav_20191112_20191112_R20191113_AN07.nc'
+        }
+        self.assertListEqual(self.normalizer.get_dataset_parameters(attributes), [
+            DATASET_PARAMETERS['sea_water_potential_temperature'],
+            DATASET_PARAMETERS['eastward_sea_water_velocity'],
+            DATASET_PARAMETERS['northward_sea_water_velocity'],
+            DATASET_PARAMETERS['barotropic_eastward_sea_water_velocity'],
+            DATASET_PARAMETERS['barotropic_northward_sea_water_velocity'],
+            DATASET_PARAMETERS['sea_surface_height_above_geoid'],
+            DATASET_PARAMETERS['ocean_mixed_layer_thickness_defined_by_sigma_theta'],
+
+        ])
+
+    def test_dataset_parameters_hourly3d(self):
+        """Should return the proper dataset parameters"""
+        attributes = {
+            'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001/'
+            'cmems_mod_ibi_phy_anfc_0.027deg-3D_PT1H-m/2021/08/'
+            'CMEMS_v5r1_IBI_PHY_NRT_PdE_01hav3D_20210815_20210815_R20210816_HC01.nc'
+        }
+        self.assertListEqual(self.normalizer.get_dataset_parameters(attributes), [
+            DATASET_PARAMETERS['sea_water_potential_temperature'],
+            DATASET_PARAMETERS['sea_water_salinity'],
+            DATASET_PARAMETERS['eastward_sea_water_velocity'],
+            DATASET_PARAMETERS['northward_sea_water_velocity'],
+        ])
+
+    def test_dataset_parameters_monthly(self):
+        """Should return the proper dataset parameters"""
+        attributes = {
+            'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001/'
+                   'cmems_mod_ibi_phy_anfc_0.027deg-3D_P1M-m/2019/'
+                   'CMEMS_v5r1_IBI_PHY_NRT_PdE_01mav_20191001_20191031_R20191031_AN01.nc'
+        }
+        self.assertListEqual(self.normalizer.get_dataset_parameters(attributes), [
+            DATASET_PARAMETERS['sea_water_potential_temperature'],
+            DATASET_PARAMETERS['sea_water_salinity'],
+            DATASET_PARAMETERS['eastward_sea_water_velocity'],
+            DATASET_PARAMETERS['northward_sea_water_velocity'],
+            DATASET_PARAMETERS['sea_surface_height_above_geoid'],
+            DATASET_PARAMETERS['ocean_mixed_layer_thickness_defined_by_sigma_theta'],
+            DATASET_PARAMETERS['sea_water_potential_temperature_at_sea_floor'],
+        ])
