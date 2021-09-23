@@ -259,3 +259,214 @@ class CMEMS015003MetadataNormalizerTestCase(unittest.TestCase):
                 DATASET_PARAMETERS['eastward_sea_water_velocity'],
                 DATASET_PARAMETERS['northward_sea_water_velocity']
             ])
+
+
+class CMEMS001024MetadataNormalizerTestCase(unittest.TestCase):
+    """Tests for the CMEMS001024MetadataNormalizer class"""
+
+    def setUp(self):
+        self.normalizer = normalizers.geospaas.CMEMS001024MetadataNormalizer()
+
+    def test_entry_title(self):
+        """entry_title from CMEMS001024MetadataNormalizer """
+        self.assertEqual(
+            self.normalizer.get_entry_title({}),
+            'GLOBAL OCEAN 1_12 PHYSICS ANALYSIS AND FORECAST UPDATED DAILY')
+
+    def test_summary(self):
+        """summary from CMEMS001024MetadataNormalizer"""
+        self.assertEqual(
+            self.normalizer.get_summary({}),
+            'Description: The Operational Mercator global ocean analysis and forecast system at '
+            '1/12 degree is providing 10 days of 3D global ocean forecasts updated daily.;'
+            'Processing level: 4;'
+            'Product: GLOBAL_ANALYSIS_FORECAST_PHY_001_024')
+
+    def test_time_coverage_start(self):
+        """time_coverage_start from CMEMS001024MetadataNormalizer """
+        self.assertEqual(
+            self.normalizer.get_time_coverage_start({
+                'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/'
+                       'global-analysis-forecast-phy-001-024/2016/03/'
+                       'mercatorpsy4v3r1_gl12_mean_20160303_R20160316.nc'}),
+            datetime(year=2016, month=3, day=3, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_start_3dinst_so(self):
+        """time_coverage_start from CMEMS001024MetadataNormalizer for a
+        3dinst_so dataset
+        """
+        self.assertEqual(
+            self.normalizer.get_time_coverage_start({
+                'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/'
+                'global-analysis-forecast-phy-001-024-3dinst-so/2019/04/'
+                'mercatorpsy4v3r1_gl12_so_20190403_18h_R20190404.nc'}),
+            datetime(year=2019, month=4, day=3, hour=18, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_start_3dinst_thetao(self):
+        """time_coverage_start from CMEMS001024MetadataNormalizer for a
+        3dinst_thetao dataset"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_start({
+                'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/'
+                'global-analysis-forecast-phy-001-024-3dinst-thetao/2020/04/'
+                'mercatorpsy4v3r1_gl12_thetao_20200404_18h_R20200405.nc'}),
+            datetime(year=2020, month=4, day=4, hour=18, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_start_3dinst_uovo(self):
+        """time_coverage_start from CMEMS001024MetadataNormalizer for a
+        3dinst_uovo dataset"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_start({
+                'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/'
+                'global-analysis-forecast-phy-001-024-3dinst-uovo/2020/04/'
+                'mercatorpsy4v3r1_gl12_uovo_20200403_06h_R20200404.nc'}),
+            datetime(year=2020, month=4, day=3, hour=6, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_start_hourly_merged_uv(self):
+        """time_coverage_start from CMEMS001024MetadataNormalizer for a
+        hourly_merged_uv dataset"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_start({
+                'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/'
+                'global-analysis-forecast-phy-001-024-hourly-merged-uv/2019/05/'
+                'SMOC_20190515_R20190516.nc'}),
+            datetime(year=2019, month=5, day=15, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_start_hourly_t_u_v_ssh(self):
+        """time_coverage_start from CMEMS001024MetadataNormalizer for a
+        hourly_t_u_v_ssh dataset"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_start({
+                'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/'
+                'global-analysis-forecast-phy-001-024-hourly-t-u-v-ssh/2020/05/'
+                'mercatorpsy4v3r1_gl12_hrly_20200511_R20200520.nc'}),
+            datetime(year=2020, month=5, day=11, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_start_monthly(self):
+        """time_coverage_start from CMEMS001024MetadataNormalizer for a
+        monthly dataset"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_start({
+                'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/'
+                'global-analysis-forecast-phy-001-024-monthly/2018/'
+                'mercatorpsy4v3r1_gl12_mean_201807.nc'}),
+            datetime(year=2018, month=7, day=1, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_end(self):
+        """time_coverage_start from CMEMS001024MetadataNormalizer"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_end({
+                'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/'
+                       'global-analysis-forecast-phy-001-024/2016/03/'
+                       'mercatorpsy4v3r1_gl12_mean_20160303_R20160316.nc'}),
+            datetime(year=2016, month=3, day=4, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_end_3dinst_so(self):
+        """time_coverage_start from CMEMS001024MetadataNormalizer for a
+        3dinst_so dataset
+        """
+        self.assertEqual(
+            self.normalizer.get_time_coverage_end({
+                'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/'
+                       'global-analysis-forecast-phy-001-024-3dinst-so/2019/04/'
+                       'mercatorpsy4v3r1_gl12_so_20190403_18h_R20190404.nc'}),
+            datetime(year=2019, month=4, day=3, hour=18, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_end_3dinst_thetao(self):
+        """time_coverage_start from CMEMS001024MetadataNormalizer for a
+        3dinst_thetao dataset
+        """
+        self.assertEqual(
+            self.normalizer.get_time_coverage_end({
+                'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/'
+                       'global-analysis-forecast-phy-001-024-3dinst-thetao/2020/04/'
+                       'mercatorpsy4v3r1_gl12_thetao_20200404_18h_R20200405.nc'}),
+            datetime(year=2020, month=4, day=4, hour=18, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_end_3dinst_uovo(self):
+        """time_coverage_start from CMEMS001024MetadataNormalizer for a
+        3dinst_uovo dataset
+        """
+        self.assertEqual(
+            self.normalizer.get_time_coverage_end({
+                'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/'
+                       'global-analysis-forecast-phy-001-024-3dinst-uovo/2020/04/'
+                       'mercatorpsy4v3r1_gl12_uovo_20200403_06h_R20200404.nc'}),
+            datetime(year=2020, month=4, day=3, hour=6, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_end_hourly_merged_uv(self):
+        """time_coverage_start from CMEMS001024MetadataNormalizer for a
+        hourly_merged_uv dataset
+        """
+        self.assertEqual(
+            self.normalizer.get_time_coverage_end({
+                'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/'
+                       'global-analysis-forecast-phy-001-024-hourly-merged-uv/2019/05/'
+                       'SMOC_20190515_R20190516.nc'}),
+            datetime(year=2019, month=5, day=16, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_end_hourly_t_u_v_ssh(self):
+        """time_coverage_start from CMEMS001024MetadataNormalizer for a
+        hourly_t_u_v_ssh dataset
+        """
+        self.assertEqual(
+            self.normalizer.get_time_coverage_end({
+                'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/'
+                       'global-analysis-forecast-phy-001-024-hourly-t-u-v-ssh/2020/05/'
+                       'mercatorpsy4v3r1_gl12_hrly_20200511_R20200520.nc'}),
+            datetime(year=2020, month=5, day=12, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_end_monthly(self):
+        """time_coverage_start from CMEMS001024MetadataNormalizer for a
+        monthly dataset
+        """
+        self.assertEqual(
+            self.normalizer.get_time_coverage_end({
+                'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/'
+                       'global-analysis-forecast-phy-001-024-monthly/2018/'
+                       'mercatorpsy4v3r1_gl12_mean_201807.nc'}),
+            datetime(year=2018, month=8, day=1, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_platform(self):
+        """platform from CMEMS001024MetadataNormalizer """
+        self.assertEqual(
+            self.normalizer.get_platform({}),
+            OrderedDict([('Category', 'Models/Analyses'),
+                         ('Series_Entity', ''),
+                         ('Short_Name', 'OPERATIONAL MODELS'),
+                         ('Long_Name', '')]))
+
+    def test_instrument(self):
+        """instrument from CMEMS001024MetadataNormalizer """
+        self.assertEqual(
+            self.normalizer.get_instrument({}),
+            OrderedDict([('Category', 'In Situ/Laboratory Instruments'),
+                         ('Class', 'Data Analysis'),
+                         ('Type', 'Environmental Modeling'),
+                         ('Subtype', ''),
+                         ('Short_Name', 'Computer'),
+                         ('Long_Name', 'Computer')]))
+
+    def test_location_geometry(self):
+        """geometry from CMEMS001024MetadataNormalizer """
+        self.assertEqual(
+            self.normalizer.get_location_geometry({}),
+            'POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))')
+
+    def test_dataset_parameters(self):
+        """dataset_parameters from CMEMS001024MetadataNormalizer """
+        self.assertEqual(
+            self.normalizer.get_dataset_parameters({}),
+            [
+                DATASET_PARAMETERS['sea_water_potential_temperature_at_sea_floor'],
+                DATASET_PARAMETERS['ocean_mixed_layer_thickness_defined_by_sigma_theta'],
+                DATASET_PARAMETERS['sea_ice_area_fraction'],
+                DATASET_PARAMETERS['sea_ice_thickness'],
+                DATASET_PARAMETERS['sea_water_salinity'],
+                DATASET_PARAMETERS['sea_water_potential_temperature'],
+                DATASET_PARAMETERS['eastward_sea_water_velocity'],
+                DATASET_PARAMETERS['eastward_sea_ice_velocity'],
+                DATASET_PARAMETERS['northward_sea_water_velocity'],
+                DATASET_PARAMETERS['northward_sea_ice_velocity'],
+                DATASET_PARAMETERS['sea_surface_height_above_geoid']
+            ])
