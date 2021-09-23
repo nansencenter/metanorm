@@ -482,13 +482,6 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
                 {'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/global-analysis-forecast-phy-001-024-monthly/2018/mercatorpsy4v3r1_gl12_mean_201807.nc'}),
             datetime(year=2018, month=7, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
-    def test_time_coverage_start_sealevel_glo_phy_l4_nrt_observations_008_046(self):
-        """shall return the propert starting time for hardcoded normalizer """
-        self.assertEqual(
-            self.normalizer.get_time_coverage_start(
-                {'url': 'ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046/dataset-duacs-nrt-global-merged-allsat-phy-l4/2019/04/nrt_global_allsat_phy_l4_20190403_20200320.nc'}),
-            datetime(year=2019, month=4, day=2, hour=12, minute=0, second=0, tzinfo=tzutc()))
-
     def test_time_coverage_start_multiobs_glo_phy_nrt_015_003_daily(self):
         """shall return the propert starting time for hardcoded normalizer """
         self.assertEqual(
@@ -654,13 +647,6 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
                 {'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/global-analysis-forecast-phy-001-024-monthly/2018/mercatorpsy4v3r1_gl12_mean_201807.nc'}),
             datetime(year=2018, month=8, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
-    def test_time_coverage_end_sealevel_glo_phy_l4_nrt_observations_008_046(self):
-        """shall return the propert ending time for hardcoded normalizer """
-        self.assertEqual(
-            self.normalizer.get_time_coverage_end(
-                {'url': 'ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046/dataset-duacs-nrt-global-merged-allsat-phy-l4/2019/04/nrt_global_allsat_phy_l4_20190403_20200320.nc'}),
-            datetime(year=2019, month=4, day=3, hour=12, minute=0, second=0, tzinfo=tzutc()))
-
     def test_time_coverage_end_multiobs_glo_phy_nrt_015_003_daily(self):
         """shall return the propert ending time for hardcoded normalizer """
         self.assertEqual(
@@ -805,20 +791,6 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
                          ('Long_Name', '')])
         )
 
-    def test_instrument_sealevel_glo_phy_l4_nrt_observations_008_046(self):
-        """instrument from URLMetadataNormalizer """
-        attributes = {
-            'url': 'ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046'}
-        self.assertEqual(
-            self.normalizer.get_instrument(attributes),
-            OrderedDict([('Category', 'Earth Remote Sensing Instruments'),
-                         ('Class', 'Active Remote Sensing'),
-                         ('Type', 'Altimeters'),
-                         ('Subtype', ''),
-                         ('Short_Name', ''),
-                         ('Long_Name', '')])
-        )
-
     def test_instrument_medsea_analysis_forecast_phy_006_013(self):
         """Should return the proper instrument"""
         attributes = {'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/'}
@@ -861,18 +833,6 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         """platform from URLMetadataNormalizer """
         attributes = {
             'url': 'ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003'}
-        self.assertEqual(
-            self.normalizer.get_platform(attributes),
-            OrderedDict([('Category','Earth Observation Satellites'),
-                        ('Series_Entity',''),
-                        ('Short_Name',''),
-                        ('Long_Name','')])
-        )
-
-    def test_platform_sealevel_glo_phy_l4_nrt_observations_008_046(self):
-        """platform from URLMetadataNormalizer """
-        attributes = {
-            'url': 'ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046'}
         self.assertEqual(
             self.normalizer.get_platform(attributes),
             OrderedDict([('Category','Earth Observation Satellites'),
@@ -924,21 +884,6 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         """provider from URLMetadataNormalizer """
         attributes = {
             'url': 'ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003'}
-        self.assertEqual(
-            self.normalizer.get_provider(attributes),
-            OrderedDict([('Bucket_Level0','MULTINATIONAL ORGANIZATIONS'),
-                         ('Bucket_Level1',''),
-                         ('Bucket_Level2',''),
-                         ('Bucket_Level3',''),
-                         ('Short_Name','CMEMS'),
-                         ('Long_Name','Copernicus - Marine Environment Monitoring Service'),
-                         ('Data_Center_URL','')])
-        )
-
-    def test_provider_sealevel_glo_phy_l4_nrt_observations_008_046(self):
-        """provider from URLMetadataNormalizer """
-        attributes = {
-            'url': 'ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046'}
         self.assertEqual(
             self.normalizer.get_provider(attributes),
             OrderedDict([('Bucket_Level0','MULTINATIONAL ORGANIZATIONS'),
@@ -1009,24 +954,6 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
             [
                 self.DATASET_PARAMETERS['eastward_sea_water_velocity'],
                 self.DATASET_PARAMETERS['northward_sea_water_velocity'],
-            ]
-        )
-
-    def test_dataset_parameters_sealevel_glo_phy_l4_nrt_observations_008_046(self):
-        """dataset_parameters from URLMetadataNormalizer """
-        attributes = {
-            'url': 'ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046'}
-        self.assertEqual(
-            self.normalizer.get_dataset_parameters(attributes),
-            [
-                self.DATASET_PARAMETERS['sea_surface_height_above_geoid'],
-                self.DATASET_PARAMETERS['sea_surface_height_above_sea_level'],
-                self.DATASET_PARAMETERS['surface_geostrophic_eastward_sea_water_velocity'],
-                self.DATASET_PARAMETERS['surface_geostrophic_eastward_sea_water_velocity_'
-                                        'assuming_mean_sea_level_for_geoid'],
-                self.DATASET_PARAMETERS['surface_geostrophic_northward_sea_water_velocity'],
-                self.DATASET_PARAMETERS['surface_geostrophic_northward_sea_water_velocity_'
-                                        'assuming_mean_sea_level_for_geoid'],
             ]
         )
 
@@ -1204,13 +1131,6 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         self.assertEqual(
             self.normalizer.get_entry_title(attributes),'GLOBAL TOTAL SURFACE AND 15M CURRENT FROM ALTIMETRIC GEOSTROPHIC CURRENT AND MODELED EKMAN CURRENT PROCESSING')
 
-    def test_entry_title_sealevel_glo_phy_l4_nrt_observations_008_046(self):
-        """entry_title from URLMetadataNormalizer """
-        attributes = {
-            'url': 'ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046'}
-        self.assertEqual(
-            self.normalizer.get_entry_title(attributes),'GLOBAL OCEAN GRIDDED L4 SEA SURFACE HEIGHTS AND DERIVED VARIABLES NRT')
-
     def test_entry_title_medsea_analysis_forecast_phy_006_013(self):
         """Should return the proper entry_title"""
         attributes = {'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/'}
@@ -1295,14 +1215,6 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
             self.normalizer.get_location_geometry(attributes),
             'POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))')
 
-    def test_geometry_sealevel_glo_phy_l4_nrt_observations_008_046(self):
-        """geometry from URLMetadataNormalizer """
-        attributes = {
-            'url': 'ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046'}
-        self.assertEqual(
-            self.normalizer.get_location_geometry(attributes),
-            'POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))')
-
     def test_geometry_medsea_analysis_forecast_phy_006_013(self):
         """Should return the proper geometry"""
         attributes = {'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/'}
@@ -1368,18 +1280,6 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
             'Description: This product is a NRT L4 global total velocity field at 0m and 15m.;'
             'Processing level: 4;'
             'Product: MULTIOBS_GLO_PHY_NRT_015_003'
-        )
-
-    def test_summary_sealevel_glo_phy_l4_nrt_observations_008_046(self):
-        """summary from URLMetadataNormalizer """
-        attributes = {
-            'url': 'ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046'}
-        self.assertEqual(
-            self.normalizer.get_summary(attributes),
-            'Description: Altimeter satellite gridded Sea Level Anomalies (SLA) computed with '
-            'respect to a twenty-year mean.;'
-            'Processing level: 4;'
-            'Product: SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046'
         )
 
     def test_summary_medsea_analysis_forecast_phy_006_013(self):
