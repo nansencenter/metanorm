@@ -96,7 +96,7 @@ class CMEMS008046MetadataNormalizerTestCase(unittest.TestCase):
                        'nrt_global_allsat_phy_l4_20190403_20200320.nc'}),
             datetime(year=2019, month=4, day=3, hour=12, minute=0, second=0, tzinfo=timezone.utc))
 
-    def test_platform_sealevel_glo_phy_l4_nrt_observations_008_046(self):
+    def test_platform(self):
         """platform from CMEMS008046MetadataNormalizer """
         self.assertEqual(
             self.normalizer.get_platform({}),
@@ -116,7 +116,7 @@ class CMEMS008046MetadataNormalizerTestCase(unittest.TestCase):
                          ('Short_Name', ''),
                          ('Long_Name', '')]))
 
-    def test_geometry(self):
+    def test_location_geometry(self):
         """geometry from CMEMS008046MetadataNormalizer """
         self.assertEqual(
             self.normalizer.get_location_geometry({}),
