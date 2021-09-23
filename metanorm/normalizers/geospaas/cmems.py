@@ -5,7 +5,6 @@ from dateutil.relativedelta import relativedelta
 
 import metanorm.utils as utils
 from .base import GeoSPaaSMetadataNormalizer
-from ...errors import MetadataNormalizationError
 
 
 class CMEMSMetadataNormalizer(GeoSPaaSMetadataNormalizer):
