@@ -729,7 +729,7 @@ class CMEMS006013MetadataNormalizerTestCase(unittest.TestCase):
     def test_dataset_parameters_missing_attribute(self):
         """An exception must be raised if the attribute is missing"""
         with self.assertRaises(MetadataNormalizationError):
-            self.normalizer.get_time_coverage_start({})
+            self.normalizer.get_dataset_parameters({})
 
 
 class CMEMS005001MetadataNormalizerTestCase(unittest.TestCase):
@@ -973,4 +973,4 @@ class CMEMS005001MetadataNormalizerTestCase(unittest.TestCase):
     def test_dataset_parameters_missing_attribute(self):
         """An exception must be raised if the attribute is missing"""
         with self.assertRaises(MetadataNormalizationError):
-            self.normalizer.get_time_coverage_start({})
+            self.normalizer.get_dataset_parameters({})
