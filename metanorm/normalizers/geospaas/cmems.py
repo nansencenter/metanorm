@@ -244,6 +244,7 @@ class CMEMS006013MetadataNormalizer(CMEMSMetadataNormalizer):
     def get_location_geometry(self, raw_metadata):
         return 'POLYGON((-17.29 45.98, -17.29 30.18, 36.30 30.18, 36.30 45.98, -17.29 45.98))'
 
+    @utils.raises(KeyError)
     def get_dataset_parameters(self, raw_metadata):
         parameters = {
             "med-cmcc-cur": (
@@ -323,6 +324,7 @@ class CMEMS005001MetadataNormalizer(CMEMSMetadataNormalizer):
     def get_location_geometry(self, raw_metadata):
         return 'POLYGON((-19 56, 5 56, 5 26, -19 26, -19 56))'
 
+    @utils.raises(KeyError)
     def get_dataset_parameters(self, raw_metadata):
         parameters = {
             "cmems_mod_ibi_phy_anfc_0.027deg-2D_PT15M-m/": (
