@@ -111,10 +111,10 @@ class REMSSGMIMetadataNormalizerTestCase(unittest.TestCase):
                 {'url': 'ftp://ftp.remss.com/gmi/bmaps_v08.2/y2014/m06/f35_20140630v8.2_d3d.gz'}),
             datetime(year=2014, month=7, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
-    def test_time_coverage_start_missing_attribute(self):
+    def test_time_coverage_end_missing_attribute(self):
         """An exception must be raised if the attribute is missing"""
         with self.assertRaises(MetadataNormalizationError):
-            self.normalizer.get_time_coverage_start({})
+            self.normalizer.get_time_coverage_end({})
 
     def test_platform(self):
         """platform from REMSSGMIMetadataNormalizer """
