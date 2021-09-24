@@ -64,6 +64,16 @@ class CMEMS008046MetadataNormalizerTestCase(unittest.TestCase):
     def setUp(self):
         self.normalizer = normalizers.geospaas.CMEMS008046MetadataNormalizer()
 
+    def test_check(self):
+        """Test the checking condition"""
+        self.assertTrue(self.normalizer.check({
+            'url': 'ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046/'
+                   'dataset-duacs-nrt-global-merged-allsat-phy-l4/2020/06/'
+                   'nrt_global_allsat_phy_l4_20200623_20200629.nc'}))
+
+        self.assertFalse(self.normalizer.check({}))
+        self.assertFalse(self.normalizer.check({'url': 'ftp://foo/bar'}))
+
     def test_entry_title(self):
         """entry_title from CMEMS008046MetadataNormalizer """
         self.assertEqual(
@@ -144,6 +154,15 @@ class CMEMS015003MetadataNormalizerTestCase(unittest.TestCase):
 
     def setUp(self):
         self.normalizer = normalizers.geospaas.CMEMS015003MetadataNormalizer()
+
+    def test_check(self):
+        """Test the checking condition"""
+        self.assertTrue(self.normalizer.check({
+            'url': 'ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003/dataset-uv-nrt-daily/'
+                   '2021/05/dataset-uv-nrt-daily_20210512T0900Z_P20210707T0000.nc'}))
+
+        self.assertFalse(self.normalizer.check({}))
+        self.assertFalse(self.normalizer.check({'url': 'ftp://foo/bar'}))
 
     def test_entry_title(self):
         """entry_title from CMEMS015003MetadataNormalizer """
@@ -267,6 +286,16 @@ class CMEMS001024MetadataNormalizerTestCase(unittest.TestCase):
 
     def setUp(self):
         self.normalizer = normalizers.geospaas.CMEMS001024MetadataNormalizer()
+
+    def test_check(self):
+        """Test the checking condition"""
+        self.assertTrue(self.normalizer.check({
+            'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024/'
+                   'global-analysis-forecast-phy-001-024/2020/12/'
+                   'mercatorpsy4v3r1_gl12_mean_20201223_R20210106.nc'}))
+
+        self.assertFalse(self.normalizer.check({}))
+        self.assertFalse(self.normalizer.check({'url': 'ftp://foo/bar'}))
 
     def test_entry_title(self):
         """entry_title from CMEMS001024MetadataNormalizer """
@@ -478,6 +507,16 @@ class CMEMS006013MetadataNormalizerTestCase(unittest.TestCase):
 
     def setUp(self):
         self.normalizer = normalizers.geospaas.CMEMS006013MetadataNormalizer()
+
+    def test_check(self):
+        """Test the checking condition"""
+        self.assertTrue(self.normalizer.check({
+            'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/'
+                   'med-cmcc-cur-an-fc-d/2019/12/'
+                   '20191201_d-CMCC--RFVL-MFSeas6-MEDATL-b20210101_an-sv07.00.nc'}))
+
+        self.assertFalse(self.normalizer.check({}))
+        self.assertFalse(self.normalizer.check({'url': 'ftp://foo/bar'}))
 
     def test_entry_title(self):
         """entry_title from CMEMS006013MetadataNormalizer """
@@ -698,6 +737,16 @@ class CMEMS005001MetadataNormalizerTestCase(unittest.TestCase):
 
     def setUp(self):
         self.normalizer = normalizers.geospaas.CMEMS005001MetadataNormalizer()
+
+    def test_check(self):
+        """Test the checking condition"""
+        self.assertTrue(self.normalizer.check({
+            'url': 'ftp://nrt.cmems-du.eu/Core/IBI_ANALYSISFORECAST_PHY_005_001/'
+                   'cmems_mod_ibi_phy_anfc_0.027deg-2D_PT1H-m/2020/02/'
+                   'CMEMS_v5r1_IBI_PHY_NRT_PdE_01hav_20200217_20200217_R20200219_AN06.nc'}))
+
+        self.assertFalse(self.normalizer.check({}))
+        self.assertFalse(self.normalizer.check({'url': 'ftp://foo/bar'}))
 
     def test_entry_title(self):
         """entry_title from CMEMS005001MetadataNormalizer """
