@@ -28,6 +28,15 @@ class CMEMSMetadataNormalizerTestCase(unittest.TestCase):
             self.normalizer.get_entry_id({'url': 'ftp://foo/bar/baz123.h5.gz'}),
             'baz123')
 
+    def test_entry_id_error(self):
+        """a MetadataNormalizationError must be raised when an entry_id cannot be found"""
+        # wrong file format
+        with self.assertRaises(MetadataNormalizationError):
+            self.normalizer.get_entry_id({'url': 'ftp://foo/bar.txt'})
+        # no url attribute
+        with self.assertRaises(MetadataNormalizationError):
+            self.normalizer.get_entry_id({})
+
     def test_provider(self):
         """The provider is always CMEMS"""
         self.assertEqual(
@@ -56,6 +65,16 @@ class CMEMSMetadataNormalizerTestCase(unittest.TestCase):
             # test time_coverage_end
             self.assertEqual(self.normalizer.get_time_coverage_end(raw_metadata), 'end')
             mock_find_time_coverage.assert_called_with(self.normalizer.time_patterns, url)
+
+    def test_time_coverage_start_missing_attribute(self):
+        """An exception must be raised if the attribute is missing"""
+        with self.assertRaises(MetadataNormalizationError):
+            self.normalizer.get_time_coverage_start({})
+
+    def test_time_coverage_end_missing_attribute(self):
+        """An exception must be raised if the attribute is missing"""
+        with self.assertRaises(MetadataNormalizationError):
+            self.normalizer.get_time_coverage_end({})
 
 
 class CMEMS008046MetadataNormalizerTestCase(unittest.TestCase):
