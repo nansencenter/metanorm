@@ -11,6 +11,11 @@ class CMEMSMetadataNormalizer(GeoSPaaSMetadataNormalizer):
     """Base class for CMEMS normalizers"""
 
     time_patterns = ()
+    url_prefix = None
+
+    def check(self, raw_metadata):
+        return (self.url_prefix is not None
+                and raw_metadata.get('url', '').startswith(self.url_prefix))
 
     @utils.raises((AttributeError, KeyError))
     def get_entry_id(self, raw_metadata):
@@ -41,9 +46,7 @@ class CMEMS008046MetadataNormalizer(CMEMSMetadataNormalizer):
         ),
     )
 
-    def check(self, raw_metadata):
-        return raw_metadata.get('url', '').startswith(
-            'ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046')
+    url_prefix = 'ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046'
 
     def get_entry_title(self, raw_metadata):
         return 'GLOBAL OCEAN GRIDDED L4 SEA SURFACE HEIGHTS AND DERIVED VARIABLES NRT'
@@ -96,9 +99,7 @@ class CMEMS015003MetadataNormalizer(CMEMSMetadataNormalizer):
         )
     )
 
-    def check(self, raw_metadata):
-        return raw_metadata.get('url', '').startswith(
-            'ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003')
+    url_prefix = 'ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003'
 
     def get_entry_title(self, raw_metadata):
         return ('GLOBAL TOTAL SURFACE AND 15M CURRENT FROM ALTIMETRIC '
@@ -158,9 +159,7 @@ class CMEMS001024MetadataNormalizer(CMEMSMetadataNormalizer):
         )
     )
 
-    def check(self, raw_metadata):
-        return raw_metadata.get('url', '').startswith(
-            'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024')
+    url_prefix = 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024'
 
     def get_entry_title(self, raw_metadata):
         return 'GLOBAL OCEAN 1_12 PHYSICS ANALYSIS AND FORECAST UPDATED DAILY'
@@ -218,9 +217,6 @@ class CMEMS006013MetadataNormalizer(CMEMSMetadataNormalizer):
             lambda time: (time, time + relativedelta(months=1))
         )
     )
-
-    def check(self, raw_metadata):
-        return raw_metadata.get('url', '').startswith(self.url_prefix)
 
     def get_entry_title(self, raw_metadata):
         return 'Mediterranean Forecasting System (hydrodynamic-wave model)'
@@ -297,9 +293,6 @@ class CMEMS005001MetadataNormalizer(CMEMSMetadataNormalizer):
             lambda time: (time, time + relativedelta(months=1))
         )
     )
-
-    def check(self, raw_metadata):
-        return raw_metadata.get('url', '').startswith(self.url_prefix)
 
     def get_entry_title(self, raw_metadata):
         return 'Atlantic-Iberian Biscay Irish-Ocean Physics Analysis and Forecast'
