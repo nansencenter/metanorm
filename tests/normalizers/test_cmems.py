@@ -17,6 +17,12 @@ class CMEMSMetadataNormalizerTestCase(unittest.TestCase):
     def setUp(self):
         self.normalizer = normalizers.geospaas.CMEMSMetadataNormalizer()
 
+    def test_check(self):
+        """check() should always return False for the base class"""
+        self.assertFalse(self.normalizer.check({}))
+        self.assertFalse(self.normalizer.check({'url': ''}))
+        self.assertFalse(self.normalizer.check({'url': 'ftp://foo'}))
+
     def test_entry_id(self):
         """Test extracting the entry_id from a URL"""
         self.assertEqual(self.normalizer.get_entry_id({'url': 'ftp://foo/bar/baz123.nc'}), 'baz123')
