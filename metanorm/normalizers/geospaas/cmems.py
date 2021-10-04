@@ -38,6 +38,7 @@ class CMEMS008046MetadataNormalizer(CMEMSMetadataNormalizer):
     product
     """
 
+    url_prefix = 'ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046'
     time_patterns = (
         (
             re.compile(r'/nrt_global_allsat_phy_l4_' + utils.YEARMONTHDAY_REGEX + r'_.*\.nc$'),
@@ -45,8 +46,6 @@ class CMEMS008046MetadataNormalizer(CMEMSMetadataNormalizer):
             lambda time: (time - relativedelta(hours=12), time + relativedelta(hours=12))
         ),
     )
-
-    url_prefix = 'ftp://nrt.cmems-du.eu/Core/SEALEVEL_GLO_PHY_L4_NRT_OBSERVATIONS_008_046'
 
     def get_entry_title(self, raw_metadata):
         return 'GLOBAL OCEAN GRIDDED L4 SEA SURFACE HEIGHTS AND DERIVED VARIABLES NRT'
@@ -85,6 +84,7 @@ class CMEMS008046MetadataNormalizer(CMEMSMetadataNormalizer):
 class CMEMS015003MetadataNormalizer(CMEMSMetadataNormalizer):
     """Normalizer for the MULTIOBS_GLO_PHY_NRT_015_003 product"""
 
+    url_prefix = 'ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003'
     time_patterns = (
         (
             re.compile(r'/dataset-uv-nrt-(daily|hourly)_' +
@@ -98,8 +98,6 @@ class CMEMS015003MetadataNormalizer(CMEMSMetadataNormalizer):
             lambda time: (time, time + relativedelta(months=1))
         )
     )
-
-    url_prefix = 'ftp://nrt.cmems-du.eu/Core/MULTIOBS_GLO_PHY_NRT_015_003'
 
     def get_entry_title(self, raw_metadata):
         return ('GLOBAL TOTAL SURFACE AND 15M CURRENT FROM ALTIMETRIC '
@@ -135,6 +133,7 @@ class CMEMS001024MetadataNormalizer(CMEMSMetadataNormalizer):
     """Normalizer for the GLOBAL_ANALYSIS_FORECAST_PHY_001_024 product
     """
 
+    url_prefix = 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024'
     time_patterns = (
         (
             re.compile(
@@ -158,8 +157,6 @@ class CMEMS001024MetadataNormalizer(CMEMSMetadataNormalizer):
             lambda time: (time, time)
         )
     )
-
-    url_prefix = 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_PHY_001_024'
 
     def get_entry_title(self, raw_metadata):
         return 'GLOBAL OCEAN 1_12 PHYSICS ANALYSIS AND FORECAST UPDATED DAILY'
