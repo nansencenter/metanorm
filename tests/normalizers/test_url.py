@@ -440,20 +440,6 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
                 {'url': 'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1/D365-ESACCI-L4_GHRSST-SSTdepth-OSTIA-GLOB_CDR2.1-v02.0-fv01.0.nc'}),
             datetime(year=1982, month=12, day=31, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
-    def test_time_coverage_start_jaxa(self):
-        """shall return the propert starting time for hardcoded normalizer """
-        self.assertEqual(
-            self.normalizer.get_time_coverage_start(
-                {'url': 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25/3/2012/07/GW1AM2_20120702_01D_EQOD_L3SGSSTLB3300300.h5'}),
-            datetime(year=2012, month=7, day=2, hour=0, minute=0, second=0, tzinfo=tzutc()))
-
-    def test_time_coverage_start_jaxa_month_file(self):
-        """shall return the propert starting time for hardcoded normalizer """
-        self.assertEqual(
-            self.normalizer.get_time_coverage_start(
-                {'url': 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25/3/2013/07/GW1AM2_20130700_01M_EQMA_L3SGSSTLB3300300.h5'}),
-            datetime(year=2013, month=7, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
-
     def test_time_coverage_start_phy_001_024(self):
         """shall return the propert starting time for hardcoded normalizer """
         self.assertEqual(
@@ -633,20 +619,6 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
                 {'url': 'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1/D365-ESACCI-L4_GHRSST-SSTdepth-OSTIA-GLOB_CDR2.1-v02.0-fv01.0.nc'}),
             datetime(year=2010, month=12, day=31, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
-    def test_time_coverage_end_jaxa_single_day_file(self):
-        """shall return the propert end time for hardcoded normalizer """
-        self.assertEqual(
-            self.normalizer.get_time_coverage_end(
-                {'url': 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25/3/2015/04/GW1AM2_20150401_01D_EQOD_L3SGSSTLB3300300.h5'}),
-            datetime(year=2015, month=4, day=2, hour=0, minute=0, second=0, tzinfo=tzutc()))
-
-    def test_time_coverage_end_jaxa_month_file(self):
-        """shall return the propert end time for hardcoded normalizer """
-        self.assertEqual(
-            self.normalizer.get_time_coverage_end(
-                {'url': 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25/3/2015/04/GW1AM2_20150400_01M_EQMD_L3SGSSTLB3300300.h5'}),
-            datetime(year=2015, month=5, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
-
     def test_time_coverage_end_phy_001_024(self):
         """shall return the propert starting time for hardcoded normalizer """
         self.assertEqual(
@@ -819,20 +791,6 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
             }),
             datetime(year=2019, month=11, day=1, hour=0, minute=0, second=0, tzinfo=tzutc()))
 
-    def test_instrument_jaxa(self):
-        """instrument from URLMetadataNormalizer """
-        attributes = {
-            'url': 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25/3/2012/07/GW1AM2_201207031905_134D_L2SGSSTLB3300300.h5'}
-        self.assertEqual(
-            self.normalizer.get_instrument(attributes),
-            OrderedDict([('Category', 'Earth Remote Sensing Instruments'),
-                         ('Class', 'Passive Remote Sensing'),
-                         ('Type', 'Spectrometers/Radiometers'),
-                         ('Subtype', 'Imaging Spectrometers/Radiometers'),
-                         ('Short_Name', 'AMSR2'),
-                         ('Long_Name', 'Advanced Microwave Scanning Radiometer 2')])
-        )
-
     def test_instrument_ceda(self):
         """instrument from URLMetadataNormalizer """
         attributes = {
@@ -915,18 +873,6 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
                          ('Long_Name', 'Computer')])
         )
 
-    def test_platform_jaxa(self):
-        """platform from URLMetadataNormalizer """
-        attributes = {
-            'url': 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25/3/2012/07/GW1AM2_201207031905_134D_L2SGSSTLB3300300.h5'}
-        self.assertEqual(
-            self.normalizer.get_platform(attributes),
-            OrderedDict([('Category', 'Earth Observation Satellites'),
-                         ('Series_Entity', ''),
-                         ('Short_Name', 'GCOM-W1'),
-                         ('Long_Name', 'Global Change Observation Mission 1st-Water')])
-        )
-
     def test_platform_ceda(self):
         """platform from URLMetadataNormalizer """
         attributes = {
@@ -998,21 +944,6 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         )
 
 
-
-    def test_provider_jaxa(self):
-        """provider from URLMetadataNormalizer """
-        attributes = {
-            'url': 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25/3/2012/07/GW1AM2_201207031905_134D_L2SGSSTLB3300300.h5'}
-        self.assertEqual(
-            self.normalizer.get_provider(attributes),
-            OrderedDict([('Bucket_Level0', 'GOVERNMENT AGENCIES-NON-US'),
-                         ('Bucket_Level1', 'JAPAN'),
-                         ('Bucket_Level2', ''),
-                         ('Bucket_Level3', ''),
-                         ('Short_Name', 'JP/JAXA/EOC'),
-                         ('Long_Name', 'Earth Observation Center, Japan Aerospace Exploration Agency, Japan'),
-                         ('Data_Center_URL', 'http://www.eorc.jaxa.jp/en/index.html')])
-        )
 
     def test_provider_ceda(self):
         """provider from URLMetadataNormalizer """
@@ -1102,15 +1033,6 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
                          ('Data_Center_URL', '')])
         )
 
-
-    def test_dataset_parameters_jaxa(self):
-        """dataset_parameters from URLMetadataNormalizer """
-        attributes = {
-            'url': 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25/3/2012/07/GW1AM2_201207031905_134D_L2SGSSTLB3300300.h5'}
-        self.assertEqual(
-            self.normalizer.get_dataset_parameters(attributes),
-            [self.DATASET_PARAMETERS['sea_surface_temperature']]
-        )
 
     def test_dataset_parameters_ceda(self):
         """dataset_parameters from URLMetadataNormalizer """
@@ -1331,13 +1253,6 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
             self.DATASET_PARAMETERS['sea_water_potential_temperature_at_sea_floor'],
         ])
 
-    def test_entry_title_jaxa(self):
-        """entry_title from URLMetadataNormalizer """
-        attributes = {
-            'url': 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25/3/2012/07/GW1AM2_201207031905_134D_L2SGSSTLB3300300.h5'}
-        self.assertEqual(
-            self.normalizer.get_entry_title(attributes), 'AMSR2-L3 Sea Surface Temperature')
-
     def test_entry_title_ceda(self):
         """entry_title from URLMetadataNormalizer """
         attributes = {
@@ -1381,13 +1296,6 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
             self.normalizer.get_entry_title(attributes),
             'Atlantic-Iberian Biscay Irish-Ocean Physics Analysis and Forecast'
         )
-
-    def test_entry_id_jaxa(self):
-        """entry_id from URLMetadataNormalizer """
-        attributes = {
-            'url': 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25/3/2012/07/GW1AM2_201207031905_134D_L2SGSSTLB3300300.h5'}
-        self.assertEqual(
-            self.normalizer.get_entry_id(attributes), 'GW1AM2_201207031905_134D_L2SGSSTLB3300300')
 
     def test_entry_id_ceda(self):
         """entry_id from URLMetadataNormalizer """
@@ -1454,22 +1362,6 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
             self.normalizer.get_entry_id(attributes),
             'CMEMS_v5r1_IBI_PHY_NRT_PdE_01hav3D_20210815_20210815_R20210816_HC01'
         )
-
-    def test_geometry_jaxa_the_first_type_of_sst(self):
-        """geometry from URLMetadataNormalizer """
-        attributes = {
-            'url': 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_10/3/2012/07/GW1AM2_201207031905_134D_L2SGSSTLB3300300.h5'}
-        self.assertEqual(
-            self.normalizer.get_location_geometry(attributes),
-            'POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))')
-
-    def test_geometry_jaxa_the_second_type_of_sst(self):
-        """geometry from URLMetadataNormalizer """
-        attributes = {
-            'url': 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25/3/2012/07/GW1AM2_201207031905_134D_L2SGSSTLB3300300.h5'}
-        self.assertEqual(
-            self.normalizer.get_location_geometry(attributes),
-            'POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))')
 
     def test_geometry_phy_001_024(self):
         """geometry from URLMetadataNormalizer """
@@ -1546,20 +1438,6 @@ class URLMetadataNormalizerTestCase(unittest.TestCase):
         self.assertIsNone(self.normalizer.get_time_coverage_start({'none-url': 'ftp://test/'}))
         self.assertIsNone(self.normalizer.get_location_geometry({'none-url': 'ftp://test/'}))
         self.assertIsNone(self.normalizer.get_entry_id({'none-url': 'ftp://test/'}))
-
-    def test_summary_jaxa_l2(self):
-        """summary from URLMetadataNormalizer """
-        attributes = {
-            'url': 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L2.SST'}
-        self.assertEqual(
-            self.normalizer.get_summary(attributes), 'Processing level: 2')
-
-    def test_summary_jaxa_l3(self):
-        """summary from URLMetadataNormalizer """
-        attributes = {
-            'url': 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25'}
-        self.assertEqual(
-            self.normalizer.get_summary(attributes), 'Processing level: 3')
 
     def test_summary_ceda(self):
         """summary from URLMetadataNormalizer """
