@@ -85,7 +85,8 @@ def translate_pythesint_keyword(translation_dict, alias):
             return valid_keyword
     return alias
 
-
+# TODO: rework the utils for provider so that they are
+# consistent with other GCMD fields
 def get_gcmd_provider(potential_provider_attributes, additional_keywords=None):
     """
     Get a GCMD provider from a name and/or URL, otherwise return None
@@ -254,10 +255,51 @@ def create_datetime(year, month=1, day=1, day_of_year=None, hour=0, minute=0, se
         day = int(day)
         return datetime(year, month, day, hour, minute, second).replace(tzinfo=tzutc())
 
+def find_time_coverage(time_patterns, url):
+    """Find the time coverage based on the 'url' raw attribute.
+    Returns a 2-tuple containing the start and end time,
+    or a 2-tuple containing None if no time coverage was found.
+
+    This method uses the `time_patterns` dictionary.
+    This dictionary has the following structure:
+    time_patterns = [
+        (
+            compiled_regex,
+            datetime_creation_function,
+            time_coverage_function
+        ),
+        (...)
+    ]
+    Where:
+        - "url_prefix" is the prefix matched against the 'url' raw
+        attribute
+
+        - "compiled_regex" is a compiled regular expresion used to
+        extract the time information from the URL. It should
+        contain named groups which will be given as arguments
+        to the datetime_creation_function
+
+        - "datetime_creation_function" is a function which creates
+        a datetime object from the information extracted using
+        the regex.
+
+        - "time_coverage_function" is a function which takes the
+        datetime object returned by datetime_creation_function
+        and returns the time coverage as a 2-tuple
+    """
+    for matcher, get_time, get_coverage in time_patterns:
+        match = matcher.search(url)
+        if match:
+            file_time = get_time(**match.groupdict())
+            return (get_coverage(file_time)[0], get_coverage(file_time)[1])
+    raise MetadataNormalizationError(f"Could not extract the time coverage from {url}")
+
 
 ######################## Other utilities ########################
 
 UNKNOWN = 'Unknown'
+NC_H5_FILENAME_MATCHER = re.compile(r"([^/]+)\.(nc|h5)(\.gz)?$")
+WORLD_WIDE_COVERAGE_WKT = 'POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))'
 
 
 def wkt_polygon_from_wgs84_limits(north, south, east, west):
@@ -301,3 +343,9 @@ def raises(exceptions):
                 ) from error
         return wrapper
     return decorator
+
+
+def create_parameter_list(parameters):
+    """Converts a list of standard names into a list of Pythesint dicts
+    """
+    return [get_cf_or_wkv_standard_name(cf_parameter) for cf_parameter in parameters]
