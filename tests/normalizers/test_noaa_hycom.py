@@ -220,6 +220,11 @@ class NOAAHYCOMMetadataNormalizerTestCase(unittest.TestCase):
             'POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))'
         )
 
+    def test_unknown_geometry(self):
+        """An exception should be raised if no geometry can be found"""
+        with self.assertRaises(MetadataNormalizationError):
+            self.normalizer.get_location_geometry({'url': 'http://foo'})
+
     def test_provider(self):
         """provider from NOAAHYCOMMetadataNormalizer """
         self.assertEqual(
