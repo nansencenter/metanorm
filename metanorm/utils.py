@@ -101,27 +101,6 @@ def get_gcmd_provider(potential_provider_attributes, additional_keywords=None):
     return provider
 
 
-def get_gcmd_like_provider(name=None, url=None):
-    """Generate a GCMD provider-like data structure using a name and a URL"""
-    # TODO: find a better way to manage the fallback value
-    if not name:
-        short_name = long_name = UNKNOWN
-    else:
-        short_name = name[:50]
-        long_name = name[:250]
-    provider = OrderedDict([
-        ('Bucket_Level0', UNKNOWN),
-        ('Bucket_Level1', UNKNOWN),
-        ('Bucket_Level2', UNKNOWN),
-        ('Bucket_Level3', UNKNOWN),
-        ('Short_Name', short_name),
-        ('Long_Name', long_name),
-        ('Data_Center_URL', url if url else UNKNOWN)
-    ])
-
-    return provider
-
-
 def get_gcmd_platform(platform_name, additional_keywords=None):
     """
     Gets a GCMD platform from a platform name, otherwise generate a GCMD platform-like data
