@@ -36,6 +36,8 @@ class ScihubODataMetadataNormalizer(GeoSPaaSMetadataNormalizer):
         url = raw_metadata.get('url', '')
         return (url.startswith('https://apihub.copernicus.eu/apihub/odata/v1')
                 or url.startswith('https://scihub.copernicus.eu/apihub/odata/v1')
+                or url.startswith('https://apihub.copernicus.eu/dhus/odata/v1')
+                or url.startswith('https://scihub.copernicus.eu/dhus/odata/v1')
                 or url.startswith('https://colhub.met.no/odata/v1'))
 
     @utils.raises(KeyError)
