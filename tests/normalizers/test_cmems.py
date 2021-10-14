@@ -751,6 +751,12 @@ class CMEMS006013MetadataNormalizerTestCase(unittest.TestCase):
             DATASET_PARAMETERS['sea_surface_height_above_geoid'],
         ])
 
+    def test_dataset_parameters_unknown_url(self):
+        """Should return an empty list if the URL starts with an
+        unknown prefix
+        """
+        self.assertListEqual(self.normalizer.get_dataset_parameters({'url': 'https://foo'}), [])
+
     def test_dataset_parameters_missing_attribute(self):
         """An exception must be raised if the attribute is missing"""
         with self.assertRaises(MetadataNormalizationError):
@@ -994,6 +1000,12 @@ class CMEMS005001MetadataNormalizerTestCase(unittest.TestCase):
             DATASET_PARAMETERS['ocean_mixed_layer_thickness_defined_by_sigma_theta'],
             DATASET_PARAMETERS['sea_water_potential_temperature_at_sea_floor'],
         ])
+
+    def test_dataset_parameters_unknown_url(self):
+        """Should return an empty list if the URL starts with an
+        unknown prefix
+        """
+        self.assertListEqual(self.normalizer.get_dataset_parameters({'url': 'https://foo'}), [])
 
     def test_dataset_parameters_missing_attribute(self):
         """An exception must be raised if the attribute is missing"""
