@@ -383,3 +383,7 @@ class ScihubODataMetadataNormalizerTestCase(unittest.TestCase):
                 ])
             ]
         )
+
+    def test_unknown_dataset_parameters(self):
+        """An empty list should be returned if no parameter is found"""
+        self.assertListEqual(self.normalizer.get_dataset_parameters({'Identifier': 'foo'}), [])
