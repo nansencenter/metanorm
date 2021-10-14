@@ -1,13 +1,6 @@
-"""Base normalizers. Other normalizers should inherit from
+"""Base normalizer. Other normalizers should inherit from
 MetadataNormalizer
 """
-
-import logging
-
-from metanorm.errors import MetadataNormalizationError
-
-LOGGER = logging.getLogger(__name__)
-LOGGER.addHandler(logging.NullHandler())
 
 class MetadataNormalizer():
     """Base class for all metadata normalizers"""
