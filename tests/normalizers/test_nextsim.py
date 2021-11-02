@@ -5,6 +5,7 @@ from collections import OrderedDict
 from datetime import datetime, timezone
 
 import metanorm.normalizers as normalizers
+from .data import DATASET_PARAMETERS
 from metanorm.errors import MetadataNormalizationError
 
 
@@ -127,10 +128,32 @@ class NextsimMetadataNormalizerTests(unittest.TestCase):
                 ('Long_Name', 'Nansen Environmental and Remote Sensing Centre'),
                 ('Data_Center_URL', 'http://www.nersc.no/main/index2.php')]))
 
-    # def test_get_parameters(self):
-    #     """Test getting the only dataset parameter"""
-    #     self.assertListEqual(
-    #         self.normalizer.get_dataset_parameters({}),
-    #         [
-
-    #         ])
+    def test_get_parameters(self):
+        """Test getting the only dataset parameter"""
+        self.assertListEqual(
+            self.normalizer.get_dataset_parameters({
+                'raw_dataset_parameters': [
+                    'projection_y_coordinate',
+                    'projection_x_coordinate',
+                    'longitude',
+                    'latitude',
+                    'time',
+                    'sea_ice_area_fraction',
+                    'sea_ice_thickness',
+                    'surface_snow_thickness',
+                    'sea_ice_x_velocity',
+                    'sea_ice_y_velocity'
+                ],
+            }),
+            [
+                DATASET_PARAMETERS['projection_y_coordinate'],
+                DATASET_PARAMETERS['projection_x_coordinate'],
+                DATASET_PARAMETERS['longitude'],
+                DATASET_PARAMETERS['latitude'],
+                DATASET_PARAMETERS['time'],
+                DATASET_PARAMETERS['sea_ice_area_fraction'],
+                DATASET_PARAMETERS['sea_ice_thickness'],
+                DATASET_PARAMETERS['surface_snow_thickness'],
+                DATASET_PARAMETERS['sea_ice_x_velocity'],
+                DATASET_PARAMETERS['sea_ice_y_velocity']
+            ])
