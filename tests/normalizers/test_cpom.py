@@ -69,11 +69,10 @@ class CPOMAltimetryMetadataNormalizerTests(unittest.TestCase):
             self.normalizer.get_location_geometry({'geometry': 'POINT(10 10)'}), 'POINT(10 10)')
 
     def test_missing_geometry(self):
-        """A MetadataNormalizationError must be raised when the
-        raw geometry attribute is missing
+        """An empty string must be returned when the geometry raw
+        attribute is missing
         """
-        with self.assertRaises(MetadataNormalizationError):
-            self.normalizer.get_location_geometry({})
+        self.assertEqual(self.normalizer.get_location_geometry({}), '')
 
     def test_get_provider(self):
         """Test getting the provider"""
