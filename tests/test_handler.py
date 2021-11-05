@@ -4,6 +4,7 @@
 import unittest
 import unittest.mock as mock
 
+import metanorm.errors as errors
 import metanorm.handlers as handlers
 import metanorm.normalizers as normalizers
 
@@ -11,83 +12,92 @@ import metanorm.normalizers as normalizers
 class MetadataHandlerTestCase(unittest.TestCase):
     """Test the base MetadataHandler class"""
 
-    def test_output_parameters_argument_only(self):
-        """
-        The constructor of MetadataHandler should accept being given only the
-        output_parameter_names argument
-        """
-        handler = handlers.MetadataHandler([])
-        self.assertIsInstance(handler, handlers.MetadataHandler)
+    class TestBaseNormalizer(normalizers.MetadataNormalizer):
+        """Base class for test normalizers"""
+
+        def get_foo(self, raw_metadata):
+            """Get the 'foo' attribute from raw metadata"""
+            raise NotImplementedError
+
+        def get_bar(self, raw_metadata):
+            """Get the 'bar' attribute from raw metadata"""
+            raise NotImplementedError
+
+        def normalize(self, raw_metadata):
+            return {
+                'foo': self.get_foo(raw_metadata),
+                'bar': self.get_bar(raw_metadata)
+            }
+
+    class TestNormalizer1(TestBaseNormalizer):
+        """Test normalizer"""
+        def check(self, raw_metadata):
+            return 'foo' in raw_metadata and 'bar' in raw_metadata
+
+        def get_foo(self, raw_metadata):
+            return raw_metadata['foo']
+
+        def get_bar(self, raw_metadata):
+            return raw_metadata['bar']
 
 
-    def test_output_cumulative_parameters_argument_only(self):
-        """
-        The constructor of MetadataHandler should accept being given only the
-        output_cumulative_parameter_names argument
-        """
-        handler = handlers.MetadataHandler(output_cumulative_parameter_names=[])
-        self.assertIsInstance(handler, handlers.MetadataHandler)
+    class TestNormalizer2(TestBaseNormalizer):
+        """Test normalizer"""
 
-    def test_both_arguments(self):
-        """
-        The constructor of MetadataHandler should accept being given both output_parameter_names
-        and output_cumulative_parameter_names arguments
-        """
-        handler = handlers.MetadataHandler([], [])
-        self.assertIsInstance(handler, handlers.MetadataHandler)
+        def get_foo(self, raw_metadata):
+            return raw_metadata['baz']
 
-    def test_error_if_no_argument(self):
-        """An error should be raised if both arguments are None"""
-        with self.assertRaises(ValueError):
+
+    class TestNormalizer3(TestNormalizer2):
+        """Test normalizer"""
+
+        def check(self, raw_metadata):
+            return set(('baz', 'qux', 'quux')).issubset(raw_metadata.keys())
+
+        def get_bar(self, raw_metadata):
+            return f"{raw_metadata['qux']}, {raw_metadata['quux']}"
+
+
+    def setUp(self):
+        self.handler = handlers.MetadataHandler(self.TestBaseNormalizer)
+
+    def test_instantiation(self):
+        """Test that the handler builds a list of all normalizers which
+        inherit from a base class
+        """
+        self.assertCountEqual(
+            (self.TestNormalizer1, self.TestNormalizer2, self.TestNormalizer3),
+            (n.__class__ for n in self.handler.normalizers))
+
+    def test_default_instantiation(self):
+        """If no base class is provided, MetadataNormalizer should be
+        used
+        """
+        with mock.patch('metanorm.utils.get_all_subclasses') as mock_get_all_subclasses:
             handlers.MetadataHandler()
+        mock_get_all_subclasses.assert_called_once_with(normalizers.MetadataNormalizer)
 
+    def test_get_parameters(self):
+        """Test that the metadata is normalized using the right
+        normalizers
+        """
+        self.assertDictEqual(
+            self.handler.get_parameters({'foo': 'value1', 'bar': 'value2'}),
+            {'foo': 'value1', 'bar': 'value2'}
+        )
 
-class GeospatialMetadataHandlerTestCase(unittest.TestCase):
-    """Test the GeospatialMetadataHandler class"""
+        self.assertDictEqual(
+            self.handler.get_parameters({
+                'baz': 'value3',
+                'qux': 'value4',
+                'quux': 'value5'
+            }),
+            {'foo': 'value3', 'bar': 'value4, value5'}
+        )
 
-    def test_geospatialdefault_normalizer_be_last_in_chain(self):
-        """It is mandatory to have 'GeoSpatialDefaultMetadataNormalizer' in the list of normalizers
-        (the last one)."""
-        handler = handlers.GeospatialMetadataHandler(
-            ['test_output_parameter'], ['test_cumulative_parameter'])
-        self.assertEqual(
-            normalizers.geospatial_defaults.GeoSpatialDefaultMetadataNormalizer
-            , handler.NORMALIZERS[-1]
-            )
-
-    def test_geospatialdefault_normalizer_is_lost_in_chain(self):
-        """ GeoSpatialDefaultMetadataNormalizer normalizer should never be removed from the list of
-        normalizers (otherwise, ValueError must be raised). Below list of NORMALIZERS lacks it """
-        class TestHandler(handlers.MetadataHandler):
-            """testing metadata handler"""
-            NORMALIZERS = [
-                normalizers.NETCDFCFMetadataNormalizer,
-                normalizers.SentinelSAFEMetadataNormalizer,
-                normalizers.SentinelOneIdentifierMetadataNormalizer,
-                normalizers.ACDDMetadataNormalizer,
-            ]
-        with self.assertRaises(ValueError):
-            TestHandler(['test_output_parameter'], ['test_cumulative_parameter'])
-
-    def test_build_normalizer_chain(self):
-        """Instantiate a handler and check the normalizer chain is correctly built"""
-        handler = handlers.GeospatialMetadataHandler(
-            ['test_output_parameter'], ['test_cumulative_parameter'])
-
-        normalizer = handler._chain
-        i = 0
-        while normalizer:
-            self.assertIsInstance(normalizer, handler.NORMALIZERS[i])
-            self.assertEqual(normalizer._output_parameters_names, ['test_output_parameter'])
-            self.assertEqual(normalizer._output_cumulative_parameters_names,
-                             ['test_cumulative_parameter'])
-            normalizer = normalizer.next
-            i += 1
-
-    @mock.patch.object(normalizers.BaseMetadataNormalizer, 'normalize', return_value={})
-    def test_get_parameters_calls_normalize(self, mock_normalize):
-        """Checks that the get_parameters calls the BaseMetadaNormalizer.normalize method"""
-        handler = handlers.GeospatialMetadataHandler(
-            ['test_output_parameter_name'], ['test_cumulative_parameter_name'])
-        _ = handler.get_parameters({})
-        mock_normalize.assert_called()
+    def test_get_parameters_not_found(self):
+        """get_parameters() should raise an exception if not normalizer
+        was found for the given metadata
+        """
+        with self.assertRaises(errors.NoNormalizerFound):
+            self.handler.get_parameters({'something': 'something'})

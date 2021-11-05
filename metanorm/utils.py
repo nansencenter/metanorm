@@ -1,14 +1,51 @@
 """Utility functions for metadata normalizing"""
 
+import importlib
+import functools
+import pkgutil
+import re
+import sys
 from collections import OrderedDict
 from datetime import datetime, timedelta
-from dateutil.tz import tzutc
 
 import pythesint as pti
+from dateutil.tz import tzutc
+
+from .errors import MetadataNormalizationError
 
 
-UNKNOWN = 'Unknown'
+######################## Class manipulation utilities ########################
 
+def get_all_subclasses(base_class):
+    """Recursively get all subclasses of `base_class`.
+    Returns a set to ensure uniqueness
+    """
+    subclasses = set()
+    for subclass in base_class.__subclasses__():
+        subclasses.add(subclass)
+        subclasses = subclasses.union(get_all_subclasses(subclass))
+    return subclasses
+
+
+def export_subclasses(package__all__, package_name, package_dir, base_class):
+    """Append `base_class` and all of its subclasses declared in
+    modules in `package_dir` to `all`. This is meant to be used in
+    __init__.py files to make normalizer classes easily importable.
+    """
+    package__all__.append(base_class.__name__)
+
+    # Import the modules in the package
+    for (_, name, _) in pkgutil.iter_modules([package_dir]):
+        importlib.import_module('.' + name, package_name)
+
+    # Make the base_class subclasses available
+    # in the 'package' namespace
+    for cls in get_all_subclasses(base_class):
+        setattr(sys.modules[package_name], cls.__name__, cls)
+        package__all__.append(cls.__name__)
+
+
+######################## Pythesint utilities ########################
 
 # Field names commonly used in the 'summary' attribute
 SUMMARY_FIELDS = {
@@ -21,16 +58,27 @@ SUMMARY_FIELDS = {
 # Key: valid pythesint search keyword
 # Value: iterable of aliases
 PYTHESINT_KEYWORD_TRANSLATION = {
+    # instruments
+    'OLCI': ('OL',),
+    'SLSTR': ('SL',),
     # platforms
-    'METOP-B': ('METOP_B',),
-    'METEOSAT-8': ('MSG1',),
-    'METEOSAT-9': ('MSG2',),
     'METEOSAT-10': ('MSG3',),
     'METEOSAT-11': ('MSG4',),
+    'METEOSAT-8': ('MSG1',),
+    'METEOSAT-9': ('MSG2',),
+    'METOP-B': ('METOP_B',),
+    'Sentinel-1A': ('S1A',),
+    'Sentinel-1B': ('S1B',),
+    'Sentinel-2A': ('S2A',),
+    'Sentinel-2B': ('S2B',),
+    'Sentinel-3A': ('S3A',),
+    'Sentinel-3B': ('S3B',),
     # providers
-    'OB.DAAC': ('OB_DAAC',)
+    'ESA/EO': ('ESA',),
+    'OB.DAAC': ('OB_DAAC',),
+    'C-SAR': ('SAR-C', 'SAR-C SAR'),
+    'EUMETSAT/OSISAF': ('EUMETSAT OSI SAF',),
 }
-
 
 def translate_pythesint_keyword(translation_dict, alias):
     """Get a valid pythesint search keyword from known aliases"""
@@ -39,7 +87,8 @@ def translate_pythesint_keyword(translation_dict, alias):
             return valid_keyword
     return alias
 
-
+# TODO: rework the utils for provider so that they are
+# consistent with other GCMD fields
 def get_gcmd_provider(potential_provider_attributes, additional_keywords=None):
     """
     Get a GCMD provider from a name and/or URL, otherwise return None
@@ -49,27 +98,6 @@ def get_gcmd_provider(potential_provider_attributes, additional_keywords=None):
         provider = gcmd_search('provider', attribute, additional_keywords)
         if provider:
             break
-    return provider
-
-
-def get_gcmd_like_provider(name=None, url=None):
-    """Generate a GCMD provider-like data structure using a name and a URL"""
-    # TODO: find a better way to manage the fallback value
-    if not name:
-        short_name = long_name = UNKNOWN
-    else:
-        short_name = name[:50]
-        long_name = name[:250]
-    provider = OrderedDict([
-        ('Bucket_Level0', UNKNOWN),
-        ('Bucket_Level1', UNKNOWN),
-        ('Bucket_Level2', UNKNOWN),
-        ('Bucket_Level3', UNKNOWN),
-        ('Short_Name', short_name),
-        ('Long_Name', long_name),
-        ('Data_Center_URL', url if url else UNKNOWN)
-    ])
-
     return provider
 
 
@@ -165,14 +193,6 @@ def restrict_gcmd_search(gcmd_objects, keywords):
     return restricted_search
 
 
-def wkt_polygon_from_wgs84_limits(north, south, east, west):
-    """
-    Returns a WKT string representation of a simple boundary box delimited by its northernmost
-    latitude, southernmost latitude, easternmost longitude and westernmost longitude
-    """
-    return f"POLYGON(({west} {south},{east} {south},{east} {north},{west} {north},{west} {south}))"
-
-
 def get_cf_or_wkv_standard_name(keyword):
     """return the values of a dataset parameter in a standard way from the
     standards that are defined in the pti package based on the keyword that has been passed to it.
@@ -190,6 +210,8 @@ def get_cf_or_wkv_standard_name(keyword):
         result_values = pti.get_wkv_variable(keyword)
     return result_values
 
+
+######################## Time utilities ########################
 
 YEARMONTH_REGEX = r'(?P<year>\d{4})(?P<month>\d{2})'
 YEARMONTHDAY_REGEX = YEARMONTH_REGEX + r'(?P<day>\d{2})'
@@ -214,6 +236,60 @@ def create_datetime(year, month=1, day=1, day_of_year=None, hour=0, minute=0, se
         day = int(day)
         return datetime(year, month, day, hour, minute, second).replace(tzinfo=tzutc())
 
+def find_time_coverage(time_patterns, url):
+    """Find the time coverage based on the 'url' raw attribute.
+    Returns a 2-tuple containing the start and end time,
+    or a 2-tuple containing None if no time coverage was found.
+
+    This method uses the `time_patterns` dictionary.
+    This dictionary has the following structure:
+    time_patterns = [
+        (
+            compiled_regex,
+            datetime_creation_function,
+            time_coverage_function
+        ),
+        (...)
+    ]
+    Where:
+        - "url_prefix" is the prefix matched against the 'url' raw
+        attribute
+
+        - "compiled_regex" is a compiled regular expresion used to
+        extract the time information from the URL. It should
+        contain named groups which will be given as arguments
+        to the datetime_creation_function
+
+        - "datetime_creation_function" is a function which creates
+        a datetime object from the information extracted using
+        the regex.
+
+        - "time_coverage_function" is a function which takes the
+        datetime object returned by datetime_creation_function
+        and returns the time coverage as a 2-tuple
+    """
+    for matcher, get_time, get_coverage in time_patterns:
+        match = matcher.search(url)
+        if match:
+            file_time = get_time(**match.groupdict())
+            return (get_coverage(file_time)[0], get_coverage(file_time)[1])
+    raise MetadataNormalizationError(f"Could not extract the time coverage from {url}")
+
+
+######################## Other utilities ########################
+
+UNKNOWN = 'Unknown'
+NC_H5_FILENAME_MATCHER = re.compile(r"([^/]+)\.(nc|h5)(\.gz)?$")
+WORLD_WIDE_COVERAGE_WKT = 'POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))'
+
+
+def wkt_polygon_from_wgs84_limits(north, south, east, west):
+    """
+    Returns a WKT string representation of a simple boundary box delimited by its northernmost
+    latitude, southernmost latitude, easternmost longitude and westernmost longitude
+    """
+    return f"POLYGON(({west} {south},{east} {south},{east} {north},{west} {north},{west} {south}))"
+
 
 def dict_to_string(dictionary):
     """Returns a string representation of the dictionary argument.
@@ -226,3 +302,31 @@ def dict_to_string(dictionary):
     for key, value in dictionary.items():
         string += f"{key}: {value};"
     return string.rstrip(';')
+
+
+def raises(exceptions):
+    """Decorator for methods which get an attribute from metadata.
+    Makes it possible to declare which exception(s) are thrown when the
+    raw metadata does not have the expected structure.
+    `exceptions` can be an exception class or a tuple of exception
+    classes. If any of these exceptions is raised by the method,
+    a MetadataNormalizationError with a (hopefully) clear error message
+    is raised from this exception.
+    """
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(self, raw_metadata):
+            try:
+                return func(self, raw_metadata)
+            except exceptions as error:
+                raise MetadataNormalizationError(
+                    f"{func.__name__} was unable to process the following metadata: {raw_metadata}"
+                ) from error
+        return wrapper
+    return decorator
+
+
+def create_parameter_list(parameters):
+    """Converts a list of standard names into a list of Pythesint dicts
+    """
+    return [get_cf_or_wkv_standard_name(cf_parameter) for cf_parameter in parameters]

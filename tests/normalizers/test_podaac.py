@@ -1,4 +1,4 @@
-"""Tests for the AVISO altimetry normalizer"""
+"""Tests for the PODAAC noramlizer"""
 
 import unittest
 import unittest.mock as mock
@@ -9,39 +9,24 @@ import metanorm.normalizers as normalizers
 from metanorm.errors import MetadataNormalizationError
 
 
-class AVISOAltimetryMetadataNormalizerTests(unittest.TestCase):
-    """Tests for the AVISOaltimetryMetadataNormalizer normalizer"""
+class PODAACMetadataNormalizerTestCase(unittest.TestCase):
+    """Tests for PODAACMetadataNormalizer"""
 
     def setUp(self):
-        self.normalizer = normalizers.AVISOAltimetryMetadataNormalizer()
+        self.normalizer = normalizers.PODAACMetadataNormalizer()
 
     def test_check(self):
-        """check() should return True when dealing with an AVISO
-        altimetry dataset
+        """check() should return True when dealing with a PODAAC
+        OpenDAP URL
         """
         self.assertTrue(self.normalizer.check({
-            'creator_url': 'https://www.aviso.altimetry.fr',
-            'creator_email': 'aviso@altimetry.fr'
-        }))
-
-        self.assertTrue(self.normalizer.check({
-            'creator_url': 'http://www.aviso.altimetry.fr',
-            'creator_email': 'aviso@altimetry.fr'
+            'url': 'https://opendap.jpl.nasa.gov/opendap/allData/ghrsst/foo.nc'
         }))
 
         self.assertFalse(self.normalizer.check({}))
-        self.assertFalse(self.normalizer.check({
-            'creator_url': 'https://foo/bar.nc',
-            'creator_email': 'aviso@altimetry.fr'
-        }))
-        self.assertFalse(self.normalizer.check({
-            'creator_url': 'http://www.aviso.altimetry.fr',
-            'creator_email': 'foo@bar.fr'
-        }))
-        self.assertFalse(self.normalizer.check({'creator_url': 'http://www.aviso.altimetry.fr'}))
-        self.assertFalse(self.normalizer.check({'creator_email': 'aviso@altimetry.fr'}))
+        self.assertFalse(self.normalizer.check({'url': 'https://foo/bar.nc'}))
 
-    def test_get_entry_title(self):
+    def test_entry_title(self):
         """Test getting the title"""
         self.assertEqual(self.normalizer.get_entry_title({'title': 'foo'}), 'foo')
 
@@ -76,7 +61,7 @@ class AVISOAltimetryMetadataNormalizerTests(unittest.TestCase):
     def test_get_summary(self):
         """Test getting the summary"""
         self.assertEqual(
-            self.normalizer.get_summary({'comment': 'lorem ipsum', 'processing_level': 'L3C'}),
+            self.normalizer.get_summary({'summary': 'lorem ipsum', 'processing_level': 'L3C'}),
             'Description: lorem ipsum;Processing level: 3C')
 
     def test_get_summary_missing_raw_attributes(self):
@@ -84,7 +69,7 @@ class AVISOAltimetryMetadataNormalizerTests(unittest.TestCase):
         raw attributes used to build the summary is missing
         """
         with self.assertRaises(MetadataNormalizationError):
-            self.normalizer.get_summary({'comment': 'lorem ipsum'})
+            self.normalizer.get_summary({'summary': 'lorem ipsum'})
         with self.assertRaises(MetadataNormalizationError):
             self.normalizer.get_summary({'processing_level': 'L3C'})
 
@@ -136,50 +121,95 @@ class AVISOAltimetryMetadataNormalizerTests(unittest.TestCase):
 
     def test_get_platform(self):
         """Test getting the platform"""
-        self.assertDictEqual(
-            self.normalizer.get_platform({}),
-            OrderedDict([
-                ('Category', 'Earth Observation Satellites'),
-                ('Series_Entity', ''),
-                ('Short_Name', ''),
-                ('Long_Name', '')])
-        )
+        with mock.patch('metanorm.utils.get_gcmd_platform') as mock_get_platform:
+            mock_get_platform.side_effect = lambda p: {'SENTINEL-1A': 'foo'}[p]
+            self.assertEqual(self.normalizer.get_platform({'platform': 'SENTINEL-1A'}), 'foo')
+
+    def test_missing_platform(self):
+        """A MetadataNormalizationError must be raised when the
+        platform raw attribute is missing
+        """
+        with self.assertRaises(MetadataNormalizationError):
+            self.normalizer.get_platform({})
 
     def test_get_instrument(self):
         """Test getting the instrument"""
-        self.assertDictEqual(
-            self.normalizer.get_instrument({}),
-            OrderedDict([
-                ('Category', 'Earth Remote Sensing Instruments'),
-                ('Class', 'Active Remote Sensing'),
-                ('Type', 'Altimeters'),
-                ('Subtype', ''),
-                ('Short_Name', ''),
-                ('Long_Name', '')])
-        )
+        with mock.patch('metanorm.utils.get_gcmd_instrument') as mock_get_instrument:
+            mock_get_instrument.side_effect = lambda p: {'VIIRS': 'foo'}[p]
+            self.assertEqual(self.normalizer.get_instrument({'sensor': 'VIIRS'}), 'foo')
 
-    def test_get_location_geometry(self):
-        """Test getting the geometry"""
-        self.assertEqual(self.normalizer.get_location_geometry({'geometry': 'wkt'}), 'wkt')
+    def test_missing_sensor(self):
+        """A MetadataNormalizationError must be raised when the
+        sensor raw attribute is missing
+        """
+        with self.assertRaises(MetadataNormalizationError):
+            self.normalizer.get_instrument({})
+
+    def test_get_location_geometry_from_geospatial_bounds(self):
+        """Test getting the location geometry from the
+        geospatial_bounds attribute
+        """
+        geometry = (
+            'POLYGON((' +
+            '-29.04 61.31,' +
+            '-18.32 59.66,' +
+            '-20.25 51.06,' +
+            '-38.97 55.12,' +
+            '-29.04 61.31))')
+
+        self.assertEqual(
+            self.normalizer.get_location_geometry({
+                'geospatial_bounds': geometry,
+                'geospatial_bounds_crs': 'EPSG:3413'
+            }),
+            'SRID=3413;' + geometry)
+
+        self.assertEqual(
+            self.normalizer.get_location_geometry({'geospatial_bounds': geometry}),
+            'SRID=4326;' + geometry)
+
+    def test_get_location_geometry_from_bounding_box(self):
+        """Test getting the location geometry from the
+        "northernmost_latitude", etc... attributes
+        """
+        attributes = {
+            'northernmost_latitude': "9.47472000",
+            'southernmost_latitude': "-15.3505001",
+            'easternmost_longitude': "-142.755005",
+            'westernmost_longitude': "-175.084000"
+        }
+        expected_geometry = ('POLYGON((' +
+                             '-175.084000 -15.3505001,' +
+                             '-142.755005 -15.3505001,' +
+                             '-142.755005 9.47472000,' +
+                             '-175.084000 9.47472000,' +
+                             '-175.084000 -15.3505001))')
+
+        self.assertEqual(self.normalizer.get_location_geometry(attributes), expected_geometry)
 
     def test_missing_geometry(self):
         """A MetadataNormalizationError must be raised when the
-        geometry raw attribute is missing
+        geometry raw attributes are missing
         """
         with self.assertRaises(MetadataNormalizationError):
             self.normalizer.get_location_geometry({})
+
+        with self.assertRaises(MetadataNormalizationError):
+            self.normalizer.get_location_geometry({'northernmost_latitude': '9'})
 
     def test_get_provider(self):
         """Test getting the provider"""
         self.assertDictEqual(
             self.normalizer.get_provider({}),
             OrderedDict([
-                ('Bucket_Level0', 'COMMERCIAL'),
-                ('Bucket_Level1', ''),
+                ('Bucket_Level0', 'GOVERNMENT AGENCIES-U.S. FEDERAL AGENCIES'),
+                ('Bucket_Level1', 'NASA'),
                 ('Bucket_Level2', ''),
                 ('Bucket_Level3', ''),
-                ('Short_Name', 'AVISO'),
+                ('Short_Name', 'NASA/JPL/PODAAC'),
                 ('Long_Name',
-                'Archiving, Validation and Interpretation of Satellite Oceanographic Data'),
-                ('Data_Center_URL', 'http://www.aviso.oceanobs.com/')])
+                 'Physical Oceanography Distributed Active Archive Center, Jet Propulsion '
+                 'Laboratory, NASA'),
+                ('Data_Center_URL', 'https://podaac.jpl.nasa.gov/')
+            ])
         )

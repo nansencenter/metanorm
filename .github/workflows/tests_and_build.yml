@@ -1,10 +1,6 @@
 ---
 name: "Unit tests and builds"
-on:
-  push:
-    branches: ['**']
-  release:
-    types: [released]
+on: push
 env:
   BASE_IMAGE_NAME: "${{ secrets.DOCKER_ORG }}/nansat_base:2.0.3-slim"
   TESTING_IMAGE_NAME: metanorm_tests
@@ -82,7 +78,7 @@ jobs:
         run: pip install coveralls && coveralls --service=github
 
       - name: 'Build Python package'
-        if: github.event_name == 'release'
+        if: startsWith(github.event.ref, 'refs/tags/')
         env:
           TAG_REF: ${{ github.ref }}
         run: >
@@ -93,7 +89,7 @@ jobs:
              python setup.py sdist bdist_wheel
 
       - name: 'Deploy package to the Github release'
-        if: github.event_name == 'release'
+        if: startsWith(github.event.ref, 'refs/tags/')
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
