@@ -9,6 +9,9 @@ from collections import OrderedDict
 from datetime import datetime, timedelta
 
 import pythesint as pti
+import shapely.geometry
+import shapely.ops
+import shapely.wkt
 from dateutil.tz import tzutc
 
 from .errors import MetadataNormalizationError
@@ -275,12 +278,7 @@ def find_time_coverage(time_patterns, url):
             return (get_coverage(file_time)[0], get_coverage(file_time)[1])
     raise MetadataNormalizationError(f"Could not extract the time coverage from {url}")
 
-
-######################## Other utilities ########################
-
-UNKNOWN = 'Unknown'
-NC_H5_FILENAME_MATCHER = re.compile(r"([^/]+)\.(nc|h5)(\.gz)?$")
-WORLD_WIDE_COVERAGE_WKT = 'POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))'
+######################## Spatial utilities ########################
 
 
 def wkt_polygon_from_wgs84_limits(north, south, east, west):
@@ -289,6 +287,92 @@ def wkt_polygon_from_wgs84_limits(north, south, east, west):
     latitude, southernmost latitude, easternmost longitude and westernmost longitude
     """
     return f"POLYGON(({west} {south},{east} {south},{east} {north},{west} {north},{west} {south}))"
+
+
+def translate_west_coordinates(multipolygon):
+    """Translate west coordinates from [-180, 0[ to [180, 360[
+    Should be used on a shapely multipolygon
+    """
+
+    def translate_point(point):
+        return (point[0] + 360, point[1]) if point[0] < 0 else point
+
+    def translate_ring(ring):
+        return shapely.geometry.LinearRing(translate_point(point) for point in ring.coords)
+
+    new_polygons = []
+    for polygon in multipolygon:
+
+        exterior_ring = translate_ring(polygon.exterior)
+
+        new_interior_rings = []
+        for ring in polygon.interiors:
+            new_interior_rings.append(translate_ring(ring))
+
+        new_polygons.append(shapely.geometry.Polygon(exterior_ring, new_interior_rings))
+
+    return shapely.geometry.MultiPolygon(new_polygons)
+
+
+def restore_west_coordinates(multipolygon):
+    """Translate west coordinates back from [180, 360[ to [-180, 0[
+    Should be used on a shapely multipolygon split along the IDL
+    """
+
+    def restore_point(point, is_east):
+        """Restores a point's longitude to the [-180, 0[ range. If the
+        current polygon is on the west side of the IDL, points located
+        on the IDL which have a longitude of 180 are translated to
+        -180.
+        """
+        if point[0] > 180 or (point[0] == 180 and not is_east):
+            lon = point[0] - 360
+        else:
+            lon = point[0]
+        return (lon, point[1])
+
+    def restore_ring(ring):
+        return shapely.geometry.LinearRing(restore_point(point, is_east) for point in ring.coords)
+
+    new_polygons = []
+    for polygon in multipolygon:
+        # Determine if this polygon is on the east or west side of the
+        # IDL. It has been split already, so it is either east or west.
+        # We find the first point which is not on the IDL and check
+        # whether it is east or west.
+        for point in polygon.exterior.coords:
+            if point[0] == 180:
+                continue
+            else:
+                # we deal with translated coordinates, so west
+                # coordinates are in [180, 360[
+                is_east = point[0] < 180
+                break
+
+        exterior_ring = restore_ring(polygon.exterior)
+        interior_rings = []
+        for ring in polygon.interiors:
+            interior_rings.append(restore_ring(ring))
+        new_polygons.append(shapely.geometry.Polygon(exterior_ring, interior_rings))
+
+    return shapely.geometry.MultiPolygon(new_polygons)
+
+
+def split_multipolygon_along_idl(multipolygon):
+    """Split multipolygons which cross the international dateline to
+    avoid undesired side effects
+    """
+    translated_geometry = translate_west_coordinates(multipolygon)
+    line = shapely.geometry.LineString(((180, 90), (180, -90)))
+    split_geometry = shapely.ops.split(translated_geometry, line)
+    return restore_west_coordinates(split_geometry)
+
+
+######################## Other utilities ########################
+
+UNKNOWN = 'Unknown'
+NC_H5_FILENAME_MATCHER = re.compile(r"([^/]+)\.(nc|h5)(\.gz)?$")
+WORLD_WIDE_COVERAGE_WKT = 'POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))'
 
 
 def dict_to_string(dictionary):
