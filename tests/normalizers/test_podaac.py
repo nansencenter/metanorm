@@ -170,7 +170,7 @@ class PODAACMetadataNormalizerTestCase(unittest.TestCase):
             self.normalizer.get_location_geometry({'geospatial_bounds': geometry}),
             geometry)
 
-    def test_get_location_geometry_from_geospatial_bounds_split(self):
+    def test_get_location_geometry_from_geospatial_bounds_split_polygon(self):
         """Test getting the location geometry from the
         geospatial_bounds attribute with a polygon crossing the IDL
         """
@@ -198,6 +198,74 @@ class PODAACMetadataNormalizerTestCase(unittest.TestCase):
             '161.791 52.861, '
             '180 55.60946639437804, '
             '180 25.71789582937487)))')
+
+    def test_get_location_geometry_from_geospatial_bounds_split_multipolygon(self):
+        """Test getting the location geometry from the
+        geospatial_bounds attribute with a multipolygon crossing the
+        IDL
+        """
+        geometry = ('MULTIPOLYGON('
+            '((-188.525390625 60.37042901631506,'
+            '-165.14648437500003 56.46249048388978,'
+            '-187.82226562500003 48.283192895483495,'
+            '-173.23242187500006 55.92458580482949,'
+            '-188.525390625 60.37042901631506)),'
+            '((-184.833984375 57.984808019239864,'
+            '-177.18749999999997 56.12106042504411,'
+            '-185.2734375 52.48278022207825,'
+            '-184.833984375 57.984808019239864),'
+            '(-181.84570312499997 56.63206372054478,'
+            '-184.306640625 55.677584411089526,'
+            '-181.49414062499997 54.80068486732236,'
+            '-181.84570312499997 56.63206372054478)))')
+
+        self.assertEqual(
+            self.normalizer.get_location_geometry({
+                'geospatial_bounds': geometry,
+                'easternmost_longitude': '-188.525390625',
+                'westernmost_longitude': '-165.14648437500003'
+            }),
+            'MULTIPOLYGON ('
+            '((171.474609375 60.37042901631506, '
+            '180 58.94535368682163, '
+            '180 57.89199918002712, '
+            '171.474609375 60.37042901631506)), '
+            '((-180 58.94535368682163, '
+            '-165.146484375 56.46249048388978, '
+            '-180 51.10473353644537, '
+            '-180 52.38008427459071, '
+            '-173.2324218750001 55.92458580482949, '
+            '-180 57.89199918002712, -180 58.94535368682163)), '
+            '((180 51.10473353644537, '
+            '172.177734375 48.2831928954835, '
+            '180 52.38008427459071, '
+            '180 51.10473353644537)), '
+            '((175.166015625 57.98480801923986, '
+            '180 56.80657678152991, '
+            '180 54.85557165879511, '
+            '174.7265625 52.48278022207825, '
+            '175.166015625 57.98480801923986), '
+            '(178.154296875 56.63206372054478, '
+            '175.693359375 55.67758441108953, '
+            '178.505859375 54.80068486732236, '
+            '178.154296875 56.63206372054478)), '
+            '((-180 56.80657678152991, '
+            '-177.1875 56.12106042504411, '
+            '-180 54.85557165879511, '
+            '-180 56.80657678152991)))')
+
+    def test_get_location_geometry_unsupported_geometry(self):
+        """An exception should be raised in case of geometry type which
+        is not supported
+        """
+        geometry = ('LINESTRING(-188.525390625 50, -165.14648437500003 50)')
+
+        with self.assertRaises(MetadataNormalizationError):
+            self.normalizer.get_location_geometry({
+                'geospatial_bounds': geometry,
+                'easternmost_longitude': '-188.525390625',
+                'westernmost_longitude': '-165.14648437500003'
+            })
 
     def test_get_location_geometry_from_bounding_box(self):
         """Test getting the location geometry from the
