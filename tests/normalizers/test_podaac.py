@@ -160,13 +160,44 @@ class PODAACMetadataNormalizerTestCase(unittest.TestCase):
         self.assertEqual(
             self.normalizer.get_location_geometry({
                 'geospatial_bounds': geometry,
-                'geospatial_bounds_crs': 'EPSG:3413'
+                'geospatial_bounds_crs': 'EPSG:3413',
+                'easternmost_longitude': '-18.32',
+                'westernmost_longitude': '-38.97'
             }),
             'SRID=3413;' + geometry)
 
         self.assertEqual(
             self.normalizer.get_location_geometry({'geospatial_bounds': geometry}),
-            'SRID=4326;' + geometry)
+            geometry)
+
+    def test_get_location_geometry_from_geospatial_bounds_split(self):
+        """Test getting the location geometry from the
+        geospatial_bounds attribute with a polygon crossing the IDL
+        """
+        geometry = ('POLYGON((' +
+            '-148.262 60.400, ' +
+            '-147.443 25.982, ' +
+            '-177.157 21.480, ' +
+            '161.791 52.861, ' +
+            '-148.262 60.400))')
+
+        self.assertEqual(
+            self.normalizer.get_location_geometry({
+                'geospatial_bounds': geometry,
+                'easternmost_longitude': '-177.157',
+                'westernmost_longitude': '161.791'
+            }),
+            'MULTIPOLYGON ((('
+            '-148.262 60.4, '
+            '-147.443 25.982, '
+            '-177.157 21.48, '
+            '-180 25.71789582937487, '
+            '-180 55.60946639437804, '
+            '-148.262 60.4)), '
+            '((180 25.71789582937487, '
+            '161.791 52.861, '
+            '180 55.60946639437804, '
+            '180 25.71789582937487)))')
 
     def test_get_location_geometry_from_bounding_box(self):
         """Test getting the location geometry from the
@@ -184,6 +215,24 @@ class PODAACMetadataNormalizerTestCase(unittest.TestCase):
                              '-142.755005 9.47472000,' +
                              '-175.084000 9.47472000,' +
                              '-175.084000 -15.3505001))')
+
+        self.assertEqual(self.normalizer.get_location_geometry(attributes), expected_geometry)
+
+    def test_get_location_geometry_from_bounding_box_split(self):
+        """Test getting the location geometry from the
+        "northernmost_latitude", etc... attributes in the case where
+        it crosses the IDL
+        """
+        attributes = {
+            'northernmost_latitude': "60",
+            'southernmost_latitude': "50",
+            'easternmost_longitude': "-175",
+            'westernmost_longitude': "175"
+        }
+        expected_geometry = (
+            'MULTIPOLYGON (('
+            '(180 50, 175 50, 175 60, 180 60, 180 50)), '
+            '((-180 60, -175 60, -175 50, -180 50, -180 60)))')
 
         self.assertEqual(self.normalizer.get_location_geometry(attributes), expected_geometry)
 

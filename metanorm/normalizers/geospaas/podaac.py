@@ -1,6 +1,8 @@
 """Normalizer for the metadata used by PO.DAAC"""
 
 import dateutil.parser
+import shapely.geometry
+import shapely.wkt
 
 import metanorm.utils as utils
 from .base import GeoSPaaSMetadataNormalizer
@@ -55,14 +57,10 @@ class PODAACMetadataNormalizer(GeoSPaaSMetadataNormalizer):
         metadata
         """
         if 'geospatial_bounds' in raw_metadata:
-            srid = '4326'
-            if 'geospatial_bounds_crs' in raw_metadata:
-                srid = raw_metadata['geospatial_bounds_crs'].split(':')[1]
-            srid = f'SRID={srid};'
-            return srid + raw_metadata['geospatial_bounds']
+            result_wkt = raw_metadata['geospatial_bounds']
         elif set(['northernmost_latitude', 'southernmost_latitude',
                   'easternmost_longitude', 'westernmost_longitude']).issubset(raw_metadata.keys()):
-            return utils.wkt_polygon_from_wgs84_limits(
+            result_wkt = utils.wkt_polygon_from_wgs84_limits(
                 raw_metadata['northernmost_latitude'],
                 raw_metadata['southernmost_latitude'],
                 raw_metadata['easternmost_longitude'],
@@ -70,6 +68,32 @@ class PODAACMetadataNormalizer(GeoSPaaSMetadataNormalizer):
         else:
             raise MetadataNormalizationError(
                 f"Unable to find a value for the 'location_geometry' in {raw_metadata}")
+
+        # detect if the spatial coverage crosses the
+        # international dateline
+        easternmost_longitude = raw_metadata.get('easternmost_longitude')
+        westernmost_longitude = raw_metadata.get('westernmost_longitude')
+        if (easternmost_longitude is not None and
+                westernmost_longitude is not None and
+                float(easternmost_longitude) < float(westernmost_longitude)):
+
+            geometry = shapely.wkt.loads(result_wkt)
+            if isinstance(geometry, shapely.geometry.Polygon):
+                multipolygon = shapely.geometry.MultiPolygon((geometry,))
+            elif isinstance(geometry, shapely.geometry.MultiPolygon):
+                multipolygon = geometry
+            else:
+                raise MetadataNormalizationError(
+                    f"Unsupported geometry: {raw_metadata['geospatial_bounds']}")
+            result_wkt = utils.split_multipolygon_along_idl(multipolygon).wkt
+
+        # get the SRID if it is defined
+        if 'geospatial_bounds_crs' in raw_metadata:
+            srid = f"SRID={raw_metadata['geospatial_bounds_crs'].split(':')[1]};"
+        else:
+            srid = ''
+
+        return srid + result_wkt
 
     def get_provider(self, raw_metadata):
         """Get the provider from the raw metadata"""

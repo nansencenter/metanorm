@@ -20,4 +20,5 @@ setuptools.setup(
         "Operating System :: POSIX :: Linux",
     ],
     python_requires='>=3.7',
+    install_requires=['shapely>=1.6.0'],
 )
