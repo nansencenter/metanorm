@@ -36,7 +36,7 @@ class CPOMAltimetryMetadataNormalizer(GeoSPaaSMetadataNormalizer):
 
     @utils.raises(KeyError)
     def get_location_geometry(self, raw_metadata):
-        return raw_metadata['geometry']
+        return raw_metadata.get('geometry', '')
 
     def get_provider(self, raw_metadata):
         return pti.get_gcmd_provider('UC-LONDON/CPOM')

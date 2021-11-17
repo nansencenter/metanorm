@@ -93,6 +93,26 @@ DATASET_PARAMETERS = {
         ('units', 'm s-1'),
         ('minmax', '-10 10'),
         ('colormap', 'jet')]),
+    'latitude': OrderedDict([
+        ('standard_name', 'latitude'),
+        ('canonical_units', 'degree_north'),
+        ('definition',
+            'Latitude is positive northward; its units of degree_north (or '
+            'equivalent) indicate this explicitly. In a latitude-longitude '
+            'system defined with respect to a rotated North Pole, the '
+            'standard name of grid_latitude should be used instead of '
+            'latitude. Grid latitude is positive in the grid-northward '
+            'direction, but its units should be plain degree.')]),
+    'longitude': OrderedDict([
+        ('standard_name', 'longitude'),
+        ('canonical_units', 'degree_east'),
+        ('definition',
+            'Longitude is positive eastward; its units of degree_east (or '
+            'equivalent) indicate this explicitly. In a latitude-longitude '
+            'system defined with respect to a rotated North Pole, the '
+            'standard name of grid_longitude should be used instead of '
+            'longitude. Grid longitude is positive in the grid-eastward '
+            'direction, but its units should be plain degree.')]),
     'model_level_number_at_sea_floor': OrderedDict([
         ('standard_name', 'model_level_number_at_sea_floor'),
         ('canonical_units', '1'),
@@ -138,6 +158,26 @@ DATASET_PARAMETERS = {
             'Various criteria are used to define the mixed layer; this can be specified by using a'
             ' standard name of ocean_mixed_layer_defined_by_X. "Thickness" means the vertical '
             'extent of a layer.')]),
+    'projection_x_coordinate': OrderedDict([
+        ('standard_name', 'projection_x_coordinate'),
+        ('canonical_units', 'm'),
+        ('definition',
+            '"x" indicates a vector component along the grid x-axis, when '
+            'this is not true longitude, positive with increasing x. '
+            'Projection coordinates are distances in the x- and y-directions '
+            'on a plane onto which the surface of the Earth has been '
+            'projected according to a map projection. The relationship '
+            'between the projection coordinates and latitude and longitude '
+            'is described by the grid_mapping.')]),
+    'projection_y_coordinate': OrderedDict([
+        ('standard_name', 'projection_y_coordinate'),
+        ('canonical_units', 'm'),
+        ('definition',
+            '"y" indicates a vector component along the grid y-axis, when this is not true '
+            'latitude, positive with increasing y. Projection coordinates are distances in the '
+            'x- and y-directions on a plane onto which the surface of the Earth has been projected '
+            'according to a map projection. The relationship between the projection coordinates and'
+            ' latitude and longitude is described by the grid_mapping.')]),
     'rainfall_rate': OrderedDict([
         ('standard_name', 'rainfall_rate'),
         ('canonical_units', 'm s-1'),
@@ -181,6 +221,24 @@ DATASET_PARAMETERS = {
             '"Thickness" means the vertical extent of a layer. "Sea ice" means all ice floating in'
             ' the sea which has formed from freezing sea water, rather than by other processes '
             'such as calving of land ice to form icebergs.')]),
+    'sea_ice_x_velocity': OrderedDict([
+        ('standard_name', 'sea_ice_x_velocity'),
+        ('canonical_units', 'm s-1'),
+        ('definition',
+            'A velocity is a vector quantity. "x" indicates a vector '
+            'component along the grid x-axis, positive with increasing x. '
+            '"Sea ice" means all ice floating in the sea which has formed '
+            'from freezing sea water, rather than by other processes such as '
+            'calving of land ice to form icebergs.')]),
+    'sea_ice_y_velocity': OrderedDict([
+        ('standard_name', 'sea_ice_y_velocity'),
+        ('canonical_units', 'm s-1'),
+        ('definition',
+            'A velocity is a vector quantity. "y" indicates a vector '
+            'component along the grid y-axis, positive with increasing y. '
+            '"Sea ice" means all ice floating in the sea which has formed '
+            'from freezing sea water, rather than by other processes such as '
+            'calving of land ice to form icebergs.')]),
     'sea_surface_height_above_geoid': OrderedDict([
         ('standard_name', 'sea_surface_height_above_geoid'),
         ('canonical_units', 'm'),
@@ -403,6 +461,35 @@ DATASET_PARAMETERS = {
             ' the variable part of surface_geostrophic_northward_sea_water_velocity. The '
             'assumption that sea level is equal to the geoid means that the stationary component '
             'of ocean circulation is equal to zero.')])),
+    'surface_snow_thickness': OrderedDict([
+        ('standard_name', 'surface_snow_thickness'),
+        ('canonical_units', 'm'),
+        ('definition',
+            'Surface snow refers to the snow on the solid ground or on '
+            'surface ice cover, but excludes, for example, falling '
+            'snowflakes and snow on plants. "Thickness" means the vertical '
+            'extent of a layer. Unless indicated in the cell_methods '
+            'attribute, a quantity is assumed to apply to the whole area of '
+            'each horizontal grid box. Previously, the qualifier where_type '
+            'was used to specify that the quantity applies only to the part '
+            'of the grid box of the named type. Names containing the '
+            'where_type qualifier are deprecated and newly created data '
+            'should use the cell_methods attribute to indicate the '
+            'horizontal area to which the quantity applies.')]),
+    'time': OrderedDict([
+        ('standard_name', 'time'),
+        ('canonical_units', 's'),
+        ('definition',
+            'Atmosphere upward absolute vorticity is the sum of the '
+            'atmosphere upward relative vorticity and the vertical component '
+            'of vorticity due to the Earth’s rotation. In contrast, the '
+            'quantity with standard name '
+            "atmosphere_upward_relative_vorticity excludes the Earth's "
+            'rotation. Vorticity is a vector quantity. "Upward" indicates a '
+            'vector component which is positive when directed upward '
+            '(negative downward). A positive value of '
+            'atmosphere_upward_absolute_vorticity indicates anticlockwise '
+            'rotation when viewed from above.')]),
     'wind_speed': OrderedDict([
         ('standard_name', 'wind_speed'),
         ('canonical_units', 'm s-1'),
