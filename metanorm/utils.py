@@ -362,6 +362,10 @@ def split_multipolygon_along_idl(multipolygon):
     """Split multipolygons which cross the international dateline to
     avoid undesired side effects
     """
+    # if the multipolygon has global coverage, return it as is
+    if shapely.wkt.loads(WORLD_WIDE_COVERAGE_WKT).difference(multipolygon).is_empty:
+        return multipolygon
+
     # translate the longitude of west points from  the range [-180, 0[
     # to [180, 360[. This makes it easy to split the multipolygon along
     # the IDL

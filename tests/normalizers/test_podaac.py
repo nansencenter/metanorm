@@ -254,6 +254,19 @@ class PODAACMetadataNormalizerTestCase(unittest.TestCase):
             '-180 54.85557165879511, '
             '-180 56.80657678152991)))')
 
+    def test_get_location_geometry_split_global_coverage(self):
+        """Test getting the location geometry from a global bounding
+        box with 'inverted' coordinates
+        """
+        self.assertEqual(
+            self.normalizer.get_location_geometry({
+                'northernmost_latitude': '-90.0000000',
+                'southernmost_latitude': '90.0000000',
+                'easternmost_longitude': '-180.000000',
+                'westernmost_longitude': '180.000000'
+            }),
+            'MULTIPOLYGON (((180 90, -180 90, -180 -90, 180 -90, 180 90)))')
+
     def test_get_location_geometry_unsupported_geometry(self):
         """An exception should be raised in case of geometry type which
         is not supported
