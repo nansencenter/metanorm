@@ -361,3 +361,87 @@ class CMEMS005001MetadataNormalizer(CMEMSMetadataNormalizer):
             if raw_metadata['url'].startswith(f"{self.url_prefix}/{prefix}"):
                 return utils.create_parameter_list(parameter_list)
         return []
+
+
+class CMEMS002001aMetadataNormalizer(CMEMSMetadataNormalizer):
+    """Normalizer for the ARCTIC_ANALYSIS_FORECAST_PHYS_002_001_a product"""
+
+    url_prefix = 'ftp://nrt.cmems-du.eu/Core/ARCTIC_ANALYSIS_FORECAST_PHYS_002_001_a'
+    time_patterns = (
+        (
+            re.compile(rf"/{utils.YEARMONTHDAY_REGEX}_(dm|hr)-metno-MODEL-topaz4-ARC-.*\.nc"),
+            utils.create_datetime,
+            lambda time: (time, time + relativedelta(days=1))
+        ),
+    )
+
+    def get_entry_title(self, raw_metadata):
+        return 'Arctic Ocean Physics Analysis and Forecast'
+
+    def get_summary(self, raw_metadata):
+        return utils.dict_to_string({
+            utils.SUMMARY_FIELDS['description']:
+                'The operational TOPAZ4 Arctic Ocean system uses the HYCOM model and a 100-member '
+                'EnKF assimilation scheme. It is run daily to provide 10 days of forecast(average '
+                'of 10 members) of the 3D physical ocean, including sea ice data assimilation is '
+                'performed weekly to provide 7 days of analysis(ensemble average). Output products '
+                'are interpolated on a grid of 12.5 km resolution at the North Pole (equivalent to '
+                '1/8 deg in mid-latitudes) on a polar stereographic projection.',
+            utils.SUMMARY_FIELDS['processing_level']: '4',
+            utils.SUMMARY_FIELDS['product']: 'ARCTIC_ANALYSIS_FORECAST_PHYS_002_001_a'
+        })
+
+    def get_platform(self, raw_metadata):
+        return utils.get_gcmd_platform('OPERATIONAL MODELS')
+
+    def get_instrument(self, raw_metadata):
+        return utils.get_gcmd_instrument('Computer')
+
+    def get_location_geometry(self, raw_metadata):
+        return 'POLYGON((-180 62, -180 90, 180 90, 180 62, -180 62))'
+
+    @utils.raises(KeyError)
+    def get_dataset_parameters(self, raw_metadata):
+        parameters = {
+            "dataset-topaz4-arc-1hr-myoceanv2-be/": (
+                'longitude',
+                'latitude',
+                'sea_floor_depth_below_geoid',
+                'sea_water_salinity',
+                'sea_water_potential_temperature',
+                'sea_ice_area_fraction',
+                'sea_ice_thickness',
+                'surface_snow_thickness',
+                'sea_ice_x_velocity',
+                'sea_ice_y_velocity',
+                'sea_surface_height_above_geoid',
+                'x_sea_water_velocity',
+                'y_sea_water_velocity',
+            ),
+            "dataset-topaz4-arc-myoceanv2-be/": (
+                'longitude',
+                'latitude',
+                'sea_floor_depth_below_geoid',
+                'sea_water_potential_temperature',
+                'sea_water_salinity',
+                'x_sea_water_velocity',
+                'y_sea_water_velocity',
+                'ocean_mixed_layer_thickness',
+                'sea_surface_height_above_geoid',
+                'ocean_barotropic_streamfunction',
+                'sea_ice_area_fraction',
+                'sea_ice_thickness',
+                'sea_ice_x_velocity',
+                'sea_ice_y_velocity',
+                'surface_snow_thickness',
+                'fy_frac',
+                'fy_age',
+                'sea_ice_albedo',
+                'sea_water_potential_temperature_at_sea_floor',
+            ),
+        }
+
+        for prefix, parameter_list in parameters.items():
+            if raw_metadata['url'].startswith(f"{self.url_prefix}/{prefix}"):
+                return utils.create_parameter_list(parameter_list)
+        return []
