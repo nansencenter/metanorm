@@ -1,6 +1,8 @@
 """Normalizers for the metadata of CMEMS datasets"""
 
 import re
+from datetime import datetime
+
 from dateutil.relativedelta import relativedelta
 
 import metanorm.utils as utils
@@ -363,6 +365,77 @@ class CMEMS005001MetadataNormalizer(CMEMSMetadataNormalizer):
         return []
 
 
+class CMEMS002003MetadataNormalizer(CMEMSMetadataNormalizer):
+    """Normalizer for the ARCTIC_MULTIYEAR_PHY_002_003 product"""
+
+    url_prefix = 'ftp://my.cmems-du.eu/Core/ARCTIC_MULTIYEAR_PHY_002_003'
+    time_patterns = (
+        (
+            re.compile(rf"/{utils.YEARMONTHDAY_REGEX}_dm-12km-NERSC-MODEL-TOPAZ4B-ARC-RAN.*\.nc"),
+            utils.create_datetime,
+            lambda time: (time, time + relativedelta(days=1))
+        ),
+        (
+            re.compile(rf"/{utils.YEARMONTHDAY_REGEX}_mm-12km-NERSC-MODEL-TOPAZ4B-ARC-RAN.*\.nc"),
+            utils.create_datetime,
+            lambda time: (
+                datetime(time.year, time.month, 1, tzinfo=time.tzinfo),
+                datetime(time.year, time.month, 1, tzinfo=time.tzinfo) + relativedelta(months=1))
+        ),
+        (
+            re.compile(rf"/{utils.YEARMONTHDAY_REGEX}_ym-12km-NERSC-MODEL-TOPAZ4B-ARC-RAN.*\.nc"),
+            utils.create_datetime,
+            lambda time: (time, time + relativedelta(years=1))
+        ),
+    )
+
+    def get_entry_title(self, raw_metadata):
+        return 'Arctic Ocean Physics Reanalysis'
+
+    def get_summary(self, raw_metadata):
+        return utils.dict_to_string({
+            utils.SUMMARY_FIELDS['description']:
+                'The current version of the TOPAZ system - TOPAZ4b - is nearly identical to the '
+                'real-time forecast system run at MET Norway. It uses a recent version of the '
+                'Hybrid Coordinate Ocean Model (HYCOM) developed at University of Miami (Bleck '
+                '2002). HYCOM is coupled to a sea ice model; ice thermodynamics are described in '
+                'Drange and Simonsen (1996) and the elastic-viscous-plastic rheology in Hunke and '
+                'Dukowicz (1997).',
+            utils.SUMMARY_FIELDS['processing_level']: '4',
+            utils.SUMMARY_FIELDS['product']: 'ARCTIC_MULTIYEAR_PHY_002_003'
+        })
+
+    def get_platform(self, raw_metadata):
+        return utils.get_gcmd_platform('OPERATIONAL MODELS')
+
+    def get_instrument(self, raw_metadata):
+        return utils.get_gcmd_instrument('Computer')
+
+    def get_location_geometry(self, raw_metadata):
+        return 'POLYGON((-180 53, -180 90, 180 90, 180 53, -180 53))'
+
+    @utils.raises(KeyError)
+    def get_dataset_parameters(self, raw_metadata):
+        return utils.create_parameter_list([
+            'latitude',
+            'longitude',
+            'sea_water_potential_temperature_at_sea_floor',
+            'ocean_mixed_layer_thickness_defined_by_sigma_theta',
+            'sea_floor_depth_below_geoid',
+            'sea_ice_area_fraction',
+            'surface_snow_thickness',
+            'sea_ice_thickness',
+            'sea_water_salinity',
+            'ocean_barotropic_streamfunction',
+            'sea_water_potential_temperature',
+            'sea_water_x_velocity',
+            'sea_water_y_velocity',
+            'sea_ice_x_velocity',
+            'sea_ice_y_velocity',
+            'sea_surface_height_above_geoid',
+        ])
+
+
 class CMEMS002001aMetadataNormalizer(CMEMSMetadataNormalizer):
     """Normalizer for the ARCTIC_ANALYSIS_FORECAST_PHYS_002_001_a product"""
 
@@ -627,3 +700,4 @@ class CMEMS002004MetadataNormalizer(CMEMSMetadataNormalizer):
             if prefix in raw_metadata['url']:
                 return utils.create_parameter_list(parameter_list)
         return []
+
