@@ -532,3 +532,98 @@ class CMEMS002001MetadataNormalizer(CMEMSMetadataNormalizer):
                 return utils.create_parameter_list(parameter_list)
         return []
 
+
+class CMEMS002004MetadataNormalizer(CMEMSMetadataNormalizer):
+    """Normalizer for the ARCTIC_ANALYSISFORECAST_BGC_002_004 product"""
+    url_prefix = None
+    time_patterns = (
+        (
+            re.compile(rf"/{utils.YEARMONTHDAY_REGEX}_dm-metno-MODEL-topaz5_ecosmo-ARC-.*\.nc"),
+            utils.create_datetime,
+            lambda time: (time, time + relativedelta(days=1))
+        ),
+        (
+            re.compile(rf"/{utils.YEARMONTH_REGEX}_mm-metno-MODEL-topaz5_ecosmo-ARC-.*\.nc"),
+            utils.create_datetime,
+            lambda time: (time, time + relativedelta(months=1))
+        ),
+    )
+
+    def check(self, raw_metadata):
+        return '-metno-MODEL-topaz5_ecosmo-ARC-' in self.get_entry_id(raw_metadata)
+
+    def get_provider(self, raw_metadata):
+        if 'thredds.met.no' in raw_metadata['url']:
+            return utils.get_gcmd_provider(['NO/MET'])
+        elif 'cmems' in raw_metadata['url']:
+            return utils.get_gcmd_provider(['CMEMS'])
+        else:
+            return None
+
+    def get_entry_title(self, raw_metadata):
+        return 'Arctic Ocean Biogeochemistry Analysis and Forecast, 6.25 km'
+
+    def get_summary(self, raw_metadata):
+        return utils.dict_to_string({
+            utils.SUMMARY_FIELDS['description']: 'TOPAZ 5 biochemistry model',
+            utils.SUMMARY_FIELDS['processing_level']: '4',
+            utils.SUMMARY_FIELDS['product']: 'ARCTIC_ANALYSISFORECAST_BGC_002_004'
+        })
+
+    def get_platform(self, raw_metadata):
+        return utils.get_gcmd_platform('OPERATIONAL MODELS')
+
+    def get_instrument(self, raw_metadata):
+        return utils.get_gcmd_instrument('Computer')
+
+    def get_location_geometry(self, raw_metadata):
+        return 'POLYGON((-180 50, -180 90, 180 90, 180 50, -180 50))'
+
+    @utils.raises(KeyError)
+    def get_dataset_parameters(self, raw_metadata):
+        parameters = {
+            "/topaz5_bgc_mm_files/": (
+                'longitude',
+                'latitude',
+                'sea_floor_depth_below_geoid',
+                ('net_primary_production_of_biomass_'
+                    'expressed_as_carbon_per_unit_volume_in_sea_water'),
+                'mass_concentration_of_chlorophyll_a_in_sea_water',
+                'volume_attenuation_coefficient_of_downwelling_radiative_flux_in_sea_water',
+                'mole_concentration_of_nitrate_in_sea_water',
+                'mole_concentration_of_phosphate_in_sea_water',
+                'mole_concentration_of_phytoplankton_expressed_as_carbon_in_sea_water',
+                'mole_concentration_of_zooplankton_expressed_as_carbon_in_sea_water',
+                'mole_concentration_of_dissolved_molecular_oxygen_in_sea_water',
+                'mole_concentration_of_silicate_in_sea_water',
+                'sinking_mole_flux_of_particulate_organic_matter_expressed_as_carbon_in_sea_water',
+                'sea_water_ph_reported_on_total_scale',
+                'mole_concentration_of_dissolved_inorganic_carbon_in_sea_water',
+                'surface_partial_pressure_of_carbon_dioxide_in_sea_water',
+            ),
+            "/topaz5_bgc_dm_files/": (
+                'longitude',
+                'latitude',
+                'depth',
+                'sea_floor_depth_below_geoid',
+                ('net_primary_production_of_biomass_'
+                    'expressed_as_carbon_per_unit_volume_in_sea_water'),
+                'mass_concentration_of_chlorophyll_a_in_sea_water',
+                'volume_attenuation_coefficient_of_downwelling_radiative_flux_in_sea_water',
+                'mole_concentration_of_nitrate_in_sea_water',
+                'mole_concentration_of_phosphate_in_sea_water',
+                'mole_concentration_of_phytoplankton_expressed_as_carbon_in_sea_water',
+                'mole_concentration_of_zooplankton_expressed_as_carbon_in_sea_water',
+                'mole_concentration_of_dissolved_molecular_oxygen_in_sea_water',
+                'mole_concentration_of_silicate_in_sea_water',
+                'sinking_mole_flux_of_particulate_organic_matter_expressed_as_carbon_in_sea_water',
+                'sea_water_ph_reported_on_total_scale',
+                'mole_concentration_of_dissolved_inorganic_carbon_in_sea_water',
+                'surface_partial_pressure_of_carbon_dioxide_in_sea_water',
+            ),
+        }
+
+        for prefix, parameter_list in parameters.items():
+            if prefix in raw_metadata['url']:
+                return utils.create_parameter_list(parameter_list)
+        return []
