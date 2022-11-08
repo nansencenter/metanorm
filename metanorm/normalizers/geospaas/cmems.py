@@ -445,3 +445,90 @@ class CMEMS002001aMetadataNormalizer(CMEMSMetadataNormalizer):
             if raw_metadata['url'].startswith(f"{self.url_prefix}/{prefix}"):
                 return utils.create_parameter_list(parameter_list)
         return []
+
+
+class CMEMS002001MetadataNormalizer(CMEMSMetadataNormalizer):
+    """Normalizer for the ARCTIC_ANALYSISFORECAST_PHY_002_001 product"""
+    # for now the product is only available at met.no,
+    # so we use the file name for identification rather than the URL
+    url_prefix = None
+    time_patterns = (
+        (
+            re.compile(rf"/{utils.YEARMONTHDAY_REGEX}_(dm|hr)-metno-MODEL-topaz5-ARC-.*\.nc"),
+            utils.create_datetime,
+            lambda time: (time, time + relativedelta(days=1))
+        ),
+    )
+
+    def check(self, raw_metadata):
+        return '-metno-MODEL-topaz5-ARC-' in self.get_entry_id(raw_metadata)
+
+    def get_provider(self, raw_metadata):
+        return utils.get_gcmd_provider(['NO/MET'])
+
+    def get_entry_title(self, raw_metadata):
+        return 'Arctic Ocean Physics Analysis and Forecast, 6.25 km'
+
+    def get_summary(self, raw_metadata):
+        return utils.dict_to_string({
+            utils.SUMMARY_FIELDS['description']: 'TOPAZ 5 physical model',
+            utils.SUMMARY_FIELDS['processing_level']: '4',
+            utils.SUMMARY_FIELDS['product']: 'ARCTIC_ANALYSISFORECAST_PHY_002_001'
+        })
+
+    def get_platform(self, raw_metadata):
+        return utils.get_gcmd_platform('OPERATIONAL MODELS')
+
+    def get_instrument(self, raw_metadata):
+        return utils.get_gcmd_instrument('Computer')
+
+    def get_location_geometry(self, raw_metadata):
+        return 'POLYGON((-180 50, -180 90, 180 90, 180 50, -180 50))'
+
+    @utils.raises(KeyError)
+    def get_dataset_parameters(self, raw_metadata):
+        parameters = {
+            "/topaz5_phy_hr_files/": (
+                'longitude',
+                'latitude',
+                'sea_floor_depth_below_geoid',
+                'sea_water_salinity',
+                'sea_water_potential_temperature',
+                'sea_ice_area_fraction',
+                'sea_ice_thickness',
+                'surface_snow_thickness',
+                'sea_ice_x_velocity',
+                'sea_ice_y_velocity',
+                'sea_surface_height_above_geoid',
+                'sea_water_x_velocity',
+                'sea_water_y_velocity',
+            ),
+            "/topaz5_phy_dm_files/": (
+                'longitude',
+                'latitude',
+                'depth',
+                'sea_floor_depth_below_geoid',
+                'sea_water_potential_temperature',
+                'sea_water_salinity',
+                'sea_water_x_velocity',
+                'sea_water_y_velocity',
+                'ocean_mixed_layer_thickness_defined_by_sigma_theta',
+                'sea_surface_height_above_geoid',
+                'ocean_barotropic_streamfunction',
+                'sea_ice_area_fraction',
+                'sea_ice_thickness',
+                'sea_ice_x_velocity',
+                'sea_ice_y_velocity',
+                'surface_snow_thickness',
+                'age_of_sea_ice',
+                'sea_ice_classification',
+                'sea_ice_albedo',
+                'sea_water_potential_temperature_at_sea_floor',
+            ),
+        }
+
+        for prefix, parameter_list in parameters.items():
+            if prefix in raw_metadata['url']:
+                return utils.create_parameter_list(parameter_list)
+        return []
+
