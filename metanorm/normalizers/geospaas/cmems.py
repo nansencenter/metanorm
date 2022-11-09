@@ -700,4 +700,3 @@ class CMEMS002004MetadataNormalizer(CMEMSMetadataNormalizer):
             if prefix in raw_metadata['url']:
                 return utils.create_parameter_list(parameter_list)
         return []
-
