@@ -115,14 +115,23 @@ class UtilsTestCase(unittest.TestCase):
         self.assertEqual(utils.translate_pythesint_keyword(translation_dict, 'alias22'), 'keyword2')
         self.assertEqual(utils.translate_pythesint_keyword(translation_dict, 'alias3'), 'alias3')
 
-    def test_get_gcmd_metopb_platform(self):
-        """Test getting the right METOP-B platform"""
-        self.assertEqual(
-            utils.get_gcmd_platform('METOP_B'),
-            OrderedDict([('Category', 'Earth Observation Satellites'),
-                         ('Series_Entity', 'METOP'),
-                         ('Short_Name', 'METOP-B'),
-                         ('Long_Name', 'Meteorological Operational Satellite - B')]))
+    def test_get_gcmd_platform(self):
+        """Test getting a GCMD platform"""
+        placeholder = {'foo': 'bar'}
+        with mock.patch('metanorm.utils.gcmd_search', return_value=placeholder):
+            self.assertEqual(utils.get_gcmd_platform('baz'), placeholder)
+
+    def test_get_gcmd_platform_unknown(self):
+        """Test getting an unknown GCMD platform"""
+        with mock.patch('metanorm.utils.gcmd_search', return_value=None):
+            self.assertEqual(
+                utils.get_gcmd_platform('foo'),
+                OrderedDict([
+                    ('Category', utils.UNKNOWN),
+                    ('Series_Entity', utils.UNKNOWN),
+                    ('Short_Name', 'foo'),
+                    ('Long_Name', 'foo')
+                ]))
 
     def test_raises_decorator(self):
         """Test that the `raises()` decorator raises a
