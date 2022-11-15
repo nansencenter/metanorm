@@ -133,6 +133,26 @@ class UtilsTestCase(unittest.TestCase):
                     ('Long_Name', 'foo')
                 ]))
 
+    def test_get_gcmd_instrument(self):
+        """Test getting a GCMD instrument"""
+        placeholder = {'foo': 'bar'}
+        with mock.patch('metanorm.utils.gcmd_search', return_value=placeholder):
+            self.assertEqual(utils.get_gcmd_instrument('baz'), placeholder)
+
+    def test_get_gcmd_instrument_unknown(self):
+        """Test getting an unknown GCMD instrument"""
+        with mock.patch('metanorm.utils.gcmd_search', return_value=None):
+            self.assertEqual(
+                utils.get_gcmd_instrument('foo'),
+                OrderedDict([
+                    ('Category', utils.UNKNOWN),
+                    ('Class', utils.UNKNOWN),
+                    ('Type', utils.UNKNOWN),
+                    ('Subtype', utils.UNKNOWN),
+                    ('Short_Name', 'foo'),
+                    ('Long_Name', 'foo')
+                ]))
+
     def test_raises_decorator(self):
         """Test that the `raises()` decorator raises a
         MetadataNormalizationError when the function it decorates
