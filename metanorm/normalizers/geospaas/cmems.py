@@ -534,7 +534,7 @@ class CMEMS002001MetadataNormalizer(CMEMSMetadataNormalizer):
     )
 
     def check(self, raw_metadata):
-        return '-metno-MODEL-topaz5-ARC-' in self.get_entry_id(raw_metadata)
+        return '-metno-MODEL-topaz5-ARC-' in raw_metadata.get('url', '')
 
     def get_provider(self, raw_metadata):
         return utils.get_gcmd_provider(['NO/MET'])
@@ -623,7 +623,7 @@ class CMEMS002004MetadataNormalizer(CMEMSMetadataNormalizer):
     )
 
     def check(self, raw_metadata):
-        return '-metno-MODEL-topaz5_ecosmo-ARC-' in self.get_entry_id(raw_metadata)
+        return '-metno-MODEL-topaz5_ecosmo-ARC-' in raw_metadata.get('url', '')
 
     def get_provider(self, raw_metadata):
         if 'thredds.met.no' in raw_metadata['url']:
