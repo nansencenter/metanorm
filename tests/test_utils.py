@@ -115,6 +115,17 @@ class UtilsTestCase(unittest.TestCase):
         self.assertEqual(utils.translate_pythesint_keyword(translation_dict, 'alias22'), 'keyword2')
         self.assertEqual(utils.translate_pythesint_keyword(translation_dict, 'alias3'), 'alias3')
 
+    def test_get_gcmd_provider(self):
+        """Test looking for a GCMD provider"""
+        placeholder = {'foo': 'bar'}
+        with mock.patch('metanorm.utils.gcmd_search', side_effect=[None, placeholder]):
+            self.assertEqual(utils.get_gcmd_provider('baz'), placeholder)
+
+    def test_get_gcmd_provider_not_found(self):
+        """Test looking for a GCMD provider and not finding any"""
+        with mock.patch('metanorm.utils.gcmd_search', return_value=None):
+            self.assertIsNone(utils.get_gcmd_provider('baz'))
+
     def test_get_gcmd_platform(self):
         """Test getting a GCMD platform"""
         placeholder = {'foo': 'bar'}
