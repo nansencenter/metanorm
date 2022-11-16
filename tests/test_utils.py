@@ -300,26 +300,45 @@ class UtilsTestCase(unittest.TestCase):
         self.assertEqual(
             utils.translate_west_coordinates(
                 shapely.geometry.MultiPolygon([(
-                    [(-10, 80), (-10, 90), (-50, 80), (-10, 80)],
+                    [(10, 80), (-10, 90), (-180, 80), (10, 80)],
                     [((-20, 83), (-20, 82), (-40, 81), (-20, 83))]
                 )])),
             shapely.geometry.MultiPolygon([(
-                [(350, 80), (350, 90), (310, 80), (350, 80)],
+                [(10, 80), (350, 90), (180, 80), (10, 80)],
                 [((340, 83), (340, 82), (320, 81), (340, 83))]
             )])
         )
 
-    def test_restore_west_coordinates(self):
-        """Test translating west corrdinates back to [-180, 0["""
+    def test_restore_west_coordinates_west_idl(self):
+        """Test translating west coordinates back to [-180, 0[ for a
+        polygon on the west side of the IDL
+        """
         self.assertEqual(
             utils.restore_west_coordinates(
                 shapely.geometry.MultiPolygon([(
-                    [(350, 80), (350, 90), (310, 80), (350, 80)],
+                    [(180, 80), (350, 80), (350, 90), (180, 80)],
                     [((340, 83), (340, 82), (320, 81), (340, 83))]
                 )])),
             shapely.geometry.MultiPolygon([(
-                [(-10, 80), (-10, 90), (-50, 80), (-10, 80)],
+                [(-180, 80), (-10, 80), (-10, 90), (-180, 80)],
                 [((-20, 83), (-20, 82), (-40, 81), (-20, 83))]
+            )])
+        )
+
+    def test_restore_west_coordinates_east_idl(self):
+        """Test translating west coordinates back to [-180, 0[ for a
+        polygon on the east side of the IDL. No modification should be
+        made
+        """
+        self.assertEqual(
+            utils.restore_west_coordinates(
+                shapely.geometry.MultiPolygon([(
+                    [(10, 80), (10, 90), (20, 80), (10, 80)],
+                    []
+                )])),
+            shapely.geometry.MultiPolygon([(
+                [(10, 80), (10, 90), (20, 80), (10, 80)],
+                []
             )])
         )
 
