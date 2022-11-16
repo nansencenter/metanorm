@@ -164,6 +164,51 @@ class UtilsTestCase(unittest.TestCase):
                     ('Long_Name', 'foo')
                 ]))
 
+    def test_gcmd_search_one_result(self):
+        """Test searching GCMD vocabularies when only one result is
+        found by Pythesint
+        """
+        with mock.patch("pythesint.json_vocabulary.JSONVocabulary.get_list",
+                        return_value=[{'foo': 'bar', 'baz': 'qux'}]):
+            self.assertEqual(
+                utils.gcmd_search('instrument', 'bar', ['quux']),
+                {'foo': 'bar', 'baz': 'qux'})
+
+    def test_gcmd_search_unambiguous_selection(self):
+        """Test searching GCMD vocabularies when multiple results are
+        found by pythesint and an additional keyword allows to select
+        one without ambiguity
+        """
+        search_results = [
+            {'foo': 'bar', 'baz': 'qux'},
+            {'foo': 'bar', 'baz': 'quux'},
+        ]
+        with mock.patch("pythesint.json_vocabulary.JSONVocabulary.get_list",
+                        return_value=search_results):
+            self.assertEqual(
+                utils.gcmd_search('instrument', 'bar', ['quux']),
+                {'foo': 'bar', 'baz': 'quux'})
+
+    def test_gcmd_search_arbitrary_selection(self):
+        """Test searching GCMD vocabularies when multiple results are
+        found by pythesint and the additional keyword does not allow to
+        select one. The first result is then selected.
+        """
+        search_results = [
+            {'foo': 'bar', 'baz': 'qux'},
+            {'foo': 'bar', 'baz': 'qux', 'corge': 'grault'},
+        ]
+        with mock.patch("pythesint.json_vocabulary.JSONVocabulary.get_list",
+                        return_value=search_results):
+            self.assertEqual(
+                utils.gcmd_search('instrument', 'bar', ['qux']),
+                {'foo': 'bar', 'baz': 'qux'})
+
+    def test_gcmd_search_no_result(self):
+        """Test searching GCMD vocabularies when no result is found"""
+        with mock.patch("pythesint.json_vocabulary.JSONVocabulary.get_list", return_value=[]):
+            self.assertIsNone(utils.gcmd_search('instrument', 'bar', ['qux']))
+
     def test_raises_decorator(self):
         """Test that the `raises()` decorator raises a
         MetadataNormalizationError when the function it decorates
