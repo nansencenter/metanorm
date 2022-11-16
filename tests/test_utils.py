@@ -309,9 +309,9 @@ class UtilsTestCase(unittest.TestCase):
             )])
         )
 
-    def test_restore_west_coordinates_west_idl(self):
+    def test_restore_west_coordinates_east_idl(self):
         """Test translating west coordinates back to [-180, 0[ for a
-        polygon on the west side of the IDL
+        polygon on the east side of the IDL
         """
         self.assertEqual(
             utils.restore_west_coordinates(
@@ -325,21 +325,20 @@ class UtilsTestCase(unittest.TestCase):
             )])
         )
 
-    def test_restore_west_coordinates_east_idl(self):
+    def test_restore_west_coordinates_west_idl(self):
         """Test translating west coordinates back to [-180, 0[ for a
-        polygon on the east side of the IDL. No modification should be
+        polygon on the west side of the IDL. No modification should be
         made
         """
         self.assertEqual(
             utils.restore_west_coordinates(
-                shapely.geometry.MultiPolygon([(
-                    [(10, 80), (10, 90), (20, 80), (10, 80)],
-                    []
-                )])),
-            shapely.geometry.MultiPolygon([(
-                [(10, 80), (10, 90), (20, 80), (10, 80)],
-                []
-            )])
+                shapely.geometry.MultiPolygon([
+                    ([(10, 80), (10, 90), (20, 80), (10, 80)], [])
+                ])),
+            shapely.geometry.MultiPolygon([
+                ([(10, 80), (10, 90), (20, 80), (10, 80)], [])
+            ])
+        )
         )
 
 
