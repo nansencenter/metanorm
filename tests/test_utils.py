@@ -209,6 +209,19 @@ class UtilsTestCase(unittest.TestCase):
         with mock.patch("pythesint.json_vocabulary.JSONVocabulary.get_list", return_value=[]):
             self.assertIsNone(utils.gcmd_search('instrument', 'bar', ['qux']))
 
+    def test_restrict_gcmd_search(self):
+        """Test restricting the results of a GCMD search using
+        additional keywords. The keyword which restricts the search
+        the most should be used
+        """
+        search_results = [
+            {'foo': 'bar', 'baz': 'qux'},
+            {'foo': 'bar', 'baz': 'qux', 'corge': 'grault'},
+        ]
+        self.assertEqual(
+            utils.restrict_gcmd_search(search_results, ['qux', 'grault']),
+            [{'foo': 'bar', 'baz': 'qux', 'corge': 'grault'}])
+
     def test_raises_decorator(self):
         """Test that the `raises()` decorator raises a
         MetadataNormalizationError when the function it decorates
