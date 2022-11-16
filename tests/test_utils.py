@@ -222,6 +222,27 @@ class UtilsTestCase(unittest.TestCase):
             utils.restrict_gcmd_search(search_results, ['qux', 'grault']),
             [{'foo': 'bar', 'baz': 'qux', 'corge': 'grault'}])
 
+    def test_get_cf_standard_name(self):
+        """Test getting a standardized dataset parameter from the CF
+        vocabulary
+        """
+        placeholder = {'foo': 'bar'}
+        with mock.patch('pythesint.get_cf_standard_name', return_value=placeholder):
+            self.assertEqual(
+                utils.get_cf_or_wkv_standard_name('baz'),
+                placeholder)
+
+    def test_get_wkv_standard_name(self):
+        """Test getting a standardized dataset parameter from the well
+        known vocabularies
+        """
+        placeholder = {'foo': 'bar'}
+        with mock.patch('pythesint.get_cf_standard_name', side_effect=IndexError), \
+                mock.patch('pythesint.get_wkv_variable', return_value=placeholder):
+            self.assertEqual(
+                utils.get_cf_or_wkv_standard_name('baz'),
+                placeholder)
+
     def test_raises_decorator(self):
         """Test that the `raises()` decorator raises a
         MetadataNormalizationError when the function it decorates
