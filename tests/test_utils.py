@@ -339,7 +339,28 @@ class UtilsTestCase(unittest.TestCase):
                 ([(10, 80), (10, 90), (20, 80), (10, 80)], [])
             ])
         )
+
+    def test_split_multipolygon_along_idl(self):
+        """Test splitting a multipolygon along the IDL"""
+        self.assertEqual(
+            utils.split_multipolygon_along_idl(
+                shapely.geometry.MultiPolygon([
+                    ([(-170, 80), (-170, 90), (170, 90), (170, 80), (-170, 80)], [])
+                ])),
+            shapely.geometry.MultiPolygon([
+                ([(-180, 90), (-170, 90), (-170, 80), (-180, 80), (-180, 90)], []),
+                ([(180, 80), (170, 80), (170, 90), (180, 90), (180, 80)], []),
+            ])
         )
+
+    def test_split_multipolygon_along_idl_global_coverage(self):
+        """When a dataset has global coverage, not splitting is needed"""
+        multipolygon = shapely.geometry.MultiPolygon([
+            ([(-180, 90), (-180, -90), (180, -90), (180, 90), (-180, 90)], [])
+        ])
+        self.assertEqual(
+            utils.split_multipolygon_along_idl(multipolygon),
+            multipolygon)
 
 
 class SubclassesTestCase(unittest.TestCase):
