@@ -309,6 +309,20 @@ class UtilsTestCase(unittest.TestCase):
             )])
         )
 
+    def test_restore_west_coordinates(self):
+        """Test translating west corrdinates back to [-180, 0["""
+        self.assertEqual(
+            utils.restore_west_coordinates(
+                shapely.geometry.MultiPolygon([(
+                    [(350, 80), (350, 90), (310, 80), (350, 80)],
+                    [((340, 83), (340, 82), (320, 81), (340, 83))]
+                )])),
+            shapely.geometry.MultiPolygon([(
+                [(-10, 80), (-10, 90), (-50, 80), (-10, 80)],
+                [((-20, 83), (-20, 82), (-40, 81), (-20, 83))]
+            )])
+        )
+
 
 class SubclassesTestCase(unittest.TestCase):
     """Tests for utility functions dealing with subclasses"""
