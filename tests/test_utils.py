@@ -362,6 +362,19 @@ class UtilsTestCase(unittest.TestCase):
             utils.split_multipolygon_along_idl(multipolygon),
             multipolygon)
 
+    def test_create_parameter_list(self):
+        """Test creating a parameter list from a list of names"""
+        def get_cf_or_wkv_standard_name_side_effect(name):
+            """Side effect function used for testing"""
+            return {'long_name': name}
+
+        with mock.patch('metanorm.utils.get_cf_or_wkv_standard_name',
+                        side_effect=get_cf_or_wkv_standard_name_side_effect):
+            self.assertListEqual(
+                utils.create_parameter_list(('foo', 'bar')),
+                [{'long_name': 'foo'}, {'long_name': 'bar'}]
+            )
+
 
 class SubclassesTestCase(unittest.TestCase):
     """Tests for utility functions dealing with subclasses"""
