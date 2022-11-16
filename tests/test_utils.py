@@ -7,6 +7,7 @@ from datetime import datetime
 
 from dateutil.relativedelta import relativedelta
 from dateutil.tz import tzutc
+import shapely.geometry
 
 import metanorm.errors as errors
 import metanorm.utils as utils
@@ -291,6 +292,22 @@ class UtilsTestCase(unittest.TestCase):
         self.assertEqual(
             utils.wkt_polygon_from_wgs84_limits(90, 60, 180, -180),
             'POLYGON((-180 60,180 60,180 90,-180 90,-180 60))')
+
+    def test_translate_west_coordinates(self):
+        """Test translating west coordinates from [-180, 0[ to
+        [180, 360[
+        """
+        self.assertEqual(
+            utils.translate_west_coordinates(
+                shapely.geometry.MultiPolygon([(
+                    [(-10, 80), (-10, 90), (-50, 80), (-10, 80)],
+                    [((-20, 83), (-20, 82), (-40, 81), (-20, 83))]
+                )])),
+            shapely.geometry.MultiPolygon([(
+                [(350, 80), (350, 90), (310, 80), (350, 80)],
+                [((340, 83), (340, 82), (320, 81), (340, 83))]
+            )])
+        )
 
 
 class SubclassesTestCase(unittest.TestCase):
