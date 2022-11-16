@@ -286,6 +286,12 @@ class UtilsTestCase(unittest.TestCase):
         with self.assertRaises(ValueError):
             get_foo(mock.Mock(), {})
 
+    def test_wkt_polygon_from_wgs84_limits(self):
+        """Test making a WKT polygon string from box bounds"""
+        self.assertEqual(
+            utils.wkt_polygon_from_wgs84_limits(90, 60, 180, -180),
+            'POLYGON((-180 60,180 60,180 90,-180 90,-180 60))')
+
 
 class SubclassesTestCase(unittest.TestCase):
     """Tests for utility functions dealing with subclasses"""
