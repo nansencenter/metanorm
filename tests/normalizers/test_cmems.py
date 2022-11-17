@@ -28,7 +28,7 @@ class GCMDTestsBuiltin():
                 mock_get_gcmd_method.return_value)
 
     def test_dataset_parameters(self):
-        """Test getting the instrument dataset parameters"""
+        """Test getting the dataset parameters"""
         with mock.patch('metanorm.utils.create_parameter_list') as mock_get_gcmd_method:
             self.assertEqual(
                 self.normalizer.get_dataset_parameters(mock.MagicMock()),
@@ -1019,7 +1019,7 @@ class CMEMS002003MetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase)
         """Should return the proper starting time"""
         self.assertEqual(
             self.normalizer.get_time_coverage_start({
-                'url': 'ftp://aperrin@my.cmems-du.eu/Core/ARCTIC_MULTIYEAR_PHY_002_003/'
+                'url': 'ftp://my.cmems-du.eu/Core/ARCTIC_MULTIYEAR_PHY_002_003/'
                        'cmems_mod_arc_phy_my_topaz4_P1M/'
                        '19910115_mm-12km-NERSC-MODEL-TOPAZ4B-ARC-RAN.fv2.0.nc'
             }),
@@ -1029,7 +1029,7 @@ class CMEMS002003MetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase)
         """Should return the proper starting time"""
         self.assertEqual(
             self.normalizer.get_time_coverage_start({
-                'url': 'ftp://aperrin@my.cmems-du.eu/Core/ARCTIC_MULTIYEAR_PHY_002_003/'
+                'url': 'ftp://my.cmems-du.eu/Core/ARCTIC_MULTIYEAR_PHY_002_003/'
                 'cmems_mod_arc_phy_my_topaz4_P1M/'
                 '19910101_ym-12km-NERSC-MODEL-TOPAZ4B-ARC-RAN.fv2.0.nc'
             }),
