@@ -1,6 +1,6 @@
 """Tests for the ESA CCI normalizer"""
 import unittest
-from collections import OrderedDict
+import unittest.mock as mock
 from datetime import datetime
 from dateutil.tz import tzutc
 
@@ -82,43 +82,32 @@ class CEDAESACCIMetadataNormalizerTestCase(unittest.TestCase):
         with self.assertRaises(MetadataNormalizationError):
             self.normalizer.get_time_coverage_end({})
 
-    def test_platform(self):
-        """platform from CEDAESACCIMetadataNormalizer """
-        self.assertEqual(
-            self.normalizer.get_platform({}),
-            OrderedDict([('Category', 'Earth Observation Satellites'),
-                         ('Series_Entity', ''),
-                         ('Short_Name', ''),
-                         ('Long_Name', '')]))
+    def test_gcmd_platform(self):
+        """Test getting the platform"""
+        with mock.patch('metanorm.utils.get_gcmd_platform') as mock_get_gcmd_method:
+            self.assertEqual(
+                self.normalizer.get_platform({}),
+                mock_get_gcmd_method.return_value)
 
-    def test_instrument(self):
-        """instrument from CEDAESACCIMetadataNormalizer """
-        self.assertEqual(
-            self.normalizer.get_instrument({}),
-            OrderedDict([('Category', 'Earth Remote Sensing Instruments'),
-                         ('Class', 'Passive Remote Sensing'),
-                         ('Type', 'Spectrometers/Radiometers'),
-                         ('Subtype', 'Imaging Spectrometers/Radiometers'),
-                         ('Short_Name', ''),
-                         ('Long_Name', '')]))
+    def test_gcmd_instrument(self):
+        """Test getting the instrument"""
+        with mock.patch('metanorm.utils.get_gcmd_instrument') as mock_get_gcmd_method:
+            self.assertEqual(
+                self.normalizer.get_instrument({}),
+                mock_get_gcmd_method.return_value)
+
+    def test_gcmd_provider(self):
+        """Test getting the provider"""
+        with mock.patch('metanorm.utils.get_gcmd_provider') as mock_get_gcmd_method:
+            self.assertEqual(
+                self.normalizer.get_provider({}),
+                mock_get_gcmd_method.return_value)
 
     def test_location_geometry(self):
         """geometry from CEDAESACCIMetadataNormalizer """
         self.assertEqual(
             self.normalizer.get_location_geometry({}),
             'POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))')
-
-    def test_provider(self):
-        """provider from CEDAESACCIMetadataNormalizer """
-        self.assertEqual(
-            self.normalizer.get_provider({}),
-            OrderedDict([('Bucket_Level0', 'MULTINATIONAL ORGANIZATIONS'),
-                         ('Bucket_Level1', ''),
-                         ('Bucket_Level2', ''),
-                         ('Bucket_Level3', ''),
-                         ('Short_Name', 'ESA/CCI'),
-                         ('Long_Name', 'Climate Change Initiative, European Space Agency'),
-                         ('Data_Center_URL', '')]))
 
     def test_dataset_parameters(self):
         """dataset_parameters from CEDAESACCIMetadataNormalizer """
