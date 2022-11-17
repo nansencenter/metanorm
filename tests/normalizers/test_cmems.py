@@ -968,3 +968,105 @@ class CMEMS005001MetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase)
         """An exception must be raised if the attribute is missing"""
         with self.assertRaises(MetadataNormalizationError):
             self.normalizer.get_dataset_parameters({})
+
+
+class CMEMS002003MetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase):
+    """Tests for the CMEMS002003MetadataNormalizer class"""
+
+    def setUp(self):
+        self.normalizer = normalizers.geospaas.CMEMS002003MetadataNormalizer()
+
+    def test_check(self):
+        """Test the checking condition"""
+        self.assertTrue(self.normalizer.check({
+            'url': 'ftp://my.cmems-du.eu/Core/ARCTIC_MULTIYEAR_PHY_002_003/'
+                    'cmems_mod_arc_phy_my_topaz4_P1D-m/2021/02/'
+                    '20210204_dm-12km-NERSC-MODEL-TOPAZ4B-ARC-RAN.fv2.0.nc'}))
+
+        self.assertFalse(self.normalizer.check({}))
+        self.assertFalse(self.normalizer.check({'url': 'ftp://foo/bar'}))
+
+    def test_entry_title(self):
+        """test getting entry_title"""
+        self.assertEqual(
+            self.normalizer.get_entry_title({}),
+            'Arctic Ocean Physics Reanalysis')
+
+    def test_summary(self):
+        """test getting summary"""
+        self.assertEqual(
+            self.normalizer.get_summary({}),
+            'Description: The current version of the TOPAZ system - TOPAZ4b - is nearly identical '
+                'to the real-time forecast system run at MET Norway. It uses a recent version of '
+                'the Hybrid Coordinate Ocean Model (HYCOM) developed at University of Miami (Bleck '
+                '2002). HYCOM is coupled to a sea ice model; ice thermodynamics are described in '
+                'Drange and Simonsen (1996) and the elastic-viscous-plastic rheology in Hunke and '
+                'Dukowicz (1997).;'
+            'Processing level: 4;'
+            'Product: ARCTIC_MULTIYEAR_PHY_002_003')
+
+    def test_time_coverage_start_dm(self):
+        """Should return the proper starting time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_start({
+                'url': 'ftp://my.cmems-du.eu/Core/ARCTIC_MULTIYEAR_PHY_002_003/'
+                       'cmems_mod_arc_phy_my_topaz4_P1D-m/2021/02/'
+                       '20210204_dm-12km-NERSC-MODEL-TOPAZ4B-ARC-RAN.fv2.0.nc'
+            }),
+            datetime(year=2021, month=2, day=4, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_start_mm(self):
+        """Should return the proper starting time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_start({
+                'url': 'ftp://aperrin@my.cmems-du.eu/Core/ARCTIC_MULTIYEAR_PHY_002_003/'
+                       'cmems_mod_arc_phy_my_topaz4_P1M/'
+                       '19910115_mm-12km-NERSC-MODEL-TOPAZ4B-ARC-RAN.fv2.0.nc'
+            }),
+            datetime(year=1991, month=1, day=1, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_start_ym(self):
+        """Should return the proper starting time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_start({
+                'url': 'ftp://aperrin@my.cmems-du.eu/Core/ARCTIC_MULTIYEAR_PHY_002_003/'
+                'cmems_mod_arc_phy_my_topaz4_P1M/'
+                '19910101_ym-12km-NERSC-MODEL-TOPAZ4B-ARC-RAN.fv2.0.nc'
+            }),
+            datetime(year=1991, month=1, day=1, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_end_dm(self):
+        """Should return the proper end time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_end({
+                'url': 'ftp://my.cmems-du.eu/Core/ARCTIC_MULTIYEAR_PHY_002_003/'
+                       'cmems_mod_arc_phy_my_topaz4_P1D-m/2021/02/'
+                       '20210204_dm-12km-NERSC-MODEL-TOPAZ4B-ARC-RAN.fv2.0.nc'
+            }),
+            datetime(year=2021, month=2, day=5, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_end_mm(self):
+        """Should return the proper end time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_end({
+                'url': 'ftp://my.cmems-du.eu/Core/ARCTIC_MULTIYEAR_PHY_002_003/'
+                       'cmems_mod_arc_phy_my_topaz4_P1M/'
+                       '19910115_mm-12km-NERSC-MODEL-TOPAZ4B-ARC-RAN.fv2.0.nc'
+            }),
+            datetime(year=1991, month=2, day=1, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_end_ym(self):
+        """Should return the proper end time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_end({
+                'url': 'ftp://my.cmems-du.eu/Core/ARCTIC_MULTIYEAR_PHY_002_003/'
+                       'cmems_mod_arc_phy_my_topaz4_P1M/'
+                       '19910101_ym-12km-NERSC-MODEL-TOPAZ4B-ARC-RAN.fv2.0.nc'
+            }),
+            datetime(year=1992, month=1, day=1, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_location_geometry(self):
+        """test getting geometry"""
+        self.assertEqual(
+            self.normalizer.get_location_geometry({}),
+            'POLYGON((-180 53, -180 90, 180 90, 180 53, -180 53))')
