@@ -3,12 +3,10 @@
 
 import unittest
 import unittest.mock as mock
-from collections import OrderedDict
 from datetime import datetime, timezone
 
 import metanorm.normalizers as normalizers
 from metanorm.errors import MetadataNormalizationError
-from .data import DATASET_PARAMETERS
 
 
 class GCMDTestsBuiltin():
@@ -19,14 +17,21 @@ class GCMDTestsBuiltin():
         """Test getting the platform"""
         with mock.patch('metanorm.utils.get_gcmd_platform') as mock_get_gcmd_method:
             self.assertEqual(
-                self.normalizer.get_platform({}),
+                self.normalizer.get_platform(mock.MagicMock()),
                 mock_get_gcmd_method.return_value)
 
     def test_gcmd_instrument(self):
         """Test getting the instrument"""
         with mock.patch('metanorm.utils.get_gcmd_instrument') as mock_get_gcmd_method:
             self.assertEqual(
-                self.normalizer.get_instrument({}),
+                self.normalizer.get_instrument(mock.MagicMock()),
+                mock_get_gcmd_method.return_value)
+
+    def test_dataset_parameters(self):
+        """Test getting the instrument dataset parameters"""
+        with mock.patch('metanorm.utils.create_parameter_list') as mock_get_gcmd_method:
+            self.assertEqual(
+                self.normalizer.get_dataset_parameters(mock.MagicMock()),
                 mock_get_gcmd_method.return_value)
 
 
@@ -152,21 +157,6 @@ class CMEMS008046MetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase)
             self.normalizer.get_location_geometry({}),
             'POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))')
 
-    def test_dataset_parameters(self):
-        """dataset_parameters from CMEMS008046MetadataNormalizer """
-        self.assertEqual(
-            self.normalizer.get_dataset_parameters({}),
-            [
-                DATASET_PARAMETERS['sea_surface_height_above_geoid'],
-                DATASET_PARAMETERS['sea_surface_height_above_sea_level'],
-                DATASET_PARAMETERS['surface_geostrophic_eastward_sea_water_velocity'],
-                DATASET_PARAMETERS['surface_geostrophic_eastward_sea_water_velocity_'
-                                   'assuming_mean_sea_level_for_geoid'],
-                DATASET_PARAMETERS['surface_geostrophic_northward_sea_water_velocity'],
-                DATASET_PARAMETERS['surface_geostrophic_northward_sea_water_velocity_'
-                                        'assuming_mean_sea_level_for_geoid'],
-            ])
-
 
 class CMEMS015003MetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase):
     """Tests for the CMEMS015003MetadataNormalizer class"""
@@ -269,15 +259,6 @@ class CMEMS015003MetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase)
         self.assertEqual(
             self.normalizer.get_location_geometry({}),
             'POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))')
-
-    def test_dataset_parameters(self):
-        """dataset_parameters from CMEMS015003MetadataNormalizer """
-        self.assertEqual(
-            self.normalizer.get_dataset_parameters({}),
-            [
-                DATASET_PARAMETERS['eastward_sea_water_velocity'],
-                DATASET_PARAMETERS['northward_sea_water_velocity']
-            ])
 
 
 class CMEMS001024MetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase):
@@ -462,24 +443,6 @@ class CMEMS001024MetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase)
             self.normalizer.get_location_geometry({}),
             'POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))')
 
-    def test_dataset_parameters(self):
-        """dataset_parameters from CMEMS001024MetadataNormalizer """
-        self.assertEqual(
-            self.normalizer.get_dataset_parameters({}),
-            [
-                DATASET_PARAMETERS['sea_water_potential_temperature_at_sea_floor'],
-                DATASET_PARAMETERS['ocean_mixed_layer_thickness_defined_by_sigma_theta'],
-                DATASET_PARAMETERS['sea_ice_area_fraction'],
-                DATASET_PARAMETERS['sea_ice_thickness'],
-                DATASET_PARAMETERS['sea_water_salinity'],
-                DATASET_PARAMETERS['sea_water_potential_temperature'],
-                DATASET_PARAMETERS['eastward_sea_water_velocity'],
-                DATASET_PARAMETERS['eastward_sea_ice_velocity'],
-                DATASET_PARAMETERS['northward_sea_water_velocity'],
-                DATASET_PARAMETERS['northward_sea_ice_velocity'],
-                DATASET_PARAMETERS['sea_surface_height_above_geoid']
-            ])
-
 
 class CMEMS006013MetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase):
     """Tests for the CMEMS006013MetadataNormalizer class"""
@@ -612,46 +575,79 @@ class CMEMS006013MetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase)
     def test_dataset_parameters_cur(self):
         """Should return the proper dataset parameters"""
         attributes = {
-            'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/med-cmcc-cur'}
-        self.assertEqual(
-            self.normalizer.get_dataset_parameters(attributes), [
-                DATASET_PARAMETERS['eastward_sea_water_velocity'],
-                DATASET_PARAMETERS['northward_sea_water_velocity']
-            ])
+            'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/med-cmcc-cur'
+        }
+        with mock.patch('metanorm.utils.create_parameter_list') as mock_utils_method:
+            self.assertEqual(
+                self.normalizer.get_dataset_parameters(attributes),
+                mock_utils_method.return_value)
+            mock_utils_method.assert_called_once_with(
+                (
+                    'eastward_sea_water_velocity',
+                    'northward_sea_water_velocity',
+                )
+            )
 
     def test_dataset_parameters_mld(self):
         """Should return the proper dataset parameters"""
         attributes = {
-            'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/med-cmcc-mld'}
-        self.assertEqual(
-            self.normalizer.get_dataset_parameters(attributes), [
-                DATASET_PARAMETERS['ocean_mixed_layer_thickness_defined_by_sigma_theta']
-            ])
+            'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/med-cmcc-mld'
+        }
+        with mock.patch('metanorm.utils.create_parameter_list') as mock_utils_method:
+            self.assertEqual(
+                self.normalizer.get_dataset_parameters(attributes),
+                mock_utils_method.return_value)
+            mock_utils_method.assert_called_once_with(
+                (
+                    'ocean_mixed_layer_thickness_defined_by_sigma_theta',
+                )
+            )
 
     def test_dataset_parameters_sal(self):
         """Should return the proper dataset parameters"""
         attributes = {
-            'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/med-cmcc-sal'}
-        self.assertEqual(
-            self.normalizer.get_dataset_parameters(attributes),
-            [DATASET_PARAMETERS['sea_water_salinity']])
+            'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/med-cmcc-sal'
+        }
+        with mock.patch('metanorm.utils.create_parameter_list') as mock_utils_method:
+            self.assertEqual(
+                self.normalizer.get_dataset_parameters(attributes),
+                mock_utils_method.return_value)
+            mock_utils_method.assert_called_once_with(
+                (
+                    'sea_water_salinity',
+                )
+            )
 
     def test_dataset_parameters_ssh(self):
         """Should return the proper dataset parameters"""
         attributes = {
-            'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/med-cmcc-ssh'}
-        self.assertEqual(
-            self.normalizer.get_dataset_parameters(attributes),
-            [DATASET_PARAMETERS['sea_surface_height_above_geoid']])
+            'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/med-cmcc-ssh'
+        }
+        with mock.patch('metanorm.utils.create_parameter_list') as mock_utils_method:
+            self.assertEqual(
+                self.normalizer.get_dataset_parameters(attributes),
+                mock_utils_method.return_value)
+            mock_utils_method.assert_called_once_with(
+                (
+                    'sea_surface_height_above_geoid',
+                )
+            )
 
     def test_dataset_parameters_tem(self):
         """Should return the proper dataset parameters"""
         attributes = {
-            'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/med-cmcc-tem'}
-        self.assertEqual(self.normalizer.get_dataset_parameters(attributes), [
-            DATASET_PARAMETERS['sea_water_potential_temperature_at_sea_floor'],
-            DATASET_PARAMETERS['sea_water_potential_temperature']
-        ])
+            'url': 'ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/med-cmcc-tem'
+        }
+        with mock.patch('metanorm.utils.create_parameter_list') as mock_utils_method:
+            self.assertEqual(
+                self.normalizer.get_dataset_parameters(attributes),
+                mock_utils_method.return_value)
+            mock_utils_method.assert_called_once_with(
+                (
+                    'sea_water_potential_temperature_at_sea_floor',
+                    'sea_water_potential_temperature',
+                )
+            )
 
     def test_dataset_parameters_mask_bathy(self):
         """Should return the proper dataset parameters"""
@@ -659,11 +655,17 @@ class CMEMS006013MetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase)
             'url': "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/" +
                    "MEDSEA_ANALYSISFORECAST_PHY_006_013-statics/MED-MFC_006_013_mask_bathy.nc"
         }
-        self.assertEqual(self.normalizer.get_dataset_parameters(attributes), [
-            DATASET_PARAMETERS['model_level_number_at_sea_floor'],
-            DATASET_PARAMETERS['sea_binary_mask'],
-            DATASET_PARAMETERS['sea_floor_depth_below_geoid'],
-        ])
+        with mock.patch('metanorm.utils.create_parameter_list') as mock_utils_method:
+            self.assertEqual(
+                self.normalizer.get_dataset_parameters(attributes),
+                mock_utils_method.return_value)
+            mock_utils_method.assert_called_once_with(
+                (
+                    'model_level_number_at_sea_floor',
+                    'sea_binary_mask',
+                    'sea_floor_depth_below_geoid',
+                )
+            )
 
     def test_dataset_parameters_coordinates(self):
         """Should return the proper dataset parameters"""
@@ -671,9 +673,15 @@ class CMEMS006013MetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase)
             'url': "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/" +
                    "MEDSEA_ANALYSISFORECAST_PHY_006_013-statics/MED-MFC_006_013_coordinates.nc"
         }
-        self.assertEqual(
-            self.normalizer.get_dataset_parameters(attributes),
-            [DATASET_PARAMETERS['cell_thickness']])
+        with mock.patch('metanorm.utils.create_parameter_list') as mock_utils_method:
+            self.assertEqual(
+                self.normalizer.get_dataset_parameters(attributes),
+                mock_utils_method.return_value)
+            mock_utils_method.assert_called_once_with(
+                (
+                    'cell_thickness',
+                )
+            )
 
     def test_dataset_parameters_mdt(self):
         """Should return the proper dataset parameters"""
@@ -681,9 +689,15 @@ class CMEMS006013MetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase)
             'url': "ftp://nrt.cmems-du.eu/Core/MEDSEA_ANALYSISFORECAST_PHY_006_013/" +
                    "MEDSEA_ANALYSISFORECAST_PHY_006_013-statics/MED-MFC_006_013_mdt.nc"
         }
-        self.assertEqual(self.normalizer.get_dataset_parameters(attributes), [
-            DATASET_PARAMETERS['sea_surface_height_above_geoid'],
-        ])
+        with mock.patch('metanorm.utils.create_parameter_list') as mock_utils_method:
+            self.assertEqual(
+                self.normalizer.get_dataset_parameters(attributes),
+                mock_utils_method.return_value)
+            mock_utils_method.assert_called_once_with(
+                (
+                    'sea_surface_height_above_geoid',
+                )
+            )
 
     def test_dataset_parameters_unknown_url(self):
         """Should return an empty list if the URL starts with an
@@ -843,11 +857,17 @@ class CMEMS005001MetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase)
                    'cmems_mod_ibi_phy_anfc_0.027deg-2D_PT15M-m/2020/12/'
                    'CMEMS_v5r1_IBI_PHY_NRT_PdE_15minav_20201212_20201212_R20201221_AN04.nc'
         }
-        self.assertListEqual(self.normalizer.get_dataset_parameters(attributes), [
-            DATASET_PARAMETERS['sea_surface_height_above_geoid'],
-            DATASET_PARAMETERS['eastward_sea_water_velocity'],
-            DATASET_PARAMETERS['northward_sea_water_velocity']
-        ])
+        with mock.patch('metanorm.utils.create_parameter_list') as mock_utils_method:
+            self.assertEqual(
+                self.normalizer.get_dataset_parameters(attributes),
+                mock_utils_method.return_value)
+            mock_utils_method.assert_called_once_with(
+                (
+                    'sea_surface_height_above_geoid',
+                    'eastward_sea_water_velocity',
+                    'northward_sea_water_velocity',
+                )
+            )
 
     def test_dataset_parameters_daily(self):
         """Should return the proper dataset parameters"""
@@ -856,15 +876,21 @@ class CMEMS005001MetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase)
             'cmems_mod_ibi_phy_anfc_0.027deg-3D_P1D-m/2021/05/'
             'CMEMS_v5r1_IBI_PHY_NRT_PdE_01dav_20210503_20210503_R20210510_AN06.nc'
         }
-        self.assertListEqual(self.normalizer.get_dataset_parameters(attributes), [
-            DATASET_PARAMETERS['sea_water_potential_temperature'],
-            DATASET_PARAMETERS['sea_water_salinity'],
-            DATASET_PARAMETERS['eastward_sea_water_velocity'],
-            DATASET_PARAMETERS['northward_sea_water_velocity'],
-            DATASET_PARAMETERS['sea_surface_height_above_geoid'],
-            DATASET_PARAMETERS['ocean_mixed_layer_thickness_defined_by_sigma_theta'],
-            DATASET_PARAMETERS['sea_water_potential_temperature_at_sea_floor'],
-        ])
+        with mock.patch('metanorm.utils.create_parameter_list') as mock_utils_method:
+            self.assertEqual(
+                self.normalizer.get_dataset_parameters(attributes),
+                mock_utils_method.return_value)
+            mock_utils_method.assert_called_once_with(
+                (
+                    'sea_water_potential_temperature',
+                    'sea_water_salinity',
+                    'eastward_sea_water_velocity',
+                    'northward_sea_water_velocity',
+                    'sea_surface_height_above_geoid',
+                    'ocean_mixed_layer_thickness_defined_by_sigma_theta',
+                    'sea_water_potential_temperature_at_sea_floor',
+                )
+            )
 
     def test_dataset_parameters_hourly(self):
         """Should return the proper dataset parameters"""
@@ -873,16 +899,21 @@ class CMEMS005001MetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase)
             'cmems_mod_ibi_phy_anfc_0.027deg-2D_PT1H-m/2019/11/'
             'CMEMS_v5r1_IBI_PHY_NRT_PdE_01hav_20191112_20191112_R20191113_AN07.nc'
         }
-        self.assertListEqual(self.normalizer.get_dataset_parameters(attributes), [
-            DATASET_PARAMETERS['sea_water_potential_temperature'],
-            DATASET_PARAMETERS['eastward_sea_water_velocity'],
-            DATASET_PARAMETERS['northward_sea_water_velocity'],
-            DATASET_PARAMETERS['barotropic_eastward_sea_water_velocity'],
-            DATASET_PARAMETERS['barotropic_northward_sea_water_velocity'],
-            DATASET_PARAMETERS['sea_surface_height_above_geoid'],
-            DATASET_PARAMETERS['ocean_mixed_layer_thickness_defined_by_sigma_theta'],
-
-        ])
+        with mock.patch('metanorm.utils.create_parameter_list') as mock_utils_method:
+            self.assertEqual(
+                self.normalizer.get_dataset_parameters(attributes),
+                mock_utils_method.return_value)
+            mock_utils_method.assert_called_once_with(
+                (
+                    'sea_water_potential_temperature',
+                    'eastward_sea_water_velocity',
+                    'northward_sea_water_velocity',
+                    'barotropic_eastward_sea_water_velocity',
+                    'barotropic_northward_sea_water_velocity',
+                    'sea_surface_height_above_geoid',
+                    'ocean_mixed_layer_thickness_defined_by_sigma_theta',
+                )
+            )
 
     def test_dataset_parameters_hourly3d(self):
         """Should return the proper dataset parameters"""
@@ -891,12 +922,18 @@ class CMEMS005001MetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase)
             'cmems_mod_ibi_phy_anfc_0.027deg-3D_PT1H-m/2021/08/'
             'CMEMS_v5r1_IBI_PHY_NRT_PdE_01hav3D_20210815_20210815_R20210816_HC01.nc'
         }
-        self.assertListEqual(self.normalizer.get_dataset_parameters(attributes), [
-            DATASET_PARAMETERS['sea_water_potential_temperature'],
-            DATASET_PARAMETERS['sea_water_salinity'],
-            DATASET_PARAMETERS['eastward_sea_water_velocity'],
-            DATASET_PARAMETERS['northward_sea_water_velocity'],
-        ])
+        with mock.patch('metanorm.utils.create_parameter_list') as mock_utils_method:
+            self.assertEqual(
+                self.normalizer.get_dataset_parameters(attributes),
+                mock_utils_method.return_value)
+            mock_utils_method.assert_called_once_with(
+                (
+                    'sea_water_potential_temperature',
+                    'sea_water_salinity',
+                    'eastward_sea_water_velocity',
+                    'northward_sea_water_velocity',
+                )
+            )
 
     def test_dataset_parameters_monthly(self):
         """Should return the proper dataset parameters"""
@@ -905,15 +942,21 @@ class CMEMS005001MetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase)
                    'cmems_mod_ibi_phy_anfc_0.027deg-3D_P1M-m/2019/'
                    'CMEMS_v5r1_IBI_PHY_NRT_PdE_01mav_20191001_20191031_R20191031_AN01.nc'
         }
-        self.assertListEqual(self.normalizer.get_dataset_parameters(attributes), [
-            DATASET_PARAMETERS['sea_water_potential_temperature'],
-            DATASET_PARAMETERS['sea_water_salinity'],
-            DATASET_PARAMETERS['eastward_sea_water_velocity'],
-            DATASET_PARAMETERS['northward_sea_water_velocity'],
-            DATASET_PARAMETERS['sea_surface_height_above_geoid'],
-            DATASET_PARAMETERS['ocean_mixed_layer_thickness_defined_by_sigma_theta'],
-            DATASET_PARAMETERS['sea_water_potential_temperature_at_sea_floor'],
-        ])
+        with mock.patch('metanorm.utils.create_parameter_list') as mock_utils_method:
+            self.assertEqual(
+                self.normalizer.get_dataset_parameters(attributes),
+                mock_utils_method.return_value)
+            mock_utils_method.assert_called_once_with(
+                (
+                    'sea_water_potential_temperature',
+                    'sea_water_salinity',
+                    'eastward_sea_water_velocity',
+                    'northward_sea_water_velocity',
+                    'sea_surface_height_above_geoid',
+                    'ocean_mixed_layer_thickness_defined_by_sigma_theta',
+                    'sea_water_potential_temperature_at_sea_floor'
+                )
+            )
 
     def test_dataset_parameters_unknown_url(self):
         """Should return an empty list if the URL starts with an
