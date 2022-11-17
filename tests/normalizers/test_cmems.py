@@ -1153,6 +1153,10 @@ class CMEMS002001aMetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase
             self.normalizer.get_location_geometry({}),
             'POLYGON((-180 62, -180 90, 180 90, 180 62, -180 62))')
 
+    def test_unknown_parameters(self):
+        """In case of unknown parameters, return an empty list"""
+        self.assertEqual(self.normalizer.get_dataset_parameters({'url': 'https://foo'}), [])
+
 
 class CMEMS002001MetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase):
     """Tests for the CMEMS002001MetadataNormalizer class"""
@@ -1168,6 +1172,13 @@ class CMEMS002001MetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase)
 
         self.assertFalse(self.normalizer.check({}))
         self.assertFalse(self.normalizer.check({'url': 'https://foo/bar'}))
+
+    def test_provider(self):
+        """Test that we get the right provider if a CMEMS URL is used
+        """
+        with mock.patch('metanorm.utils.get_gcmd_provider') as mock_get_provider:
+            self.normalizer.get_provider({})
+            mock_get_provider.assert_called_with(['NO/MET'])
 
     def test_entry_title(self):
         """test getting entry_title"""
@@ -1227,16 +1238,16 @@ class CMEMS002001MetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase)
 
     def test_dataset_parameters(self):
         """Test getting the dataset parameters"""
-        with self.subTest('hourly'):
-            attributes = {
-                'url': 'https://thredds.met.no/thredds/dodsC/cmems/topaz5_phy_hr_files/2021/11/'
-                       '20211130_hr-metno-MODEL-topaz5-ARC-b20211130-fv02.0.nc.html'
-            }
-            with mock.patch('metanorm.utils.create_parameter_list') as mock_utils_method:
+        with mock.patch('metanorm.utils.create_parameter_list') as mock_utils_method:
+            with self.subTest('hourly'):
+                attributes = {
+                    'url': 'https://thredds.met.no/thredds/dodsC/cmems/topaz5_phy_hr_files/2021/11/'
+                        '20211130_hr-metno-MODEL-topaz5-ARC-b20211130-fv02.0.nc.html'
+                }
                 self.assertEqual(
                     self.normalizer.get_dataset_parameters(attributes),
                     mock_utils_method.return_value)
-                mock_utils_method.assert_called_once_with(
+                mock_utils_method.assert_called_with(
                     (
                         'longitude',
                         'latitude',
@@ -1253,16 +1264,15 @@ class CMEMS002001MetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase)
                         'sea_water_y_velocity',
                     )
                 )
-        with self.subTest('daily mean'):
-            attributes = {
-                'url': 'https://thredds.met.no/thredds/dodsC/cmems/topaz5_phy_dm_files/2022/09/'
-                       '20220929_dm-metno-MODEL-topaz5-ARC-b20220922-fv02.0.nc.html'
-            }
-            with mock.patch('metanorm.utils.create_parameter_list') as mock_utils_method:
+            with self.subTest('daily mean'):
+                attributes = {
+                    'url': 'https://thredds.met.no/thredds/dodsC/cmems/topaz5_phy_dm_files/2022/09/'
+                        '20220929_dm-metno-MODEL-topaz5-ARC-b20220922-fv02.0.nc.html'
+                }
                 self.assertEqual(
                     self.normalizer.get_dataset_parameters(attributes),
                     mock_utils_method.return_value)
-                mock_utils_method.assert_called_once_with(
+                mock_utils_method.assert_called_with(
                     (
                         'longitude',
                         'latitude',
@@ -1286,6 +1296,8 @@ class CMEMS002001MetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase)
                         'sea_water_potential_temperature_at_sea_floor',
                     )
                 )
+            with self.subTest('unknown'):
+                self.assertEqual(self.normalizer.get_dataset_parameters({'url': 'https://foo'}), [])
 
 
 class CMEMS002004MetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase):
@@ -1302,6 +1314,22 @@ class CMEMS002004MetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase)
 
         self.assertFalse(self.normalizer.check({}))
         self.assertFalse(self.normalizer.check({'url': 'https://foo/bar'}))
+
+    def test_provider(self):
+        """Test that we get the right provider if a CMEMS URL is used
+        """
+        with mock.patch('metanorm.utils.get_gcmd_provider') as mock_get_provider:
+            with self.subTest('cmems'):
+                self.normalizer.get_provider({
+                    'url': 'ftp://nrt.cmems-du.eu/Core/ARCTIC_ANALYSISFORECAST_BGC_002_004/'
+                           'cmems_mod_arc_bgc_anfc_ecosmo_P1D-m'})
+                mock_get_provider.assert_called_with(['CMEMS'])
+            with self.subTest('met.no'):
+                self.normalizer.get_provider({
+                    'url': 'https://thredds.met.no/thredds/dodsC/cmems/topaz5_bgc_dm_files'})
+                mock_get_provider.assert_called_with(['NO/MET'])
+            with self.subTest('unknown'):
+                self.assertIsNone(self.normalizer.get_provider({'url': 'https://foo'}))
 
     def test_entry_title(self):
         """test getting entry_title"""
@@ -1361,16 +1389,16 @@ class CMEMS002004MetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase)
 
     def test_dataset_parameters(self):
         """Test getting the dataset parameters"""
-        with self.subTest('monthly mean'):
-            attributes = {
-                'url': 'https://thredds.met.no/thredds/dodsC/cmems/topaz5_bgc_mm_files/2020/'
-                       '202011_mm-metno-MODEL-topaz5_ecosmo-ARC-fv02.0.nc.html'
-            }
-            with mock.patch('metanorm.utils.create_parameter_list') as mock_utils_method:
+        with mock.patch('metanorm.utils.create_parameter_list') as mock_utils_method:
+            with self.subTest('monthly mean'):
+                attributes = {
+                    'url': 'https://thredds.met.no/thredds/dodsC/cmems/topaz5_bgc_mm_files/2020/'
+                        '202011_mm-metno-MODEL-topaz5_ecosmo-ARC-fv02.0.nc.html'
+                }
                 self.assertEqual(
                     self.normalizer.get_dataset_parameters(attributes),
                     mock_utils_method.return_value)
-                mock_utils_method.assert_called_once_with(
+                mock_utils_method.assert_called_with(
                     (
                         'longitude',
                         'latitude',
@@ -1385,22 +1413,23 @@ class CMEMS002004MetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase)
                         'mole_concentration_of_zooplankton_expressed_as_carbon_in_sea_water',
                         'mole_concentration_of_dissolved_molecular_oxygen_in_sea_water',
                         'mole_concentration_of_silicate_in_sea_water',
-                        'sinking_mole_flux_of_particulate_organic_matter_expressed_as_carbon_in_sea_water',
+                        'sinking_mole_flux_of_particulate_organic_matter_'
+                        'expressed_as_carbon_in_sea_water',
                         'sea_water_ph_reported_on_total_scale',
                         'mole_concentration_of_dissolved_inorganic_carbon_in_sea_water',
                         'surface_partial_pressure_of_carbon_dioxide_in_sea_water',
                     )
                 )
-        with self.subTest('daily mean'):
-            attributes = {
-                'url': 'https://thredds.met.no/thredds/dodsC/cmems/topaz5_bgc_dm_files/2021/10/'
-                       '20211031_dm-metno-MODEL-topaz5_ecosmo-ARC-b20211028-fv02.0.nc.html'
-            }
-            with mock.patch('metanorm.utils.create_parameter_list') as mock_utils_method:
+            with self.subTest('daily mean'):
+                attributes = {
+                    'url': 'https://thredds.met.no/thredds/dodsC/cmems/topaz5_bgc_dm_files/2021/10/'
+                        '20211031_dm-metno-MODEL-topaz5_ecosmo-ARC-b20211028-fv02.0.nc.html'
+                }
+
                 self.assertEqual(
                     self.normalizer.get_dataset_parameters(attributes),
                     mock_utils_method.return_value)
-                mock_utils_method.assert_called_once_with(
+                mock_utils_method.assert_called_with(
                     (
                         'longitude',
                         'latitude',
@@ -1422,3 +1451,5 @@ class CMEMS002004MetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase)
                         'surface_partial_pressure_of_carbon_dioxide_in_sea_water',
                     )
                 )
+            with self.subTest('unknown'):
+                self.assertEqual(self.normalizer.get_dataset_parameters({'url': 'https://foo'}), [])
