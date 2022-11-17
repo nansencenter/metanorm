@@ -103,7 +103,6 @@ class ScihubODataMetadataNormalizer(GeoSPaaSMetadataNormalizer):
         """Returns a WKT string corresponding to the location of the dataset"""
         return raw_metadata['JTS footprint']
 
-    @utils.raises(KeyError)
     def get_provider(self, raw_metadata):
         """Returns a GCMD-like provider data structure"""
         return utils.get_gcmd_provider(['ESA/EO'])
