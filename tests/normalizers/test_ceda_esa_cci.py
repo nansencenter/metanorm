@@ -5,7 +5,6 @@ from datetime import datetime
 from dateutil.tz import tzutc
 
 import metanorm.normalizers as normalizers
-from .data import DATASET_PARAMETERS
 from metanorm.errors import MetadataNormalizationError
 
 
@@ -111,6 +110,7 @@ class CEDAESACCIMetadataNormalizerTestCase(unittest.TestCase):
 
     def test_dataset_parameters(self):
         """dataset_parameters from CEDAESACCIMetadataNormalizer """
-        self.assertEqual(self.normalizer.get_dataset_parameters({}), [
-            DATASET_PARAMETERS['sea_surface_temperature'],
-        ])
+        with mock.patch('metanorm.utils.create_parameter_list') as mock_get_gcmd_method:
+            self.assertEqual(
+                self.normalizer.get_dataset_parameters({}),
+                mock_get_gcmd_method.return_value)
