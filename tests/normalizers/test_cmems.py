@@ -7,8 +7,27 @@ from collections import OrderedDict
 from datetime import datetime, timezone
 
 import metanorm.normalizers as normalizers
-from .data import DATASET_PARAMETERS
 from metanorm.errors import MetadataNormalizationError
+from .data import DATASET_PARAMETERS
+
+
+class GCMDTestsBuiltin():
+    """Builtin used to easily add test methods for GCMD searches
+    """
+
+    def test_gcmd_platform(self):
+        """Test getting the platform"""
+        with mock.patch('metanorm.utils.get_gcmd_platform') as mock_get_gcmd_method:
+            self.assertEqual(
+                self.normalizer.get_platform({}),
+                mock_get_gcmd_method.return_value)
+
+    def test_gcmd_instrument(self):
+        """Test getting the instrument"""
+        with mock.patch('metanorm.utils.get_gcmd_instrument') as mock_get_gcmd_method:
+            self.assertEqual(
+                self.normalizer.get_instrument({}),
+                mock_get_gcmd_method.return_value)
 
 
 class CMEMSMetadataNormalizerTestCase(unittest.TestCase):
@@ -43,17 +62,12 @@ class CMEMSMetadataNormalizerTestCase(unittest.TestCase):
         with self.assertRaises(MetadataNormalizationError):
             self.normalizer.get_entry_id({})
 
-    def test_provider(self):
-        """The provider is always CMEMS"""
-        self.assertEqual(
-            self.normalizer.get_provider({}),
-            OrderedDict([('Bucket_Level0', 'MULTINATIONAL ORGANIZATIONS'),
-                         ('Bucket_Level1', ''),
-                         ('Bucket_Level2', ''),
-                         ('Bucket_Level3', ''),
-                         ('Short_Name', 'CMEMS'),
-                         ('Long_Name', 'Copernicus - Marine Environment Monitoring Service'),
-                         ('Data_Center_URL', '')]))
+    def test_gcmd_provider(self):
+        """Test getting the provider"""
+        with mock.patch('metanorm.utils.get_gcmd_provider') as mock_get_gcmd_method:
+            self.assertEqual(
+                self.normalizer.get_provider({}),
+                mock_get_gcmd_method.return_value)
 
     def test_time_coverage(self):
         """Test that the time coverage is extracted using
@@ -83,7 +97,7 @@ class CMEMSMetadataNormalizerTestCase(unittest.TestCase):
             self.normalizer.get_time_coverage_end({})
 
 
-class CMEMS008046MetadataNormalizerTestCase(unittest.TestCase):
+class CMEMS008046MetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase):
     """Tests for the CMEMS008046MetadataNormalizer class"""
 
     def setUp(self):
@@ -132,26 +146,6 @@ class CMEMS008046MetadataNormalizerTestCase(unittest.TestCase):
                        'nrt_global_allsat_phy_l4_20190403_20200320.nc'}),
             datetime(year=2019, month=4, day=3, hour=12, minute=0, second=0, tzinfo=timezone.utc))
 
-    def test_platform(self):
-        """platform from CMEMS008046MetadataNormalizer """
-        self.assertEqual(
-            self.normalizer.get_platform({}),
-            OrderedDict([('Category', 'Earth Observation Satellites'),
-                        ('Series_Entity', ''),
-                        ('Short_Name', ''),
-                        ('Long_Name', '')]))
-
-    def test_instrument(self):
-        """instrument from CMEMS008046MetadataNormalizer """
-        self.assertEqual(
-            self.normalizer.get_instrument({}),
-            OrderedDict([('Category', 'Earth Remote Sensing Instruments'),
-                         ('Class', 'Active Remote Sensing'),
-                         ('Type', 'Altimeters'),
-                         ('Subtype', ''),
-                         ('Short_Name', ''),
-                         ('Long_Name', '')]))
-
     def test_location_geometry(self):
         """geometry from CMEMS008046MetadataNormalizer """
         self.assertEqual(
@@ -174,7 +168,7 @@ class CMEMS008046MetadataNormalizerTestCase(unittest.TestCase):
             ])
 
 
-class CMEMS015003MetadataNormalizerTestCase(unittest.TestCase):
+class CMEMS015003MetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase):
     """Tests for the CMEMS015003MetadataNormalizer class"""
 
     def setUp(self):
@@ -270,26 +264,6 @@ class CMEMS015003MetadataNormalizerTestCase(unittest.TestCase):
                        'dataset-uv-nrt-hourly_20200906T0000Z_P20200918T0000.nc'}),
             datetime(year=2020, month=9, day=7, hour=0, minute=0, second=0, tzinfo=timezone.utc))
 
-    def test_platform(self):
-        """platform from CMEMS015003MetadataNormalizer """
-        self.assertEqual(
-            self.normalizer.get_platform({}),
-            OrderedDict([('Category', 'Earth Observation Satellites'),
-                        ('Series_Entity', ''),
-                        ('Short_Name', ''),
-                        ('Long_Name', '')]))
-
-    def test_instrument(self):
-        """instrument from CMEMS015003MetadataNormalizer """
-        self.assertEqual(
-            self.normalizer.get_instrument({}),
-            OrderedDict([('Category', 'Earth Remote Sensing Instruments'),
-                         ('Class', 'Active Remote Sensing'),
-                         ('Type', 'Altimeters'),
-                         ('Subtype', ''),
-                         ('Short_Name', ''),
-                         ('Long_Name', '')]))
-
     def test_location_geometry(self):
         """geometry from CMEMS015003MetadataNormalizer """
         self.assertEqual(
@@ -306,7 +280,7 @@ class CMEMS015003MetadataNormalizerTestCase(unittest.TestCase):
             ])
 
 
-class CMEMS001024MetadataNormalizerTestCase(unittest.TestCase):
+class CMEMS001024MetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase):
     """Tests for the CMEMS001024MetadataNormalizer class"""
 
     def setUp(self):
@@ -482,26 +456,6 @@ class CMEMS001024MetadataNormalizerTestCase(unittest.TestCase):
                        'mercatorpsy4v3r1_gl12_mean_201807.nc'}),
             datetime(year=2018, month=8, day=1, hour=0, minute=0, second=0, tzinfo=timezone.utc))
 
-    def test_platform(self):
-        """platform from CMEMS001024MetadataNormalizer """
-        self.assertEqual(
-            self.normalizer.get_platform({}),
-            OrderedDict([('Category', 'Models/Analyses'),
-                         ('Series_Entity', ''),
-                         ('Short_Name', 'OPERATIONAL MODELS'),
-                         ('Long_Name', '')]))
-
-    def test_instrument(self):
-        """instrument from CMEMS001024MetadataNormalizer """
-        self.assertEqual(
-            self.normalizer.get_instrument({}),
-            OrderedDict([('Category', 'In Situ/Laboratory Instruments'),
-                         ('Class', 'Data Analysis'),
-                         ('Type', 'Environmental Modeling'),
-                         ('Subtype', ''),
-                         ('Short_Name', 'Computer'),
-                         ('Long_Name', 'Computer')]))
-
     def test_location_geometry(self):
         """geometry from CMEMS001024MetadataNormalizer """
         self.assertEqual(
@@ -527,7 +481,7 @@ class CMEMS001024MetadataNormalizerTestCase(unittest.TestCase):
             ])
 
 
-class CMEMS006013MetadataNormalizerTestCase(unittest.TestCase):
+class CMEMS006013MetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase):
     """Tests for the CMEMS006013MetadataNormalizer class"""
 
     def setUp(self):
@@ -649,26 +603,6 @@ class CMEMS006013MetadataNormalizerTestCase(unittest.TestCase):
             self.normalizer.get_time_coverage_end({'url': url}),
             datetime(year=2021, month=7, day=1, hour=0, minute=0, second=0, tzinfo=timezone.utc))
 
-    def test_platform(self):
-        """platform from CMEMS006013MetadataNormalizer """
-        self.assertEqual(
-            self.normalizer.get_platform({}),
-            OrderedDict([('Category', 'Models/Analyses'),
-                         ('Series_Entity', ''),
-                         ('Short_Name', 'OPERATIONAL MODELS'),
-                         ('Long_Name', '')]))
-
-    def test_instrument(self):
-        """instrument from CMEMS006013MetadataNormalizer """
-        self.assertEqual(
-            self.normalizer.get_instrument({}),
-            OrderedDict([('Category', 'In Situ/Laboratory Instruments'),
-                         ('Class', 'Data Analysis'),
-                         ('Type', 'Environmental Modeling'),
-                         ('Subtype', ''),
-                         ('Short_Name', 'Computer'),
-                         ('Long_Name', 'Computer')]))
-
     def test_location_geometry(self):
         """geometry from CMEMS006013MetadataNormalizer """
         self.assertEqual(
@@ -763,7 +697,7 @@ class CMEMS006013MetadataNormalizerTestCase(unittest.TestCase):
             self.normalizer.get_dataset_parameters({})
 
 
-class CMEMS005001MetadataNormalizerTestCase(unittest.TestCase):
+class CMEMS005001MetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase):
     """Tests for the CMEMS005001MetadataNormalizer class"""
 
     def setUp(self):
@@ -895,26 +829,6 @@ class CMEMS005001MetadataNormalizerTestCase(unittest.TestCase):
                        'CMEMS_v5r1_IBI_PHY_NRT_PdE_01mav_20191001_20191031_R20191031_AN01.nc'
             }),
             datetime(year=2019, month=11, day=1, hour=0, minute=0, second=0, tzinfo=timezone.utc))
-
-    def test_platform(self):
-        """platform from CMEMS005001MetadataNormalizer """
-        self.assertEqual(
-            self.normalizer.get_platform({}),
-            OrderedDict([('Category', 'Models/Analyses'),
-                         ('Series_Entity', ''),
-                         ('Short_Name', 'OPERATIONAL MODELS'),
-                         ('Long_Name', '')]))
-
-    def test_instrument(self):
-        """instrument from CMEMS005001MetadataNormalizer """
-        self.assertEqual(
-            self.normalizer.get_instrument({}),
-            OrderedDict([('Category', 'In Situ/Laboratory Instruments'),
-                         ('Class', 'Data Analysis'),
-                         ('Type', 'Environmental Modeling'),
-                         ('Subtype', ''),
-                         ('Short_Name', 'Computer'),
-                         ('Long_Name', 'Computer')]))
 
     def test_location_geometry(self):
         """geometry from CMEMS005001MetadataNormalizer """
