@@ -1,5 +1,6 @@
 """Tests for the ACDD metadata normalizer"""
 import unittest
+import unittest.mock as mock
 from collections import OrderedDict
 from datetime import datetime
 
@@ -160,151 +161,25 @@ class ScihubODataMetadataNormalizerTestCase(unittest.TestCase):
 
     def test_gcmd_platform(self):
         """gcmd_platform from ScihubODataMetadataNormalizer"""
-        attributes = {'Satellite name': 'SENTINEL-1', 'Satellite number': 'B'}
-
-        self.assertEqual(
-            self.normalizer.get_platform(attributes),
-            OrderedDict([('Category', 'Earth Observation Satellites'),
-                         ('Series_Entity', 'Sentinel-1'),
-                         ('Short_Name', 'Sentinel-1B'),
-                         ('Long_Name', 'Sentinel-1B')])
-        )
-
-    def test_non_gcmd_platform(self):
-        """Non-GCMD platform from ScihubODataMetadataNormalizer"""
-        attributes = {'Satellite name': 'TEST', 'Satellite number': 'A'}
-
-        self.assertEqual(
-            self.normalizer.get_platform(attributes),
-            OrderedDict([
-                ('Category', 'Unknown'),
-                ('Series_Entity', 'Unknown'),
-                ('Short_Name', 'TESTA'),
-                ('Long_Name', 'TESTA')
-            ])
-        )
-
-    def test_non_gcmd_platform_long_name(self):
-        """
-        Non-GCMD platform from ScihubODataMetadataNormalizer, with a name longer than 250 characters
-        """
-        attributes = {
-            'Satellite name': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do ei' +
-                              'usmod tempor incididunt ut labore et dolore magna aliqua. Bibendum' +
-                              ' neque egest as congue quisque egestas diam in. Eget magna ferment' +
-                              'um iaculis eu non diam phasellus vestibulum lorvgem. Tempor commodo',
-            'Satellite number': 'A'
-        }
-
-        self.assertEqual(
-            self.normalizer.get_platform(attributes),
-            OrderedDict([
-                ('Category', 'Unknown'),
-                ('Series_Entity', 'Unknown'),
-                ('Short_Name', attributes['Satellite name'][:100]),
-                ('Long_Name', attributes['Satellite name'][:250])
-            ])
-        )
+        with mock.patch('metanorm.utils.get_gcmd_platform') as mock_get_gcmd_method:
+            self.assertEqual(
+                self.normalizer.get_platform({'Satellite name': 'foo', 'Satellite number': 'bar'}),
+                mock_get_gcmd_method.return_value)
 
     def test_platform_missing_attribute(self):
         """An exception must be raised if the attribute is missing"""
         with self.assertRaises(MetadataNormalizationError):
             self.normalizer.get_platform({})
 
-    def test_gcmd_instrument_from_get(self):
+    def test_gcmd_instrument(self):
         """
         GCMD instrument from ScihubODataMetadataNormalizer which is found using
         `pythesint.get_gcmd_instrument()`
         """
-        self.assertEqual(
-            self.normalizer.get_instrument({'Instrument': 'MODIS'}),
-            OrderedDict([('Category', 'Earth Remote Sensing Instruments'),
-                         ('Class', 'Passive Remote Sensing'),
-                         ('Type', 'Spectrometers/Radiometers'),
-                         ('Subtype', 'Imaging Spectrometers/Radiometers'),
-                         ('Short_Name', 'MODIS'),
-                         ('Long_Name', 'Moderate-Resolution Imaging Spectroradiometer')]))
-
-    def test_gcmd_instrument_from_search(self):
-        """
-        GCMD instrument from ScihubODataMetadataNormalizer which is found using
-        `pythesint.search_gcmd_instrument_list()`
-        """
-        self.assertEqual(
-            self.normalizer.get_instrument({'Instrument': 'SRAL'}),
-            OrderedDict([('Category', 'Earth Remote Sensing Instruments'),
-                         ('Class', 'Active Remote Sensing'),
-                         ('Type', 'Altimeters'),
-                         ('Subtype', 'Radar Altimeters'),
-                         ('Short_Name', 'Sentinel-3 SRAL'),
-                         ('Long_Name', 'Sentinel-3 SAR Radar Altimeter')]))
-
-    def test_gcmd_instrument_from_restricted_search(self):
-        """
-        GCMD instrument from ScihubODataMetadataNormalizer which is found using
-        `pythesint.search_gcmd_instrument_list()` and restricting the search with an
-        additional keyword
-        """
-        self.assertEqual(
-            self.normalizer.get_instrument({
-                'Satellite name': 'SENTINEL-2',
-                'Instrument': 'MSI'}),
-            OrderedDict([('Category', 'Earth Remote Sensing Instruments'),
-                         ('Class', 'Passive Remote Sensing'),
-                         ('Type', 'Spectrometers/Radiometers'),
-                         ('Subtype', 'Imaging Spectrometers/Radiometers'),
-                         ('Short_Name', 'Sentinel-2 MSI'),
-                         ('Long_Name', 'Sentinel-2 Multispectral Imager')]))
-
-    def test_c_sar_instrument(self):
-        """Special case for C-SAR GCMD instrument from ScihubODataMetadataNormalizer"""
-        self.assertEqual(
-            self.normalizer.get_instrument(
-                {'Satellite name': 'SENTINEL-1','Instrument': 'SAR-C SAR'}),
-            OrderedDict([('Category', 'Earth Remote Sensing Instruments'),
-                         ('Class', 'Active Remote Sensing'),
-                         ('Type', 'Imaging Radars'),
-                         ('Subtype', ''),
-                         ('Short_Name', 'SENTINEL-1 C-SAR'),
-                         ('Long_Name', '')]))
-
-    def test_non_gcmd_instrument(self):
-        """Non-GCMD instrument from ScihubODataMetadataNormalizer"""
-        self.assertEqual(
-            self.normalizer.get_instrument({'Instrument': 'TEST'}),
-            OrderedDict([
-                ('Category', 'Unknown'),
-                ('Class', 'Unknown'),
-                ('Type', 'Unknown'),
-                ('Subtype', 'Unknown'),
-                ('Short_Name', 'TEST'),
-                ('Long_Name', 'TEST')
-            ])
-        )
-
-    def test_non_gcmd_instrument_long_name(self):
-        """Non-GCMD instrument from ScihubODataMetadataNormalizer,
-        with a name longer than 200 characters
-        """
-        attributes = {
-            'Instrument':
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod ' +
-                'tempor incididunt ut labore et dolore magna aliqua. Bibendum neque egest' +
-                'as congue quisque egestas diam in. Eget magna fermentum iaculis eu non d' +
-                'iam phasellus vestibulum lorvgem. Tempor commodo.'
-        }
-
-        self.assertEqual(
-            self.normalizer.get_instrument(attributes),
-            OrderedDict([
-                ('Category', 'Unknown'),
-                ('Class', 'Unknown'),
-                ('Type', 'Unknown'),
-                ('Subtype', 'Unknown'),
-                ('Short_Name', attributes['Instrument'][:60]),
-                ('Long_Name', attributes['Instrument'][:200])
-            ])
-        )
+        with mock.patch('metanorm.utils.get_gcmd_instrument') as mock_get_gcmd_method:
+            self.assertEqual(
+                self.normalizer.get_instrument({'Satellite name': 'foo', 'Instrument': 'bar'}),
+                mock_get_gcmd_method.return_value)
 
     def test_instrument_missing_attribute(self):
         """An exception must be raised if the attribute is missing"""
@@ -338,28 +213,12 @@ class ScihubODataMetadataNormalizerTestCase(unittest.TestCase):
         with self.assertRaises(MetadataNormalizationError):
             self.normalizer.get_location_geometry({})
 
-    def test_gcmd_provider_from_url(self):
+    def test_gcmd_provider(self):
         """GCMD provider from ScihubODataMetadataNormalizer"""
-        expected_provider = OrderedDict([
-            ('Bucket_Level0', 'MULTINATIONAL ORGANIZATIONS'),
-            ('Bucket_Level1', ''),
-            ('Bucket_Level2', ''),
-            ('Bucket_Level3', ''),
-            ('Short_Name', 'ESA/EO'),
-            ('Long_Name', 'Observing the Earth, European Space Agency'),
-            ('Data_Center_URL', 'http://www.esa.int/esaEO/')])
-
-        attributes = {'url': 'https://scihub.copernicus.eu'}
-        self.assertEqual(
-            self.normalizer.get_provider(attributes),
-            expected_provider
-        )
-
-        attributes = {'url': 'https://apihub.copernicus.eu'}
-        self.assertEqual(
-            self.normalizer.get_provider(attributes),
-            expected_provider
-        )
+        with mock.patch('metanorm.utils.get_gcmd_provider') as mock_get_gcmd_method:
+            self.assertEqual(
+                self.normalizer.get_provider({}),
+                mock_get_gcmd_method.return_value)
 
     def test_dataset_parameters_sentinel1(self):
         """Test getting the dataset parameters for Sentinel 1 datasets
