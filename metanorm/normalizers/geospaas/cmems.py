@@ -414,7 +414,6 @@ class CMEMS002003MetadataNormalizer(CMEMSMetadataNormalizer):
     def get_location_geometry(self, raw_metadata):
         return 'POLYGON((-180 53, -180 90, 180 90, 180 53, -180 53))'
 
-    @utils.raises(KeyError)
     def get_dataset_parameters(self, raw_metadata):
         return utils.create_parameter_list([
             'latitude',
