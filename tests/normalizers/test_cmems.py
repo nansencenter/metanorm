@@ -1070,3 +1070,355 @@ class CMEMS002003MetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase)
         self.assertEqual(
             self.normalizer.get_location_geometry({}),
             'POLYGON((-180 53, -180 90, 180 90, 180 53, -180 53))')
+
+
+class CMEMS002001aMetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase):
+    """Tests for the CMEMS002001aMetadataNormalizer class"""
+
+    def setUp(self):
+        self.normalizer = normalizers.geospaas.CMEMS002001aMetadataNormalizer()
+
+    def test_check(self):
+        """Test the checking condition"""
+        self.assertTrue(self.normalizer.check({
+            'url': 'ftp://nrt.cmems-du.eu/Core/ARCTIC_ANALYSIS_FORECAST_PHYS_002_001_a/'
+                   'dataset-topaz4-arc-myoceanv2-be/'
+                   '20180104_dm-metno-MODEL-topaz4-ARC-b20180108-fv02.0.nc'}))
+
+        self.assertFalse(self.normalizer.check({}))
+        self.assertFalse(self.normalizer.check({'url': 'ftp://foo/bar'}))
+
+    def test_entry_title(self):
+        """test getting entry_title"""
+        self.assertEqual(
+            self.normalizer.get_entry_title({}),
+            'Arctic Ocean Physics Analysis and Forecast')
+
+    def test_summary(self):
+        """test getting summary"""
+        self.assertEqual(
+            self.normalizer.get_summary({}),
+            'Description: The operational TOPAZ4 Arctic Ocean system uses the HYCOM model and a '
+            '100-member EnKF assimilation scheme. It is run daily to provide 10 days of forecast'
+            '(average of 10 members) of the 3D physical ocean, including sea ice data assimilation '
+            'is performed weekly to provide 7 days of analysis(ensemble average). Output products '
+            'are interpolated on a grid of 12.5 km resolution at the North Pole (equivalent to '
+            '1/8 deg in mid-latitudes) on a polar stereographic projection.;'
+            'Processing level: 4;'
+            'Product: ARCTIC_ANALYSIS_FORECAST_PHYS_002_001_a')
+
+    def test_time_coverage_start_dm(self):
+        """Should return the proper starting time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_start({
+                'url': 'ftp://nrt.cmems-du.eu/Core/ARCTIC_ANALYSIS_FORECAST_PHYS_002_001_a/'
+                       'dataset-topaz4-arc-myoceanv2-be/'
+                       '20180104_dm-metno-MODEL-topaz4-ARC-b20180108-fv02.0.nc'
+            }),
+            datetime(year=2018, month=1, day=4, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_start_hourly(self):
+        """Should return the proper starting time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_start({
+                'url': 'ftp://nrt.cmems-du.eu/Core/ARCTIC_ANALYSIS_FORECAST_PHYS_002_001_a/'
+                       'dataset-topaz4-arc-1hr-myoceanv2-be/'
+                       '20180102_hr-metno-MODEL-topaz4-ARC-b20180102-fv02.0.nc'
+            }),
+            datetime(year=2018, month=1, day=2, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_end_dm(self):
+        """Should return the proper end time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_end({
+                'url': 'ftp://nrt.cmems-du.eu/Core/ARCTIC_ANALYSIS_FORECAST_PHYS_002_001_a/'
+                       'dataset-topaz4-arc-myoceanv2-be/'
+                       '20180104_dm-metno-MODEL-topaz4-ARC-b20180108-fv02.0.nc'
+            }),
+            datetime(year=2018, month=1, day=5, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_end_hourly(self):
+        """Should return the proper end time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_end({
+                'url': 'ftp://nrt.cmems-du.eu/Core/ARCTIC_ANALYSIS_FORECAST_PHYS_002_001_a/'
+                       'dataset-topaz4-arc-1hr-myoceanv2-be/'
+                       '20180102_hr-metno-MODEL-topaz4-ARC-b20180102-fv02.0.nc'
+            }),
+            datetime(year=2018, month=1, day=3, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_location_geometry(self):
+        """test getting geometry"""
+        self.assertEqual(
+            self.normalizer.get_location_geometry({}),
+            'POLYGON((-180 62, -180 90, 180 90, 180 62, -180 62))')
+
+
+class CMEMS002001MetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase):
+    """Tests for the CMEMS002001MetadataNormalizer class"""
+
+    def setUp(self):
+        self.normalizer = normalizers.geospaas.CMEMS002001MetadataNormalizer()
+
+    def test_check(self):
+        """Test the checking condition"""
+        self.assertTrue(self.normalizer.check({
+            'url': 'https://thredds.met.no/thredds/dodsC/cmems/topaz5_phy_dm_files/2022/'
+                   '09/20220929_dm-metno-MODEL-topaz5-ARC-b20220922-fv02.0.nc.html'}))
+
+        self.assertFalse(self.normalizer.check({}))
+        self.assertFalse(self.normalizer.check({'url': 'https://foo/bar'}))
+
+    def test_entry_title(self):
+        """test getting entry_title"""
+        self.assertEqual(
+            self.normalizer.get_entry_title({}),
+            'Arctic Ocean Physics Analysis and Forecast, 6.25 km')
+
+    def test_summary(self):
+        """test getting summary"""
+        self.assertEqual(
+            self.normalizer.get_summary({}),
+            'Description: TOPAZ 5 physical model;'
+            'Processing level: 4;'
+            'Product: ARCTIC_ANALYSISFORECAST_PHY_002_001')
+
+    def test_time_coverage_start_dm(self):
+        """Should return the proper starting time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_start({
+                'url': 'https://thredds.met.no/thredds/dodsC/cmems/topaz5_phy_dm_files/2022/09/'
+                       '20220929_dm-metno-MODEL-topaz5-ARC-b20220922-fv02.0.nc.html'
+            }),
+            datetime(year=2022, month=9, day=29, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_start_hourly(self):
+        """Should return the proper starting time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_start({
+                'url': 'https://thredds.met.no/thredds/dodsC/cmems/topaz5_phy_hr_files/2021/11/'
+                       '20211130_hr-metno-MODEL-topaz5-ARC-b20211130-fv02.0.nc.html'
+            }),
+            datetime(year=2021, month=11, day=30, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_end_dm(self):
+        """Should return the proper end time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_end({
+                'url': 'https://thredds.met.no/thredds/dodsC/cmems/topaz5_phy_dm_files/2022/09/'
+                       '20220929_dm-metno-MODEL-topaz5-ARC-b20220922-fv02.0.nc.html'
+            }),
+            datetime(year=2022, month=9, day=30, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_end_hourly(self):
+        """Should return the proper end time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_end({
+                'url': 'https://thredds.met.no/thredds/dodsC/cmems/topaz5_phy_hr_files/2021/11/'
+                       '20211130_hr-metno-MODEL-topaz5-ARC-b20211130-fv02.0.nc.html'
+            }),
+            datetime(year=2021, month=12, day=1, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_location_geometry(self):
+        """test getting geometry"""
+        self.assertEqual(
+            self.normalizer.get_location_geometry({}),
+            'POLYGON((-180 50, -180 90, 180 90, 180 50, -180 50))')
+
+    def test_dataset_parameters(self):
+        """Test getting the dataset parameters"""
+        with self.subTest('hourly'):
+            attributes = {
+                'url': 'https://thredds.met.no/thredds/dodsC/cmems/topaz5_phy_hr_files/2021/11/'
+                       '20211130_hr-metno-MODEL-topaz5-ARC-b20211130-fv02.0.nc.html'
+            }
+            with mock.patch('metanorm.utils.create_parameter_list') as mock_utils_method:
+                self.assertEqual(
+                    self.normalizer.get_dataset_parameters(attributes),
+                    mock_utils_method.return_value)
+                mock_utils_method.assert_called_once_with(
+                    (
+                        'longitude',
+                        'latitude',
+                        'sea_floor_depth_below_geoid',
+                        'sea_water_salinity',
+                        'sea_water_potential_temperature',
+                        'sea_ice_area_fraction',
+                        'sea_ice_thickness',
+                        'surface_snow_thickness',
+                        'sea_ice_x_velocity',
+                        'sea_ice_y_velocity',
+                        'sea_surface_height_above_geoid',
+                        'sea_water_x_velocity',
+                        'sea_water_y_velocity',
+                    )
+                )
+        with self.subTest('daily mean'):
+            attributes = {
+                'url': 'https://thredds.met.no/thredds/dodsC/cmems/topaz5_phy_dm_files/2022/09/'
+                       '20220929_dm-metno-MODEL-topaz5-ARC-b20220922-fv02.0.nc.html'
+            }
+            with mock.patch('metanorm.utils.create_parameter_list') as mock_utils_method:
+                self.assertEqual(
+                    self.normalizer.get_dataset_parameters(attributes),
+                    mock_utils_method.return_value)
+                mock_utils_method.assert_called_once_with(
+                    (
+                        'longitude',
+                        'latitude',
+                        'depth',
+                        'sea_floor_depth_below_geoid',
+                        'sea_water_potential_temperature',
+                        'sea_water_salinity',
+                        'sea_water_x_velocity',
+                        'sea_water_y_velocity',
+                        'ocean_mixed_layer_thickness_defined_by_sigma_theta',
+                        'sea_surface_height_above_geoid',
+                        'ocean_barotropic_streamfunction',
+                        'sea_ice_area_fraction',
+                        'sea_ice_thickness',
+                        'sea_ice_x_velocity',
+                        'sea_ice_y_velocity',
+                        'surface_snow_thickness',
+                        'age_of_sea_ice',
+                        'sea_ice_classification',
+                        'sea_ice_albedo',
+                        'sea_water_potential_temperature_at_sea_floor',
+                    )
+                )
+
+
+class CMEMS002004MetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase):
+    """Tests for the CMEMS002004MetadataNormalizer class"""
+
+    def setUp(self):
+        self.normalizer = normalizers.geospaas.CMEMS002004MetadataNormalizer()
+
+    def test_check(self):
+        """Test the checking condition"""
+        self.assertTrue(self.normalizer.check({
+            'url': 'https://thredds.met.no/thredds/dodsC/cmems/topaz5_bgc_dm_files/2021/10/'
+                   '20211031_dm-metno-MODEL-topaz5_ecosmo-ARC-b20211028-fv02.0.nc.html'}))
+
+        self.assertFalse(self.normalizer.check({}))
+        self.assertFalse(self.normalizer.check({'url': 'https://foo/bar'}))
+
+    def test_entry_title(self):
+        """test getting entry_title"""
+        self.assertEqual(
+            self.normalizer.get_entry_title({}),
+            'Arctic Ocean Biogeochemistry Analysis and Forecast, 6.25 km')
+
+    def test_summary(self):
+        """test getting summary"""
+        self.assertEqual(
+            self.normalizer.get_summary({}),
+            'Description: TOPAZ 5 biochemistry model;'
+            'Processing level: 4;'
+            'Product: ARCTIC_ANALYSISFORECAST_BGC_002_004')
+
+    def test_time_coverage_start_dm(self):
+        """Should return the proper starting time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_start({
+                'url': 'https://thredds.met.no/thredds/dodsC/cmems/topaz5_bgc_dm_files/2021/10/'
+                       '20211031_dm-metno-MODEL-topaz5_ecosmo-ARC-b20211028-fv02.0.nc.html'
+            }),
+            datetime(year=2021, month=10, day=31, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_start_mm(self):
+        """Should return the proper starting time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_start({
+                'url': 'https://thredds.met.no/thredds/dodsC/cmems/topaz5_bgc_mm_files/2020/'
+                       '202011_mm-metno-MODEL-topaz5_ecosmo-ARC-fv02.0.nc.html'
+            }),
+            datetime(year=2020, month=11, day=1, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_end_dm(self):
+        """Should return the proper end time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_end({
+                'url': 'https://thredds.met.no/thredds/dodsC/cmems/topaz5_bgc_dm_files/2021/10/'
+                       '20211031_dm-metno-MODEL-topaz5_ecosmo-ARC-b20211028-fv02.0.nc.html'
+            }),
+            datetime(year=2021, month=11, day=1, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_end_mm(self):
+        """Should return the proper end time"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_end({
+                'url': 'https://thredds.met.no/thredds/dodsC/cmems/topaz5_bgc_mm_files/2020/'
+                       '202011_mm-metno-MODEL-topaz5_ecosmo-ARC-fv02.0.nc.html'
+            }),
+            datetime(year=2020, month=12, day=1, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_location_geometry(self):
+        """test getting geometry"""
+        self.assertEqual(
+            self.normalizer.get_location_geometry({}),
+            'POLYGON((-180 50, -180 90, 180 90, 180 50, -180 50))')
+
+    def test_dataset_parameters(self):
+        """Test getting the dataset parameters"""
+        with self.subTest('monthly mean'):
+            attributes = {
+                'url': 'https://thredds.met.no/thredds/dodsC/cmems/topaz5_bgc_mm_files/2020/'
+                       '202011_mm-metno-MODEL-topaz5_ecosmo-ARC-fv02.0.nc.html'
+            }
+            with mock.patch('metanorm.utils.create_parameter_list') as mock_utils_method:
+                self.assertEqual(
+                    self.normalizer.get_dataset_parameters(attributes),
+                    mock_utils_method.return_value)
+                mock_utils_method.assert_called_once_with(
+                    (
+                        'longitude',
+                        'latitude',
+                        'sea_floor_depth_below_geoid',
+                        ('net_primary_production_of_biomass_'
+                         'expressed_as_carbon_per_unit_volume_in_sea_water'),
+                        'mass_concentration_of_chlorophyll_a_in_sea_water',
+                        'volume_attenuation_coefficient_of_downwelling_radiative_flux_in_sea_water',
+                        'mole_concentration_of_nitrate_in_sea_water',
+                        'mole_concentration_of_phosphate_in_sea_water',
+                        'mole_concentration_of_phytoplankton_expressed_as_carbon_in_sea_water',
+                        'mole_concentration_of_zooplankton_expressed_as_carbon_in_sea_water',
+                        'mole_concentration_of_dissolved_molecular_oxygen_in_sea_water',
+                        'mole_concentration_of_silicate_in_sea_water',
+                        'sinking_mole_flux_of_particulate_organic_matter_expressed_as_carbon_in_sea_water',
+                        'sea_water_ph_reported_on_total_scale',
+                        'mole_concentration_of_dissolved_inorganic_carbon_in_sea_water',
+                        'surface_partial_pressure_of_carbon_dioxide_in_sea_water',
+                    )
+                )
+        with self.subTest('daily mean'):
+            attributes = {
+                'url': 'https://thredds.met.no/thredds/dodsC/cmems/topaz5_bgc_dm_files/2021/10/'
+                       '20211031_dm-metno-MODEL-topaz5_ecosmo-ARC-b20211028-fv02.0.nc.html'
+            }
+            with mock.patch('metanorm.utils.create_parameter_list') as mock_utils_method:
+                self.assertEqual(
+                    self.normalizer.get_dataset_parameters(attributes),
+                    mock_utils_method.return_value)
+                mock_utils_method.assert_called_once_with(
+                    (
+                        'longitude',
+                        'latitude',
+                        'depth',
+                        'sea_floor_depth_below_geoid',
+                        ('net_primary_production_of_biomass_'
+                         'expressed_as_carbon_per_unit_volume_in_sea_water'),
+                        'mass_concentration_of_chlorophyll_a_in_sea_water',
+                        'volume_attenuation_coefficient_of_downwelling_radiative_flux_in_sea_water',
+                        'mole_concentration_of_nitrate_in_sea_water',
+                        'mole_concentration_of_phosphate_in_sea_water',
+                        'mole_concentration_of_phytoplankton_expressed_as_carbon_in_sea_water',
+                        'mole_concentration_of_zooplankton_expressed_as_carbon_in_sea_water',
+                        'mole_concentration_of_dissolved_molecular_oxygen_in_sea_water',
+                        'mole_concentration_of_silicate_in_sea_water',
+                        'sinking_mole_flux_of_particulate_organic_matter_expressed_as_carbon_in_sea_water',
+                        'sea_water_ph_reported_on_total_scale',
+                        'mole_concentration_of_dissolved_inorganic_carbon_in_sea_water',
+                        'surface_partial_pressure_of_carbon_dioxide_in_sea_water',
+                    )
+                )
