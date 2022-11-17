@@ -1,5 +1,6 @@
 """Tests for the CMEMS in situ TAC metadata normalizer"""
 import unittest
+import unittest.mock as mock
 from collections import OrderedDict
 from datetime import datetime
 
@@ -187,34 +188,26 @@ class CMEMSInSituTACMetadataNormalizerTestCase(unittest.TestCase):
         with self.assertRaises(MetadataNormalizationError):
             self.normalizer.get_time_coverage_end({})
 
-    def test_get_platform(self):
-        """get_platform() should return the platform
-        of the dataset
-        """
-        self.assertEqual(
-            self.normalizer.get_platform({}),
-            OrderedDict([
-                ('Category', 'In Situ Ocean-based Platforms'),
-                ('Series_Entity', ''),
-                ('Short_Name', ''),
-                ('Long_Name', '')
-            ]))
+    def test_gcmd_platform(self):
+        """Test getting the platform"""
+        with mock.patch('metanorm.utils.get_gcmd_platform') as mock_get_gcmd_method:
+            self.assertEqual(
+                self.normalizer.get_platform({}),
+                mock_get_gcmd_method.return_value)
 
-    def test_get_instrument(self):
-        """get_instrument() should return the instrument
-        of the dataset
-        """
-        self.assertEqual(
-            self.normalizer.get_instrument({}),
-            OrderedDict([
-                ('Category', 'In Situ/Laboratory Instruments'),
-                ('Class', ''),
-                ('Type', ''),
-                ('Subtype', ''),
-                ('Short_Name', ''),
-                ('Long_Name', '')
-            ])
-        )
+    def test_gcmd_instrument(self):
+        """Test getting the instrument"""
+        with mock.patch('metanorm.utils.get_gcmd_instrument') as mock_get_gcmd_method:
+            self.assertEqual(
+                self.normalizer.get_instrument({}),
+                mock_get_gcmd_method.return_value)
+
+    def test_gcmd_provider(self):
+        """Test getting the provider"""
+        with mock.patch('metanorm.utils.get_gcmd_provider') as mock_get_gcmd_method:
+            self.assertEqual(
+                self.normalizer.get_provider({}),
+                mock_get_gcmd_method.return_value)
 
     def test_get_location_geometry(self):
         """get_location_geometry() should return the location
@@ -228,19 +221,3 @@ class CMEMSInSituTACMetadataNormalizerTestCase(unittest.TestCase):
         attribute is missing
         """
         self.assertEqual(self.normalizer.get_location_geometry({}), '')
-
-    def test_get_provider(self):
-        """get_provider() should return the provider
-        of the dataset
-        """
-        self.assertEqual(
-            self.normalizer.get_provider({}),
-            OrderedDict([
-                ('Bucket_Level0', 'MULTINATIONAL ORGANIZATIONS'),
-                ('Bucket_Level1', ''),
-                ('Bucket_Level2', ''),
-                ('Bucket_Level3', ''),
-                ('Short_Name', 'CMEMS'),
-                ('Long_Name', 'Copernicus - Marine Environment Monitoring Service'),
-                ('Data_Center_URL', '')
-            ]))
