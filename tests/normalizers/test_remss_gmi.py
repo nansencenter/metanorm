@@ -1,11 +1,10 @@
 """Tests for the REMSS GMI normalizer"""
 import unittest
-from collections import OrderedDict
+import unittest.mock as mock
 from datetime import datetime
 from dateutil.tz import tzutc
 
 import metanorm.normalizers as normalizers
-from .data import DATASET_PARAMETERS
 from metanorm.errors import MetadataNormalizationError
 
 
@@ -116,25 +115,26 @@ class REMSSGMIMetadataNormalizerTestCase(unittest.TestCase):
         with self.assertRaises(MetadataNormalizationError):
             self.normalizer.get_time_coverage_end({})
 
-    def test_platform(self):
-        """platform from REMSSGMIMetadataNormalizer """
-        self.assertEqual(
-            self.normalizer.get_platform({}),
-            OrderedDict([('Category', 'Earth Observation Satellites'),
-                         ('Series_Entity', ''),
-                         ('Short_Name', 'GPM'),
-                         ('Long_Name', 'Global Precipitation Measurement')]))
+    def test_gcmd_platform(self):
+        """Test getting the platform"""
+        with mock.patch('metanorm.utils.get_gcmd_platform') as mock_get_gcmd_method:
+            self.assertEqual(
+                self.normalizer.get_platform({}),
+                mock_get_gcmd_method.return_value)
 
-    def test_instrument(self):
-        """instrument from REMSSGMIMetadataNormalizer """
-        self.assertEqual(
-            self.normalizer.get_instrument({}),
-            OrderedDict([('Category', 'Earth Remote Sensing Instruments'),
-                         ('Class', 'Passive Remote Sensing'),
-                         ('Type', 'Spectrometers/Radiometers'),
-                         ('Subtype', 'Imaging Spectrometers/Radiometers'),
-                         ('Short_Name', 'GMI'),
-                         ('Long_Name', 'Global Precipitation Measurement Microwave Imager')]))
+    def test_gcmd_instrument(self):
+        """Test getting the instrument"""
+        with mock.patch('metanorm.utils.get_gcmd_instrument') as mock_get_gcmd_method:
+            self.assertEqual(
+                self.normalizer.get_instrument({}),
+                mock_get_gcmd_method.return_value)
+
+    def test_gcmd_provider(self):
+        """Test getting the provider"""
+        with mock.patch('metanorm.utils.get_gcmd_provider') as mock_get_gcmd_method:
+            self.assertEqual(
+                self.normalizer.get_provider({}),
+                mock_get_gcmd_method.return_value)
 
     def test_location_geometry(self):
         """geometry from REMSSGMIMetadataNormalizer """
@@ -142,23 +142,9 @@ class REMSSGMIMetadataNormalizerTestCase(unittest.TestCase):
             self.normalizer.get_location_geometry({}),
             'POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))')
 
-    def test_provider(self):
-        """provider from REMSSGMIMetadataNormalizer """
-        self.assertEqual(
-            self.normalizer.get_provider({}),
-            OrderedDict([('Bucket_Level0', 'COMMERCIAL'),
-                         ('Bucket_Level1', ''),
-                         ('Bucket_Level2', ''),
-                         ('Bucket_Level3', ''),
-                         ('Short_Name', 'RSS'),
-                         ('Long_Name', 'Remote Sensing Systems'),
-                         ('Data_Center_URL', 'http://www.remss.com/')]))
-
     def test_dataset_parameters(self):
-        """dataset_parameters from REMSSGMIMetadataNormalizer """
-        self.assertEqual(self.normalizer.get_dataset_parameters({}), [
-            DATASET_PARAMETERS['wind_speed'],
-            DATASET_PARAMETERS['atmosphere_mass_content_of_water_vapor'],
-            DATASET_PARAMETERS['atmosphere_mass_content_of_cloud_liquid_water'],
-            DATASET_PARAMETERS['rainfall_rate'],
-        ])
+        """dataset_parameters from CEDAESACCIMetadataNormalizer """
+        with mock.patch('metanorm.utils.create_parameter_list') as mock_get_gcmd_method:
+            self.assertEqual(
+                self.normalizer.get_dataset_parameters({}),
+                mock_get_gcmd_method.return_value)
