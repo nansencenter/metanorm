@@ -61,10 +61,10 @@ class NextsimMetadataNormalizer(GeoSPaaSMetadataNormalizer):
         return self.get_time_coverage_start(raw_metadata) + timedelta(days=1)
 
     def get_platform(self, raw_metadata):
-        return pti.get_gcmd_platform('OPERATIONAL MODELS')
+        return utils.get_gcmd_platform('OPERATIONAL MODELS')
 
     def get_instrument(self, raw_metadata):
-        return pti.get_gcmd_instrument('Computer')
+        return utils.get_gcmd_instrument('Computer')
 
     def get_location_geometry(self, raw_metadata):
         return utils.wkt_polygon_from_wgs84_limits('90', '62', '180', '-180')
