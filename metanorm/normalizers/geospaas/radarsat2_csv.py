@@ -36,10 +36,10 @@ class Radarsat2CSVMetadataNormalizer(GeoSPaaSMetadataNormalizer):
         return self.get_time_coverage_start(raw_metadata) + timedelta(minutes=5)
 
     def get_platform(self, raw_metadata):
-        return pti.get_gcmd_platform('RADARSAT-2')
+        return utils.get_gcmd_platform('RADARSAT-2')
 
     def get_instrument(self, raw_metadata):
-        return pti.get_gcmd_instrument('C-SAR')
+        return utils.get_gcmd_instrument('C-SAR')
 
     @utils.raises(KeyError)
     def get_location_geometry(self, raw_metadata):
@@ -50,7 +50,7 @@ class Radarsat2CSVMetadataNormalizer(GeoSPaaSMetadataNormalizer):
                 f"{footprint[8]} {footprint[9]}))")
 
     def get_provider(self, raw_metadata):
-        return pti.get_gcmd_provider('CSA')
+        return utils.get_gcmd_provider(['CSA'])
 
     def get_dataset_parameters(self, raw_metadata):
-        return [pti.get_wkv_variable('surface_backwards_scattering_coefficient_of_radar_wave')]
+        return utils.create_parameter_list('surface_backwards_scattering_coefficient_of_radar_wave')
