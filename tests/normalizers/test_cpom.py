@@ -2,7 +2,6 @@
 
 import unittest
 import unittest.mock as mock
-from collections import OrderedDict
 from datetime import datetime, timezone
 
 import metanorm.normalizers as normalizers
