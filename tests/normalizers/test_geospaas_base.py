@@ -3,7 +3,6 @@
 import logging
 import unittest
 import unittest.mock as mock
-from collections import OrderedDict
 
 import metanorm.errors as errors
 import metanorm.normalizers as normalizers
@@ -74,10 +73,11 @@ class GeoSPaaSMetadataNormalizerTestCase(unittest.TestCase):
         """get_iso_topic_category() should return the "Oceans" keyword
         as default value
         """
-        self.assertDictEqual(
-            self.normalizer.get_iso_topic_category({}),
-            OrderedDict([('iso_topic_category', 'Oceans')])
-        )
+        with mock.patch('pythesint.get_iso19115_topic_category') as mock_get_gcmd_method:
+            self.assertEqual(
+                self.normalizer.get_iso_topic_category({}),
+                mock_get_gcmd_method.return_value)
+            mock_get_gcmd_method.assert_called_with('Oceans')
 
     def test_iso_topic_category_pti_error(self):
         """A MetadataNormalizationError must be raised in case of pythesint error"""
@@ -89,16 +89,11 @@ class GeoSPaaSMetadataNormalizerTestCase(unittest.TestCase):
         """get_gcmd_location() should return the "SEA SURFACE" keyword
         as default value
         """
-        self.assertDictEqual(
-            self.normalizer.get_gcmd_location({}),
-            OrderedDict([
-                ('Location_Category', 'VERTICAL LOCATION'),
-                ('Location_Type', 'SEA SURFACE'),
-                ('Location_Subregion1', ''),
-                ('Location_Subregion2', ''),
-                ('Location_Subregion3', '')
-            ])
-        )
+        with mock.patch('pythesint.get_gcmd_location') as mock_get_gcmd_method:
+            self.assertEqual(
+                self.normalizer.get_gcmd_location({}),
+                mock_get_gcmd_method.return_value)
+            mock_get_gcmd_method.assert_called_with('SEA SURFACE')
 
     def test_gcmd_location_pti_error(self):
         """A MetadataNormalizationError must be raised in case of pythesint error"""
