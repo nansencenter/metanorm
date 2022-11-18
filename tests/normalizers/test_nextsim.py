@@ -1,11 +1,10 @@
-"""Tests for the CPOM altimetry normalizer"""
+"""Tests for the nextsim normalizer"""
 
 import unittest
-from collections import OrderedDict
+import unittest.mock as mock
 from datetime import datetime, timezone
 
 import metanorm.normalizers as normalizers
-from .data import DATASET_PARAMETERS
 from metanorm.errors import MetadataNormalizationError
 
 
@@ -88,24 +87,26 @@ class NextsimMetadataNormalizerTests(unittest.TestCase):
         with self.assertRaises(MetadataNormalizationError):
             self.normalizer.get_time_coverage_end({})
 
-    def test_get_platform(self):
+    def test_gcmd_platform(self):
         """Test getting the platform"""
-        self.assertDictEqual(self.normalizer.get_platform({}),
-                             OrderedDict([('Category', 'Models/Analyses'),
-                                          ('Series_Entity', ''),
-                                          ('Short_Name', 'OPERATIONAL MODELS'),
-                                          ('Long_Name', '')]))
+        with mock.patch('metanorm.utils.get_gcmd_platform') as mock_get_gcmd_method:
+            self.assertEqual(
+                self.normalizer.get_platform({}),
+                mock_get_gcmd_method.return_value)
 
-    def test_get_instrument(self):
+    def test_gcmd_instrument(self):
         """Test getting the instrument"""
-        self.assertDictEqual(
-            self.normalizer.get_instrument({}),
-            OrderedDict([('Category', 'In Situ/Laboratory Instruments'),
-                         ('Class', 'Data Analysis'),
-                         ('Type', 'Environmental Modeling'),
-                         ('Subtype', ''),
-                         ('Short_Name', 'Computer'),
-                         ('Long_Name', 'Computer')]))
+        with mock.patch('metanorm.utils.get_gcmd_instrument') as mock_get_gcmd_method:
+            self.assertEqual(
+                self.normalizer.get_instrument({}),
+                mock_get_gcmd_method.return_value)
+
+    def test_gcmd_provider(self):
+        """Test getting the provider"""
+        with mock.patch('metanorm.utils.get_gcmd_provider') as mock_get_gcmd_method:
+            self.assertEqual(
+                self.normalizer.get_provider({}),
+                mock_get_gcmd_method.return_value)
 
     def test_get_location_geometry(self):
         """get_location_geometry() should return the location
@@ -114,46 +115,3 @@ class NextsimMetadataNormalizerTests(unittest.TestCase):
         self.assertEqual(
             self.normalizer.get_location_geometry({}),
             'POLYGON((-180 62,180 62,180 90,-180 90,-180 62))')
-
-    def test_get_provider(self):
-        """Test getting the provider"""
-        self.assertDictEqual(
-            self.normalizer.get_provider({}),
-            OrderedDict([
-                ('Bucket_Level0', 'CONSORTIA/INSTITUTIONS'),
-                ('Bucket_Level1', ''),
-                ('Bucket_Level2', ''),
-                ('Bucket_Level3', ''),
-                ('Short_Name', 'NERSC'),
-                ('Long_Name', 'Nansen Environmental and Remote Sensing Centre'),
-                ('Data_Center_URL', 'http://www.nersc.no/main/index2.php')]))
-
-    def test_get_parameters(self):
-        """Test getting the only dataset parameter"""
-        self.assertListEqual(
-            self.normalizer.get_dataset_parameters({
-                'raw_dataset_parameters': [
-                    'projection_y_coordinate',
-                    'projection_x_coordinate',
-                    'longitude',
-                    'latitude',
-                    'time',
-                    'sea_ice_area_fraction',
-                    'sea_ice_thickness',
-                    'surface_snow_thickness',
-                    'sea_ice_x_velocity',
-                    'sea_ice_y_velocity'
-                ],
-            }),
-            [
-                DATASET_PARAMETERS['projection_y_coordinate'],
-                DATASET_PARAMETERS['projection_x_coordinate'],
-                DATASET_PARAMETERS['longitude'],
-                DATASET_PARAMETERS['latitude'],
-                DATASET_PARAMETERS['time'],
-                DATASET_PARAMETERS['sea_ice_area_fraction'],
-                DATASET_PARAMETERS['sea_ice_thickness'],
-                DATASET_PARAMETERS['surface_snow_thickness'],
-                DATASET_PARAMETERS['sea_ice_x_velocity'],
-                DATASET_PARAMETERS['sea_ice_y_velocity']
-            ])
