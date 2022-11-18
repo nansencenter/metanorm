@@ -223,25 +223,16 @@ class ScihubODataMetadataNormalizerTestCase(unittest.TestCase):
     def test_dataset_parameters_sentinel1(self):
         """Test getting the dataset parameters for Sentinel 1 datasets
         """
-        self.assertListEqual(
-            self.normalizer.get_dataset_parameters({
-                'Identifier': 'S1B_IW_GRDH_1SDV_20210916T103902_20210916T103927_028722_036D80_C8D0'
-            }),
-            [
-                OrderedDict([
-                    ('standard_name', 'surface_backwards_scattering_coefficient_of_radar_wave'),
-                    ('canonical_units', '1'),
-                    ('definition', 'The scattering/absorption/attenuation coefficient is assumed to'
-                                   ' be an integral over all wavelengths, unless a coordinate of '
-                                   'radiation_wavelength is included to specify the wavelength. '
-                                   'Scattering of radiation is its deflection from its incident '
-                                   'path without loss of energy. Backwards scattering refers to the'
-                                   ' sum of scattering into all backward angles i.e. '
-                                   'scattering_angle exceeding pi/2 radians. A scattering_angle '
-                                   'should not be specified with this quantity.')
-                ])
-            ]
-        )
+        with mock.patch('metanorm.utils.create_parameter_list') as mock_get_gcmd_method:
+            self.assertEqual(
+                self.normalizer.get_dataset_parameters({
+                    'Identifier': 'S1B_IW_GRDH_1SDV_20210916T103902_20210916T103927_028722_036D80_'
+                                  'C8D0',
+                }),
+                mock_get_gcmd_method.return_value)
+            mock_get_gcmd_method.assert_called_with([
+                'surface_backwards_scattering_coefficient_of_radar_wave'
+            ])
 
     def test_unknown_dataset_parameters(self):
         """An empty list should be returned if no parameter is found"""
