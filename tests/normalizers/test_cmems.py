@@ -9,8 +9,8 @@ import metanorm.normalizers as normalizers
 from metanorm.errors import MetadataNormalizationError
 
 
-class GCMDTestsBuiltin():
-    """Builtin used to easily add test methods for GCMD searches
+class GCMDTestsMixin():
+    """Mixin used to easily add test methods for GCMD searches
     """
 
     def test_gcmd_platform(self):
@@ -102,7 +102,7 @@ class CMEMSMetadataNormalizerTestCase(unittest.TestCase):
             self.normalizer.get_time_coverage_end({})
 
 
-class CMEMS008046MetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase):
+class CMEMS008046MetadataNormalizerTestCase(GCMDTestsMixin, unittest.TestCase):
     """Tests for the CMEMS008046MetadataNormalizer class"""
 
     def setUp(self):
@@ -158,7 +158,7 @@ class CMEMS008046MetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase)
             'POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))')
 
 
-class CMEMS015003MetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase):
+class CMEMS015003MetadataNormalizerTestCase(GCMDTestsMixin, unittest.TestCase):
     """Tests for the CMEMS015003MetadataNormalizer class"""
 
     def setUp(self):
@@ -261,7 +261,7 @@ class CMEMS015003MetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase)
             'POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))')
 
 
-class CMEMS001024MetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase):
+class CMEMS001024MetadataNormalizerTestCase(GCMDTestsMixin, unittest.TestCase):
     """Tests for the CMEMS001024MetadataNormalizer class"""
 
     def setUp(self):
@@ -444,7 +444,7 @@ class CMEMS001024MetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase)
             'POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))')
 
 
-class CMEMS006013MetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase):
+class CMEMS006013MetadataNormalizerTestCase(GCMDTestsMixin, unittest.TestCase):
     """Tests for the CMEMS006013MetadataNormalizer class"""
 
     def setUp(self):
@@ -711,7 +711,7 @@ class CMEMS006013MetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase)
             self.normalizer.get_dataset_parameters({})
 
 
-class CMEMS005001MetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase):
+class CMEMS005001MetadataNormalizerTestCase(GCMDTestsMixin, unittest.TestCase):
     """Tests for the CMEMS005001MetadataNormalizer class"""
 
     def setUp(self):
@@ -970,7 +970,7 @@ class CMEMS005001MetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase)
             self.normalizer.get_dataset_parameters({})
 
 
-class CMEMS002003MetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase):
+class CMEMS002003MetadataNormalizerTestCase(GCMDTestsMixin, unittest.TestCase):
     """Tests for the CMEMS002003MetadataNormalizer class"""
 
     def setUp(self):
@@ -1072,7 +1072,7 @@ class CMEMS002003MetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase)
             'POLYGON((-180 53, -180 90, 180 90, 180 53, -180 53))')
 
 
-class CMEMS002001aMetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase):
+class CMEMS002001aMetadataNormalizerTestCase(GCMDTestsMixin, unittest.TestCase):
     """Tests for the CMEMS002001aMetadataNormalizer class"""
 
     def setUp(self):
@@ -1158,7 +1158,7 @@ class CMEMS002001aMetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase
         self.assertEqual(self.normalizer.get_dataset_parameters({'url': 'https://foo'}), [])
 
 
-class CMEMS002001MetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase):
+class CMEMS002001MetadataNormalizerTestCase(GCMDTestsMixin, unittest.TestCase):
     """Tests for the CMEMS002001MetadataNormalizer class"""
 
     def setUp(self):
@@ -1300,7 +1300,7 @@ class CMEMS002001MetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase)
                 self.assertEqual(self.normalizer.get_dataset_parameters({'url': 'https://foo'}), [])
 
 
-class CMEMS002004MetadataNormalizerTestCase(GCMDTestsBuiltin, unittest.TestCase):
+class CMEMS002004MetadataNormalizerTestCase(GCMDTestsMixin, unittest.TestCase):
     """Tests for the CMEMS002004MetadataNormalizer class"""
 
     def setUp(self):
