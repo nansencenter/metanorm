@@ -702,8 +702,7 @@ class CMEMS002004MetadataNormalizer(CMEMSMetadataNormalizer):
 
 
 class CMEMS001027MetadataNormalizer(CMEMSMetadataNormalizer):
-    """Normalizer for the GLOBAL_ANALYSISFORECAST_WAV_001_027
-    product
+    """Normalizer for the GLOBAL_ANALYSISFORECAST_WAV_001_027 product
     """
 
     url_prefix = 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSISFORECAST_WAV_001_027'
