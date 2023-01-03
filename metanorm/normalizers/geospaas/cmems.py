@@ -699,3 +699,64 @@ class CMEMS002004MetadataNormalizer(CMEMSMetadataNormalizer):
             if prefix in raw_metadata['url']:
                 return utils.create_parameter_list(parameter_list)
         return []
+
+
+class CMEMS001027MetadataNormalizer(CMEMSMetadataNormalizer):
+    """Normalizer for the GLOBAL_ANALYSISFORECAST_WAV_001_027
+    product
+    """
+
+    url_prefix = 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSISFORECAST_WAV_001_027'
+    time_patterns = (
+        (
+            re.compile(r'/mfwamglocep_' + utils.YEARMONTHDAY_REGEX + r'00_R[0-9]{8}.*\.nc$'),
+            utils.create_datetime,
+            lambda time: (time, time + relativedelta(hours=24))
+        ),
+    )
+
+    def get_entry_title(self, raw_metadata):
+        return 'Global Ocean Waves Analysis and Forecast'
+
+    def get_summary(self, raw_metadata):
+        return utils.dict_to_string({
+            utils.SUMMARY_FIELDS['description']:
+            'The operational global ocean analysis and forecast system of Météo-France with a '
+            'resolution of 1/12 degree is providing daily analyses and 10 days forecasts for the '
+            'global ocean sea surface waves. This product includes 3-hourly instantaneous fields of'
+            ' integrated wave parameters from the total spectrum (significant height, period, '
+            'direction, Stokes drift,...etc), as well as the following partitions: the wind wave, '
+            'the primary and secondary swell waves.',
+            utils.SUMMARY_FIELDS['processing_level']: '4',
+            utils.SUMMARY_FIELDS['product']: 'GLOBAL_ANALYSISFORECAST_WAV_001_027'
+        })
+
+    def get_platform(self, raw_metadata):
+        return utils.get_gcmd_platform('OPERATIONAL MODELS')
+
+    def get_instrument(self, raw_metadata):
+        return utils.get_gcmd_instrument('Computers')
+
+    def get_location_geometry(self, raw_metadata):
+        return utils.WORLD_WIDE_COVERAGE_WKT
+
+    def get_dataset_parameters(self, raw_metadata):
+        return utils.create_parameter_list((
+            'sea_surface_wave_significant_height',
+            'sea_surface_wind_wave_from_direction',
+            'sea_surface_wind_wave_significant_height',
+            'sea_surface_primary_swell_wave_from_direction',
+            'sea_surface_primary_swell_wave_mean_period',
+            'sea_surface_secondary_swell_wave_from_direction',
+            'sea_surface_secondary_swell_wave_mean_period',
+            'sea_surface_wave_from_direction',
+            'sea_surface_wave_mean_period_from_variance_spectral_density_inverse_frequency_moment',
+            'sea_surface_primary_swell_wave_significant_height',
+            'sea_surface_secondary_swell_wave_significant_height',
+            'sea_surface_wave_period_at_variance_spectral_density_maximum',
+            'sea_surface_wave_stokes_drift_x_velocity',
+            'sea_surface_wave_stokes_drift_y_velocity',
+            'sea_surface_wave_from_direction_at_variance_spectral_density_maximum',
+            'sea_surface_wave_mean_period_from_variance_spectral_density_second_frequency_moment',
+            'sea_surface_wind_wave_mean_period',
+        ))
