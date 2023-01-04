@@ -734,7 +734,7 @@ class CMEMS001027MetadataNormalizer(CMEMSMetadataNormalizer):
         return utils.get_gcmd_platform('OPERATIONAL MODELS')
 
     def get_instrument(self, raw_metadata):
-        return utils.get_gcmd_instrument('Computers')
+        return utils.get_gcmd_instrument('Computer')
 
     def get_location_geometry(self, raw_metadata):
         return utils.WORLD_WIDE_COVERAGE_WKT
@@ -797,7 +797,7 @@ class CMEMS001028MetadataNormalizer(CMEMSMetadataNormalizer):
         return utils.get_gcmd_platform('OPERATIONAL MODELS')
 
     def get_instrument(self, raw_metadata):
-        return utils.get_gcmd_instrument('Computers')
+        return utils.get_gcmd_instrument('Computer')
 
     def get_location_geometry(self, raw_metadata):
         return utils.WORLD_WIDE_COVERAGE_WKT
