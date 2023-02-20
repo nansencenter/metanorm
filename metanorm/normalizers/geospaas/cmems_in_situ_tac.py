@@ -80,10 +80,10 @@ class CMEMSInSituTACMetadataNormalizer(GeoSPaaSMetadataNormalizer):
         return dateutil.parser.parse(raw_metadata['time_coverage_end'])
 
     def get_platform(self, raw_metadata):
-        return pti.get_gcmd_platform('In Situ Ocean-based Platforms')
+        return utils.get_gcmd_platform('In Situ Ocean-based Platforms')
 
     def get_instrument(self, raw_metadata):
-        return pti.get_gcmd_instrument('In Situ/Laboratory Instruments')
+        return utils.get_gcmd_instrument('In Situ/Laboratory Instruments')
 
     @utils.raises(KeyError)
     def get_location_geometry(self, raw_metadata):

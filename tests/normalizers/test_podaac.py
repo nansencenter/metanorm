@@ -2,7 +2,6 @@
 
 import unittest
 import unittest.mock as mock
-from collections import OrderedDict
 from datetime import datetime, timezone
 
 import metanorm.normalizers as normalizers
@@ -119,11 +118,12 @@ class PODAACMetadataNormalizerTestCase(unittest.TestCase):
         with self.assertRaises(MetadataNormalizationError):
             self.normalizer.get_time_coverage_end({})
 
-    def test_get_platform(self):
+    def test_gcmd_platform(self):
         """Test getting the platform"""
-        with mock.patch('metanorm.utils.get_gcmd_platform') as mock_get_platform:
-            mock_get_platform.side_effect = lambda p: {'SENTINEL-1A': 'foo'}[p]
-            self.assertEqual(self.normalizer.get_platform({'platform': 'SENTINEL-1A'}), 'foo')
+        with mock.patch('metanorm.utils.get_gcmd_platform') as mock_get_gcmd_method:
+            self.assertEqual(
+                self.normalizer.get_platform({'platform': 'SENTINEL-1A'}),
+                mock_get_gcmd_method.return_value)
 
     def test_missing_platform(self):
         """A MetadataNormalizationError must be raised when the
@@ -132,11 +132,12 @@ class PODAACMetadataNormalizerTestCase(unittest.TestCase):
         with self.assertRaises(MetadataNormalizationError):
             self.normalizer.get_platform({})
 
-    def test_get_instrument(self):
+    def test_gcmd_instrument(self):
         """Test getting the instrument"""
-        with mock.patch('metanorm.utils.get_gcmd_instrument') as mock_get_instrument:
-            mock_get_instrument.side_effect = lambda p: {'VIIRS': 'foo'}[p]
-            self.assertEqual(self.normalizer.get_instrument({'sensor': 'VIIRS'}), 'foo')
+        with mock.patch('metanorm.utils.get_gcmd_instrument') as mock_get_gcmd_method:
+            self.assertEqual(
+                self.normalizer.get_instrument({'sensor': 'VIIRS'}),
+                mock_get_gcmd_method.return_value)
 
     def test_missing_sensor(self):
         """A MetadataNormalizationError must be raised when the
@@ -191,19 +192,20 @@ class PODAACMetadataNormalizerTestCase(unittest.TestCase):
             '-148.262 60.4, '
             '-147.443 25.982, '
             '-177.157 21.48, '
-            '-180 25.71789582937487, '
+            '-180 25.717895829374868, '
             '-180 55.60946639437804, '
             '-148.262 60.4)), '
-            '((180 25.71789582937487, '
+            '((180 25.717895829374868, '
             '161.791 52.861, '
             '180 55.60946639437804, '
-            '180 25.71789582937487)))')
+            '180 25.717895829374868)))')
 
     def test_get_location_geometry_from_geospatial_bounds_split_multipolygon(self):
         """Test getting the location geometry from the
         geospatial_bounds attribute with a multipolygon crossing the
         IDL
         """
+        self.maxDiff = None
         geometry = ('MULTIPOLYGON('
             '((-188.525390625 60.37042901631506,'
             '-165.14648437500003 56.46249048388978,'
@@ -227,32 +229,32 @@ class PODAACMetadataNormalizerTestCase(unittest.TestCase):
             }),
             'MULTIPOLYGON ('
             '((171.474609375 60.37042901631506, '
-            '180 58.94535368682163, '
+            '180 58.945353686821626, '
             '180 57.89199918002712, '
             '171.474609375 60.37042901631506)), '
-            '((-180 58.94535368682163, '
-            '-165.146484375 56.46249048388978, '
-            '-180 51.10473353644537, '
+            '((-180 58.945353686821626, '
+            '-165.14648437500003 56.46249048388978, '
+            '-180 51.104733536445366, '
             '-180 52.38008427459071, '
-            '-173.2324218750001 55.92458580482949, '
-            '-180 57.89199918002712, -180 58.94535368682163)), '
-            '((180 51.10473353644537, '
-            '172.177734375 48.2831928954835, '
+            '-173.23242187500006 55.92458580482949, '
+            '-180 57.89199918002712, -180 58.945353686821626)), '
+            '((180 51.104733536445366, '
+            '172.17773437499997 48.283192895483495, '
             '180 52.38008427459071, '
-            '180 51.10473353644537)), '
-            '((175.166015625 57.98480801923986, '
-            '180 56.80657678152991, '
+            '180 51.104733536445366)), '
+            '((175.166015625 57.984808019239864, '
+            '180 56.806576781529905, '
             '180 54.85557165879511, '
             '174.7265625 52.48278022207825, '
-            '175.166015625 57.98480801923986), '
-            '(178.154296875 56.63206372054478, '
-            '175.693359375 55.67758441108953, '
-            '178.505859375 54.80068486732236, '
-            '178.154296875 56.63206372054478)), '
-            '((-180 56.80657678152991, '
-            '-177.1875 56.12106042504411, '
+            '175.166015625 57.984808019239864), '
+            '(178.15429687500003 56.63206372054478, '
+            '175.693359375 55.677584411089526, '
+            '178.50585937500003 54.80068486732236, '
+            '178.15429687500003 56.63206372054478)), '
+            '((-180 56.806576781529905, '
+            '-177.18749999999997 56.12106042504411, '
             '-180 54.85557165879511, '
-            '-180 56.80657678152991)))')
+            '-180 56.806576781529905)))')
 
     def test_get_location_geometry_split_global_coverage(self):
         """Test getting the location geometry from a global bounding
@@ -327,19 +329,9 @@ class PODAACMetadataNormalizerTestCase(unittest.TestCase):
         with self.assertRaises(MetadataNormalizationError):
             self.normalizer.get_location_geometry({'northernmost_latitude': '9'})
 
-    def test_get_provider(self):
+    def test_gcmd_provider(self):
         """Test getting the provider"""
-        self.assertDictEqual(
-            self.normalizer.get_provider({}),
-            OrderedDict([
-                ('Bucket_Level0', 'GOVERNMENT AGENCIES-U.S. FEDERAL AGENCIES'),
-                ('Bucket_Level1', 'NASA'),
-                ('Bucket_Level2', ''),
-                ('Bucket_Level3', ''),
-                ('Short_Name', 'NASA/JPL/PODAAC'),
-                ('Long_Name',
-                 'Physical Oceanography Distributed Active Archive Center, Jet Propulsion '
-                 'Laboratory, NASA'),
-                ('Data_Center_URL', 'https://podaac.jpl.nasa.gov/')
-            ])
-        )
+        with mock.patch('metanorm.utils.get_gcmd_provider') as mock_get_gcmd_method:
+            self.assertEqual(
+                self.normalizer.get_provider({}),
+                mock_get_gcmd_method.return_value)

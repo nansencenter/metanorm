@@ -7,6 +7,7 @@ from datetime import datetime
 
 from dateutil.relativedelta import relativedelta
 from dateutil.tz import tzutc
+import shapely.geometry
 
 import metanorm.errors as errors
 import metanorm.utils as utils
@@ -115,14 +116,133 @@ class UtilsTestCase(unittest.TestCase):
         self.assertEqual(utils.translate_pythesint_keyword(translation_dict, 'alias22'), 'keyword2')
         self.assertEqual(utils.translate_pythesint_keyword(translation_dict, 'alias3'), 'alias3')
 
-    def test_get_gcmd_metopb_platform(self):
-        """Test getting the right METOP-B platform"""
+    def test_get_gcmd_provider(self):
+        """Test looking for a GCMD provider"""
+        placeholder = {'foo': 'bar'}
+        with mock.patch('metanorm.utils.gcmd_search', side_effect=[None, placeholder]):
+            self.assertEqual(utils.get_gcmd_provider('baz'), placeholder)
+
+    def test_get_gcmd_provider_not_found(self):
+        """Test looking for a GCMD provider and not finding any"""
+        with mock.patch('metanorm.utils.gcmd_search', return_value=None):
+            self.assertIsNone(utils.get_gcmd_provider('baz'))
+
+    def test_get_gcmd_platform(self):
+        """Test getting a GCMD platform"""
+        placeholder = {'foo': 'bar'}
+        with mock.patch('metanorm.utils.gcmd_search', return_value=placeholder):
+            self.assertEqual(utils.get_gcmd_platform('baz'), placeholder)
+
+    def test_get_gcmd_platform_unknown(self):
+        """Test getting an unknown GCMD platform"""
+        with mock.patch('metanorm.utils.gcmd_search', return_value=None):
+            self.assertEqual(
+                utils.get_gcmd_platform('foo'),
+                OrderedDict([
+                    ('Category', utils.UNKNOWN),
+                    ('Series_Entity', utils.UNKNOWN),
+                    ('Short_Name', 'foo'),
+                    ('Long_Name', 'foo')
+                ]))
+
+    def test_get_gcmd_instrument(self):
+        """Test getting a GCMD instrument"""
+        placeholder = {'foo': 'bar'}
+        with mock.patch('metanorm.utils.gcmd_search', return_value=placeholder):
+            self.assertEqual(utils.get_gcmd_instrument('baz'), placeholder)
+
+    def test_get_gcmd_instrument_unknown(self):
+        """Test getting an unknown GCMD instrument"""
+        with mock.patch('metanorm.utils.gcmd_search', return_value=None):
+            self.assertEqual(
+                utils.get_gcmd_instrument('foo'),
+                OrderedDict([
+                    ('Category', utils.UNKNOWN),
+                    ('Class', utils.UNKNOWN),
+                    ('Type', utils.UNKNOWN),
+                    ('Subtype', utils.UNKNOWN),
+                    ('Short_Name', 'foo'),
+                    ('Long_Name', 'foo')
+                ]))
+
+    def test_gcmd_search_one_result(self):
+        """Test searching GCMD vocabularies when only one result is
+        found by Pythesint
+        """
+        with mock.patch("pythesint.json_vocabulary.JSONVocabulary.get_list",
+                        return_value=[{'foo': 'bar', 'baz': 'qux'}]):
+            self.assertEqual(
+                utils.gcmd_search('instrument', 'bar', ['quux']),
+                {'foo': 'bar', 'baz': 'qux'})
+
+    def test_gcmd_search_unambiguous_selection(self):
+        """Test searching GCMD vocabularies when multiple results are
+        found by pythesint and an additional keyword allows to select
+        one without ambiguity
+        """
+        search_results = [
+            {'foo': 'bar', 'baz': 'qux'},
+            {'foo': 'bar', 'baz': 'quux'},
+        ]
+        with mock.patch("pythesint.json_vocabulary.JSONVocabulary.get_list",
+                        return_value=search_results):
+            self.assertEqual(
+                utils.gcmd_search('instrument', 'bar', ['quux']),
+                {'foo': 'bar', 'baz': 'quux'})
+
+    def test_gcmd_search_arbitrary_selection(self):
+        """Test searching GCMD vocabularies when multiple results are
+        found by pythesint and the additional keyword does not allow to
+        select one. The first result is then selected.
+        """
+        search_results = [
+            {'foo': 'bar', 'baz': 'qux'},
+            {'foo': 'bar', 'baz': 'qux', 'corge': 'grault'},
+        ]
+        with mock.patch("pythesint.json_vocabulary.JSONVocabulary.get_list",
+                        return_value=search_results):
+            self.assertEqual(
+                utils.gcmd_search('instrument', 'bar', ['qux']),
+                {'foo': 'bar', 'baz': 'qux'})
+
+    def test_gcmd_search_no_result(self):
+        """Test searching GCMD vocabularies when no result is found"""
+        with mock.patch("pythesint.json_vocabulary.JSONVocabulary.get_list", return_value=[]):
+            self.assertIsNone(utils.gcmd_search('instrument', 'bar', ['qux']))
+
+    def test_restrict_gcmd_search(self):
+        """Test restricting the results of a GCMD search using
+        additional keywords. The keyword which restricts the search
+        the most should be used
+        """
+        search_results = [
+            {'foo': 'bar', 'baz': 'qux'},
+            {'foo': 'bar', 'baz': 'qux', 'corge': 'grault'},
+        ]
         self.assertEqual(
-            utils.get_gcmd_platform('METOP_B'),
-            OrderedDict([('Category', 'Earth Observation Satellites'),
-                         ('Series_Entity', 'METOP'),
-                         ('Short_Name', 'METOP-B'),
-                         ('Long_Name', 'Meteorological Operational Satellite - B')]))
+            utils.restrict_gcmd_search(search_results, ['qux', 'grault']),
+            [{'foo': 'bar', 'baz': 'qux', 'corge': 'grault'}])
+
+    def test_get_cf_standard_name(self):
+        """Test getting a standardized dataset parameter from the CF
+        vocabulary
+        """
+        placeholder = {'foo': 'bar'}
+        with mock.patch('pythesint.get_cf_standard_name', return_value=placeholder):
+            self.assertEqual(
+                utils.get_cf_or_wkv_standard_name('baz'),
+                placeholder)
+
+    def test_get_wkv_standard_name(self):
+        """Test getting a standardized dataset parameter from the well
+        known vocabularies
+        """
+        placeholder = {'foo': 'bar'}
+        with mock.patch('pythesint.get_cf_standard_name', side_effect=IndexError), \
+                mock.patch('pythesint.get_wkv_variable', return_value=placeholder):
+            self.assertEqual(
+                utils.get_cf_or_wkv_standard_name('baz'),
+                placeholder)
 
     def test_raises_decorator(self):
         """Test that the `raises()` decorator raises a
@@ -166,6 +286,94 @@ class UtilsTestCase(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             get_foo(mock.Mock(), {})
+
+    def test_wkt_polygon_from_wgs84_limits(self):
+        """Test making a WKT polygon string from box bounds"""
+        self.assertEqual(
+            utils.wkt_polygon_from_wgs84_limits(90, 60, 180, -180),
+            'POLYGON((-180 60,180 60,180 90,-180 90,-180 60))')
+
+    def test_translate_west_coordinates(self):
+        """Test translating west coordinates from [-180, 0[ to
+        [180, 360[
+        """
+        self.assertEqual(
+            utils.translate_west_coordinates(
+                shapely.geometry.MultiPolygon([(
+                    [(10, 80), (-10, 90), (-180, 80), (10, 80)],
+                    [((-20, 83), (-20, 82), (-40, 81), (-20, 83))]
+                )])),
+            shapely.geometry.MultiPolygon([(
+                [(10, 80), (350, 90), (180, 80), (10, 80)],
+                [((340, 83), (340, 82), (320, 81), (340, 83))]
+            )])
+        )
+
+    def test_restore_west_coordinates_east_idl(self):
+        """Test translating west coordinates back to [-180, 0[ for a
+        polygon on the east side of the IDL
+        """
+        self.assertEqual(
+            utils.restore_west_coordinates(
+                shapely.geometry.MultiPolygon([(
+                    [(180, 80), (350, 80), (350, 90), (180, 80)],
+                    [((340, 83), (340, 82), (320, 81), (340, 83))]
+                )])),
+            shapely.geometry.MultiPolygon([(
+                [(-180, 80), (-10, 80), (-10, 90), (-180, 80)],
+                [((-20, 83), (-20, 82), (-40, 81), (-20, 83))]
+            )])
+        )
+
+    def test_restore_west_coordinates_west_idl(self):
+        """Test translating west coordinates back to [-180, 0[ for a
+        polygon on the west side of the IDL. No modification should be
+        made
+        """
+        self.assertEqual(
+            utils.restore_west_coordinates(
+                shapely.geometry.MultiPolygon([
+                    ([(10, 80), (10, 90), (20, 80), (10, 80)], [])
+                ])),
+            shapely.geometry.MultiPolygon([
+                ([(10, 80), (10, 90), (20, 80), (10, 80)], [])
+            ])
+        )
+
+    def test_split_multipolygon_along_idl(self):
+        """Test splitting a multipolygon along the IDL"""
+        self.assertEqual(
+            utils.split_multipolygon_along_idl(
+                shapely.geometry.MultiPolygon([
+                    ([(-170, 80), (-170, 90), (170, 90), (170, 80), (-170, 80)], [])
+                ])),
+            shapely.geometry.MultiPolygon([
+                ([(-180, 90), (-170, 90), (-170, 80), (-180, 80), (-180, 90)], []),
+                ([(180, 80), (170, 80), (170, 90), (180, 90), (180, 80)], []),
+            ])
+        )
+
+    def test_split_multipolygon_along_idl_global_coverage(self):
+        """When a dataset has global coverage, not splitting is needed"""
+        multipolygon = shapely.geometry.MultiPolygon([
+            ([(-180, 90), (-180, -90), (180, -90), (180, 90), (-180, 90)], [])
+        ])
+        self.assertEqual(
+            utils.split_multipolygon_along_idl(multipolygon),
+            multipolygon)
+
+    def test_create_parameter_list(self):
+        """Test creating a parameter list from a list of names"""
+        def get_cf_or_wkv_standard_name_side_effect(name):
+            """Side effect function used for testing"""
+            return {'long_name': name}
+
+        with mock.patch('metanorm.utils.get_cf_or_wkv_standard_name',
+                        side_effect=get_cf_or_wkv_standard_name_side_effect):
+            self.assertListEqual(
+                utils.create_parameter_list(('foo', 'bar')),
+                [{'long_name': 'foo'}, {'long_name': 'bar'}]
+            )
 
 
 class SubclassesTestCase(unittest.TestCase):

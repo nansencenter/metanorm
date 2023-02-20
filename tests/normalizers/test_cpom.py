@@ -1,11 +1,10 @@
 """Tests for the CPOM altimetry normalizer"""
 
 import unittest
-from collections import OrderedDict
+import unittest.mock as mock
 from datetime import datetime, timezone
 
 import metanorm.normalizers as normalizers
-from metanorm.errors import MetadataNormalizationError
 
 
 class CPOMAltimetryMetadataNormalizerTests(unittest.TestCase):
@@ -38,28 +37,26 @@ class CPOMAltimetryMetadataNormalizerTests(unittest.TestCase):
             self.normalizer.get_time_coverage_end({}),
             datetime(year=2015, month=1, day=1, tzinfo=timezone.utc))
 
-    def test_get_platform(self):
+    def test_gcmd_platform(self):
         """Test getting the platform"""
-        self.assertDictEqual(self.normalizer.get_platform({}),
-            OrderedDict([
-                ('Category', 'Earth Observation Satellites'),
-                ('Series_Entity', ''),
-                ('Short_Name', ''),
-                ('Long_Name', '')
-            ]))
+        with mock.patch('metanorm.utils.get_gcmd_platform') as mock_get_gcmd_method:
+            self.assertEqual(
+                self.normalizer.get_platform({}),
+                mock_get_gcmd_method.return_value)
 
-    def test_get_instrument(self):
+    def test_gcmd_instrument(self):
         """Test getting the instrument"""
-        self.assertDictEqual(
-            self.normalizer.get_instrument({}),
-            OrderedDict([
-                ('Category', 'Earth Remote Sensing Instruments'),
-                ('Class', 'Active Remote Sensing'),
-                ('Type', 'Altimeters'),
-                ('Subtype', ''),
-                ('Short_Name', ''),
-                ('Long_Name', '')
-            ]))
+        with mock.patch('metanorm.utils.get_gcmd_instrument') as mock_get_gcmd_method:
+            self.assertEqual(
+                self.normalizer.get_instrument({}),
+                mock_get_gcmd_method.return_value)
+
+    def test_gcmd_provider(self):
+        """Test getting the provider"""
+        with mock.patch('metanorm.utils.get_gcmd_provider') as mock_get_gcmd_method:
+            self.assertEqual(
+                self.normalizer.get_provider({}),
+                mock_get_gcmd_method.return_value)
 
     def test_get_location_geometry(self):
         """get_location_geometry() should return the location
@@ -74,30 +71,9 @@ class CPOMAltimetryMetadataNormalizerTests(unittest.TestCase):
         """
         self.assertEqual(self.normalizer.get_location_geometry({}), '')
 
-    def test_get_provider(self):
-        """Test getting the provider"""
-        self.assertDictEqual(
-            self.normalizer.get_provider({}),
-            OrderedDict([
-                ('Bucket_Level0', 'ACADEMIC'),
-                ('Bucket_Level1', ''),
-                ('Bucket_Level2', ''),
-                ('Bucket_Level3', ''),
-                ('Short_Name', 'UC-LONDON/CPOM'),
-                ('Long_Name', ''),
-                ('Data_Center_URL', 'http://www.cpom.ucl.ac.uk/cpom_ucl_only/data_resources.html')
-            ]))
-
-    def test_get_parameters(self):
-        """Test getting the only dataset parameter"""
-        self.assertListEqual(
-            self.normalizer.get_dataset_parameters({}),
-            [
-                OrderedDict([
-                    ('standard_name', 'sea_surface_height_above_sea_level'),
-                    ('long_name', 'Sea Surface Anomaly'),
-                    ('short_name', 'SSA'),
-                    ('units', 'm'),
-                    ('minmax', '-100 100'),
-                    ('colormap', 'jet')])
-            ])
+    def test_dataset_parameters(self):
+        """dataset_parameters from CEDAESACCIMetadataNormalizer """
+        with mock.patch('metanorm.utils.create_parameter_list') as mock_get_gcmd_method:
+            self.assertEqual(
+                self.normalizer.get_dataset_parameters({}),
+                mock_get_gcmd_method.return_value)

@@ -414,7 +414,6 @@ class CMEMS002003MetadataNormalizer(CMEMSMetadataNormalizer):
     def get_location_geometry(self, raw_metadata):
         return 'POLYGON((-180 53, -180 90, 180 90, 180 53, -180 53))'
 
-    @utils.raises(KeyError)
     def get_dataset_parameters(self, raw_metadata):
         return utils.create_parameter_list([
             'latitude',
@@ -700,3 +699,121 @@ class CMEMS002004MetadataNormalizer(CMEMSMetadataNormalizer):
             if prefix in raw_metadata['url']:
                 return utils.create_parameter_list(parameter_list)
         return []
+
+
+class CMEMS001027MetadataNormalizer(CMEMSMetadataNormalizer):
+    """Normalizer for the GLOBAL_ANALYSISFORECAST_WAV_001_027 product
+    """
+
+    url_prefix = 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSISFORECAST_WAV_001_027'
+    time_patterns = (
+        (
+            re.compile(r'/mfwamglocep_' + utils.YEARMONTHDAY_REGEX + r'00_R[0-9]{8}.*\.nc$'),
+            utils.create_datetime,
+            lambda time: (time, time + relativedelta(hours=24))
+        ),
+    )
+
+    def get_entry_title(self, raw_metadata):
+        return 'Global Ocean Waves Analysis and Forecast'
+
+    def get_summary(self, raw_metadata):
+        return utils.dict_to_string({
+            utils.SUMMARY_FIELDS['description']:
+            'The operational global ocean analysis and forecast system of Météo-France with a '
+            'resolution of 1/12 degree is providing daily analyses and 10 days forecasts for the '
+            'global ocean sea surface waves. This product includes 3-hourly instantaneous fields of'
+            ' integrated wave parameters from the total spectrum (significant height, period, '
+            'direction, Stokes drift,...etc), as well as the following partitions: the wind wave, '
+            'the primary and secondary swell waves.',
+            utils.SUMMARY_FIELDS['processing_level']: '4',
+            utils.SUMMARY_FIELDS['product']: 'GLOBAL_ANALYSISFORECAST_WAV_001_027'
+        })
+
+    def get_platform(self, raw_metadata):
+        return utils.get_gcmd_platform('OPERATIONAL MODELS')
+
+    def get_instrument(self, raw_metadata):
+        return utils.get_gcmd_instrument('Computer')
+
+    def get_location_geometry(self, raw_metadata):
+        return utils.WORLD_WIDE_COVERAGE_WKT
+
+    def get_dataset_parameters(self, raw_metadata):
+        return utils.create_parameter_list((
+            'sea_surface_wave_significant_height',
+            'sea_surface_wind_wave_from_direction',
+            'sea_surface_wind_wave_significant_height',
+            'sea_surface_primary_swell_wave_from_direction',
+            'sea_surface_primary_swell_wave_mean_period',
+            'sea_surface_secondary_swell_wave_from_direction',
+            'sea_surface_secondary_swell_wave_mean_period',
+            'sea_surface_wave_from_direction',
+            'sea_surface_wave_mean_period_from_variance_spectral_density_inverse_frequency_moment',
+            'sea_surface_primary_swell_wave_significant_height',
+            'sea_surface_secondary_swell_wave_significant_height',
+            'sea_surface_wave_period_at_variance_spectral_density_maximum',
+            'sea_surface_wave_stokes_drift_x_velocity',
+            'sea_surface_wave_stokes_drift_y_velocity',
+            'sea_surface_wave_from_direction_at_variance_spectral_density_maximum',
+            'sea_surface_wave_mean_period_from_variance_spectral_density_second_frequency_moment',
+            'sea_surface_wind_wave_mean_period',
+        ))
+
+
+class CMEMS001028MetadataNormalizer(CMEMSMetadataNormalizer):
+    """Normalizer for the GLOBAL_ANALYSIS_FORECAST_BIO_001_028 product
+    """
+
+    url_prefix = 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_BIO_001_028'
+    time_patterns = (
+        (
+            re.compile(r'/mercatorbiomer4v2r1_global_mean_' + utils.YEARMONTHDAY_REGEX + '.nc$'),
+            utils.create_datetime,
+            lambda time: (time, time + relativedelta(hours=24))
+        ),
+        (
+            re.compile(r'/mercatorbiomer4v2r1_global_mean_' + utils.YEARMONTH_REGEX + '.nc$'),
+            utils.create_datetime,
+            lambda time: (time, time + relativedelta(months=1))
+        ),
+    )
+
+    def get_entry_title(self, raw_metadata):
+        return 'Global Ocean Biogeochemistry Analysis and Forecast'
+
+    def get_summary(self, raw_metadata):
+        return utils.dict_to_string({
+            utils.SUMMARY_FIELDS['description']:
+            'The Operational Mercator Ocean biogeochemical global ocean analysis and forecast '
+            'system at 1/4 degree is providing 10 days of 3D global ocean forecasts updated weekly.'
+            ' The time series is aggregated in time, in order to reach a two full year’s time '
+            'series sliding window.',
+            utils.SUMMARY_FIELDS['processing_level']: '4',
+            utils.SUMMARY_FIELDS['product']: 'GLOBAL_ANALYSIS_FORECAST_BIO_001_028'
+        })
+
+    def get_platform(self, raw_metadata):
+        return utils.get_gcmd_platform('OPERATIONAL MODELS')
+
+    def get_instrument(self, raw_metadata):
+        return utils.get_gcmd_instrument('Computer')
+
+    def get_location_geometry(self, raw_metadata):
+        return utils.WORLD_WIDE_COVERAGE_WKT
+
+    def get_dataset_parameters(self, raw_metadata):
+        return utils.create_parameter_list((
+            'sea_water_alkalinity_expressed_as_mole_equivalent',
+            'mass_concentration_of_chlorophyll_a_in_sea_water',
+            'mole_concentration_of_dissolved_inorganic_carbon_in_sea_water',
+            'mole_concentration_of_dissolved_iron_in_sea_water',
+            'mole_concentration_of_nitrate_in_sea_water',
+            'net_primary_production_of_biomass_expressed_as_carbon_per_unit_volume_in_sea_water',
+            'mole_concentration_of_dissolved_molecular_oxygen_in_sea_water',
+            'sea_water_ph_reported_on_total_scale',
+            'mole_concentration_of_phytoplankton_expressed_as_carbon_in_sea_water',
+            'mole_concentration_of_phosphate_in_sea_water',
+            'mole_concentration_of_silicate_in_sea_water',
+            'surface_partial_pressure_of_carbon_dioxide_in_sea_water',
+        ))
