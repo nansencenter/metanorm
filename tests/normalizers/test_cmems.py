@@ -1453,3 +1453,140 @@ class CMEMS002004MetadataNormalizerTestCase(GCMDTestsMixin, unittest.TestCase):
                 )
             with self.subTest('unknown'):
                 self.assertEqual(self.normalizer.get_dataset_parameters({'url': 'https://foo'}), [])
+
+
+class CMEMS001027MetadataNormalizerTestCase(GCMDTestsMixin, unittest.TestCase):
+    """Tests for the CMEMS001027MetadataNormalizer class"""
+
+    def setUp(self):
+        self.normalizer = normalizers.geospaas.CMEMS001027MetadataNormalizer()
+
+    def test_check(self):
+        """Test the checking condition"""
+        self.assertTrue(self.normalizer.check({
+            'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSISFORECAST_WAV_001_027/'
+            'cmems_mod_glo_wav_anfc_0.083deg_PT3H-i/2021/02/mfwamglocep_2021020200_R20210203.nc'}))
+
+        self.assertFalse(self.normalizer.check({}))
+        self.assertFalse(self.normalizer.check({'url': 'https://foo/bar'}))
+
+    def test_entry_title(self):
+        """entry_title from CMEMS001027MetadataNormalizer """
+        self.assertEqual(
+            self.normalizer.get_entry_title({}),
+            'Global Ocean Waves Analysis and Forecast')
+
+    def test_summary(self):
+        """summary from CMEMS001027MetadataNormalizer"""
+        self.assertEqual(
+            self.normalizer.get_summary({}),
+            'Description: '
+            'The operational global ocean analysis and forecast system of Météo-France with a '
+            'resolution of 1/12 degree is providing daily analyses and 10 days forecasts for the '
+            'global ocean sea surface waves. This product includes 3-hourly instantaneous fields of'
+            ' integrated wave parameters from the total spectrum (significant height, period, '
+            'direction, Stokes drift,...etc), as well as the following partitions: the wind wave, '
+            'the primary and secondary swell waves.;'
+            'Processing level: 4;'
+            'Product: GLOBAL_ANALYSISFORECAST_WAV_001_027')
+
+    def test_time_coverage_start(self):
+        """time_coverage_start from CMEMS001027MetadataNormalizer """
+        self.assertEqual(
+            self.normalizer.get_time_coverage_start({
+                'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSISFORECAST_WAV_001_027/'
+                'cmems_mod_glo_wav_anfc_0.083deg_PT3H-i/'
+                '2021/02/mfwamglocep_2021020200_R20210203.nc'}),
+            datetime(year=2021, month=2, day=2, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_end(self):
+        """time_coverage_start from CMEMS001027MetadataNormalizer"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_end({
+                'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSISFORECAST_WAV_001_027/'
+                'cmems_mod_glo_wav_anfc_0.083deg_PT3H-i/'
+                '2021/02/mfwamglocep_2021020200_R20210203.nc'}),
+            datetime(year=2021, month=2, day=3, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_location_geometry(self):
+        """geometry from CMEMS001027MetadataNormalizer """
+        self.assertEqual(
+            self.normalizer.get_location_geometry({}),
+            'POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))')
+
+
+class CMEMS001028MetadataNormalizerTestCase(GCMDTestsMixin, unittest.TestCase):
+    """Tests for the CMEMS001028MetadataNormalizer class"""
+
+    def setUp(self):
+        self.normalizer = normalizers.geospaas.CMEMS001028MetadataNormalizer()
+
+    def test_check(self):
+        """Test the checking condition"""
+        self.assertTrue(self.normalizer.check({
+            'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_BIO_001_028/'
+                   'global-analysis-forecast-bio-001-028-daily/'
+                   '2023/01/mercatorbiomer4v2r1_global_mean_20230103.nc'}))
+
+        self.assertFalse(self.normalizer.check({}))
+        self.assertFalse(self.normalizer.check({'url': 'https://foo/bar'}))
+
+    def test_entry_title(self):
+        """entry_title from CMEMS001028MetadataNormalizer """
+        self.assertEqual(
+            self.normalizer.get_entry_title({}),
+            'Global Ocean Biogeochemistry Analysis and Forecast')
+
+    def test_summary(self):
+        """summary from CMEMS001028MetadataNormalizer"""
+        self.assertEqual(
+            self.normalizer.get_summary({}),
+            'Description: '
+            'The Operational Mercator Ocean biogeochemical global ocean analysis and forecast '
+            'system at 1/4 degree is providing 10 days of 3D global ocean forecasts updated weekly.'
+            ' The time series is aggregated in time, in order to reach a two full year’s time '
+            'series sliding window.;'
+            'Processing level: 4;'
+            'Product: GLOBAL_ANALYSIS_FORECAST_BIO_001_028')
+
+    def test_time_coverage_start_daily(self):
+        """time_coverage_start from CMEMS001028MetadataNormalizer """
+        self.assertEqual(
+            self.normalizer.get_time_coverage_start({
+                'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_BIO_001_028/'
+                       'global-analysis-forecast-bio-001-028-daily/'
+                       '2023/01/mercatorbiomer4v2r1_global_mean_20230103.nc'}),
+            datetime(year=2023, month=1, day=3, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_start_monthly(self):
+        """time_coverage_start from CMEMS001028MetadataNormalizer """
+        self.assertEqual(
+            self.normalizer.get_time_coverage_start({
+                'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_BIO_001_028/'
+                       'global-analysis-forecast-bio-001-028-monthly/'
+                       '2021/mercatorbiomer4v2r1_global_mean_202104.nc'}),
+            datetime(year=2021, month=4, day=1, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_end_daily(self):
+        """time_coverage_start from CMEMS001028MetadataNormalizer"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_end({
+                'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_BIO_001_028/'
+                       'global-analysis-forecast-bio-001-028-daily/'
+                       '2023/01/mercatorbiomer4v2r1_global_mean_20230103.nc'}),
+            datetime(year=2023, month=1, day=4, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_time_coverage_end_monthly(self):
+        """time_coverage_start from CMEMS001028MetadataNormalizer"""
+        self.assertEqual(
+            self.normalizer.get_time_coverage_end({
+                'url': 'ftp://nrt.cmems-du.eu/Core/GLOBAL_ANALYSIS_FORECAST_BIO_001_028/'
+                       'global-analysis-forecast-bio-001-028-monthly/'
+                       '2021/mercatorbiomer4v2r1_global_mean_202104.nc'}),
+            datetime(year=2021, month=5, day=1, hour=0, minute=0, second=0, tzinfo=timezone.utc))
+
+    def test_location_geometry(self):
+        """geometry from CMEMS001028MetadataNormalizer """
+        self.assertEqual(
+            self.normalizer.get_location_geometry({}),
+            'POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))')
