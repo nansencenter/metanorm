@@ -103,7 +103,6 @@ class ScihubODataMetadataNormalizer(GeoSPaaSMetadataNormalizer):
         """Returns a WKT string corresponding to the location of the dataset"""
         return raw_metadata['JTS footprint']
 
-    @utils.raises(KeyError)
     def get_provider(self, raw_metadata):
         """Returns a GCMD-like provider data structure"""
         return utils.get_gcmd_provider(['ESA/EO'])
@@ -112,8 +111,8 @@ class ScihubODataMetadataNormalizer(GeoSPaaSMetadataNormalizer):
     def get_dataset_parameters(self, raw_metadata):
         """Returns known dataset parameters depending on the dataset's ID"""
         if self.SENTINEL1_ID_MATCHER.match(raw_metadata['Identifier']):
-            return [
-                utils.get_cf_or_wkv_standard_name(
-                    'surface_backwards_scattering_coefficient_of_radar_wave')]
+            return utils.create_parameter_list([
+                'surface_backwards_scattering_coefficient_of_radar_wave'
+            ])
         else:
             return []

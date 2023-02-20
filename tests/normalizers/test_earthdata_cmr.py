@@ -1,6 +1,6 @@
 """Tests for the ACDD metadata normalizer"""
 import unittest
-from collections import OrderedDict
+import unittest.mock as mock
 from datetime import datetime
 
 from dateutil.tz import tzutc
@@ -163,24 +163,22 @@ class EarthdataCMRMetadataNormalizerTestCase(unittest.TestCase):
 
     def test_platform(self):
         """Test getting the platform"""
-        self.assertEqual(
-            self.normalizer.get_platform({'umm': {
-                "Platforms": [
-                    {
-                        "ShortName": "SUOMI-NPP",
-                        "Instruments": [
-                            {
-                                "ShortName": "VIIRS"
-                            }
-                        ]
-                    }
-                ]
-            }}),
-            OrderedDict([('Category', 'Earth Observation Satellites'),
-                         ('Series_Entity', 'Joint Polar Satellite System (JPSS)'),
-                         ('Short_Name', 'Suomi-NPP'),
-                         ('Long_Name', 'Suomi National Polar-orbiting Partnership')]),
-        )
+        with mock.patch('metanorm.utils.get_gcmd_platform') as mock_get_gcmd_method:
+            self.assertEqual(
+                self.normalizer.get_platform({'umm': {
+                    "Platforms": [
+                        {
+                            "ShortName": "SUOMI-NPP",
+                            "Instruments": [
+                                {
+                                    "ShortName": "VIIRS"
+                                }
+                            ]
+                        }
+                    ]
+                }}),
+                mock_get_gcmd_method.return_value)
+            mock_get_gcmd_method.assert_called_with('SUOMI-NPP')
 
     def test_platform_missing_attribute(self):
         """A MetadataNormalizationError must be raised if the raw
@@ -193,26 +191,22 @@ class EarthdataCMRMetadataNormalizerTestCase(unittest.TestCase):
 
     def test_instrument(self):
         """Test getting the instrument"""
-        self.assertEqual(
-            self.normalizer.get_instrument({'umm': {
-                "Platforms": [
-                    {
-                        "ShortName": "SUOMI-NPP",
-                        "Instruments": [
-                            {
-                                "ShortName": "VIIRS"
-                            }
-                        ]
-                    }
-                ]
-            }}),
-            OrderedDict([('Category', 'Earth Remote Sensing Instruments'),
-                         ('Class', 'Passive Remote Sensing'),
-                         ('Type', 'Spectrometers/Radiometers'),
-                         ('Subtype', 'Imaging Spectrometers/Radiometers'),
-                         ('Short_Name', 'VIIRS'),
-                         ('Long_Name', 'Visible-Infrared Imager-Radiometer Suite')])
-        )
+        with mock.patch('metanorm.utils.get_gcmd_instrument') as mock_get_gcmd_method:
+            self.assertEqual(
+                self.normalizer.get_instrument({'umm': {
+                    "Platforms": [
+                        {
+                            "ShortName": "SUOMI-NPP",
+                            "Instruments": [
+                                {
+                                    "ShortName": "VIIRS"
+                                }
+                            ]
+                        }
+                    ]
+                }}),
+                mock_get_gcmd_method.return_value)
+            mock_get_gcmd_method.assert_called_with('VIIRS')
 
     def test_instrument_missing_attribute(self):
         """A MetadataNormalizationError must be raised if the raw
@@ -264,20 +258,11 @@ class EarthdataCMRMetadataNormalizerTestCase(unittest.TestCase):
 
     def test_get_provider(self):
         """Test getting the provider"""
-        self.assertEqual(
-            self.normalizer.get_provider({"meta": {"provider-id": "OB_DAAC"}}),
-            OrderedDict([('Bucket_Level0', 'GOVERNMENT AGENCIES-U.S. FEDERAL AGENCIES'),
-                         ('Bucket_Level1', 'NASA'),
-                         ('Bucket_Level2', ''),
-                         ('Bucket_Level3', ''),
-                         ('Short_Name', 'NASA/GSFC/SED/ESD/GCDC/OB.DAAC'),
-                         ('Long_Name',
-                          'Ocean Biology Distributed Active Archive Center (OB.DAAC), '
-                          'Global Change Data Center, Earth Sciences Division, '
-                          'Science and Exploration Directorate, '
-                          'Goddard Space Flight Center, NASA'),
-                         ('Data_Center_URL', 'https://oceancolor.gsfc.nasa.gov')])
-        )
+        with mock.patch('metanorm.utils.get_gcmd_provider') as mock_get_gcmd_method:
+            self.assertEqual(
+                self.normalizer.get_provider({"meta": {"provider-id": "OB_DAAC"}}),
+                mock_get_gcmd_method.return_value)
+            mock_get_gcmd_method.assert_called_with(['OB_DAAC'])
 
     def test_unknown_provider_returns_none(self):
         """A MetadataNormalizationError must be raised if the provider

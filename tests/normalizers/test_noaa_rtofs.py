@@ -1,11 +1,10 @@
 """Tests for the NOAA RTOFS normalizer"""
 import unittest
-from collections import OrderedDict
+import unittest.mock as mock
 from datetime import datetime
 from dateutil.tz import tzutc
 
 import metanorm.normalizers as normalizers
-from .data import DATASET_PARAMETERS
 from metanorm.errors import MetadataNormalizationError
 
 
@@ -120,25 +119,26 @@ class NOAARTOFSMetadataNormalizerTestCase(unittest.TestCase):
         with self.assertRaises(MetadataNormalizationError):
             self.normalizer.get_time_coverage_end({})
 
-    def test_platform(self):
-        """platform from NOAARTOFSMetadataNormalizer """
-        self.assertEqual(
-            self.normalizer.get_platform({}),
-            OrderedDict([('Category', 'Models/Analyses'),
-                         ('Series_Entity', ''),
-                         ('Short_Name', 'OPERATIONAL MODELS'),
-                         ('Long_Name', '')]))
+    def test_gcmd_platform(self):
+        """Test getting the platform"""
+        with mock.patch('metanorm.utils.get_gcmd_platform') as mock_get_gcmd_method:
+            self.assertEqual(
+                self.normalizer.get_platform({}),
+                mock_get_gcmd_method.return_value)
 
-    def test_instrument(self):
-        """instrument from NOAARTOFSMetadataNormalizer """
-        self.assertEqual(
-            self.normalizer.get_instrument({}),
-            OrderedDict([('Category', 'In Situ/Laboratory Instruments'),
-                         ('Class', 'Data Analysis'),
-                         ('Type', 'Environmental Modeling'),
-                         ('Subtype', ''),
-                         ('Short_Name', 'Computer'),
-                         ('Long_Name', 'Computer')]))
+    def test_gcmd_instrument(self):
+        """Test getting the instrument"""
+        with mock.patch('metanorm.utils.get_gcmd_instrument') as mock_get_gcmd_method:
+            self.assertEqual(
+                self.normalizer.get_instrument({}),
+                mock_get_gcmd_method.return_value)
+
+    def test_gcmd_provider(self):
+        """Test getting the provider"""
+        with mock.patch('metanorm.utils.get_gcmd_provider') as mock_get_gcmd_method:
+            self.assertEqual(
+                self.normalizer.get_provider({}),
+                mock_get_gcmd_method.return_value)
 
     def test_location_geometry_global(self):
         """Should return the proper geometry"""
@@ -192,67 +192,68 @@ class NOAARTOFSMetadataNormalizerTestCase(unittest.TestCase):
         with self.assertRaises(MetadataNormalizationError):
             self.normalizer.get_location_geometry({})
 
-    def test_provider(self):
-        """provider from NOAARTOFSMetadataNormalizer """
-        self.assertEqual(
-            self.normalizer.get_provider({}),
-            OrderedDict([
-                ('Bucket_Level0', 'GOVERNMENT AGENCIES-U.S. FEDERAL AGENCIES'),
-                ('Bucket_Level1', 'DOC'),
-                ('Bucket_Level2', 'NOAA'),
-                ('Bucket_Level3', ''),
-                ('Short_Name', 'DOC/NOAA/NWS/NCEP'),
-                ('Long_Name',
-                 'National Centers for Environmental Prediction, National Weather Service, NOAA, '
-                 'U.S. Department of Commerce'),
-                ('Data_Center_URL', 'http://www.ncep.noaa.gov/')]))
-
     def test_dataset_parameters_rtofs_2ds_diag(self):
         """Should return the proper dataset parameters"""
         attributes = {'url': 'ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/rtofs/prod/'
                              'rtofs.20210518/rtofs_glo_2ds_f063_diag.nc'}
-        self.assertListEqual(self.normalizer.get_dataset_parameters(attributes), [
-            DATASET_PARAMETERS['sea_surface_height_above_geoid'],
-            DATASET_PARAMETERS['barotropic_eastward_sea_water_velocity'],
-            DATASET_PARAMETERS['barotropic_northward_sea_water_velocity'],
-            DATASET_PARAMETERS['surface_boundary_layer_thickness'],
-            DATASET_PARAMETERS['ocean_mixed_layer_thickness'],
-        ])
+        with mock.patch('metanorm.utils.create_parameter_list') as mock_utils_method:
+            self.assertEqual(
+                self.normalizer.get_dataset_parameters(attributes),
+                mock_utils_method.return_value)
+            mock_utils_method.assert_called_with([
+                'sea_surface_height_above_geoid',
+                'barotropic_eastward_sea_water_velocity',
+                'barotropic_northward_sea_water_velocity',
+                'surface_boundary_layer_thickness',
+                'ocean_mixed_layer_thickness',
+            ])
 
     def test_dataset_parameters_rtofs_2ds_prog(self):
         """Should return the proper dataset parameters"""
         attributes = {'url': 'ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/rtofs/prod/'
                              'rtofs.20210518/rtofs_glo_2ds_f062_prog.nc'}
-        self.assertListEqual(self.normalizer.get_dataset_parameters(attributes), [
-            DATASET_PARAMETERS['eastward_sea_water_velocity'],
-            DATASET_PARAMETERS['northward_sea_water_velocity'],
-            DATASET_PARAMETERS['sea_surface_temperature'],
-            DATASET_PARAMETERS['sea_surface_salinity'],
-            DATASET_PARAMETERS['sea_water_potential_density'],
-        ])
+        with mock.patch('metanorm.utils.create_parameter_list') as mock_utils_method:
+            self.assertEqual(
+                self.normalizer.get_dataset_parameters(attributes),
+                mock_utils_method.return_value)
+            mock_utils_method.assert_called_with([
+                'eastward_sea_water_velocity',
+                'northward_sea_water_velocity',
+                'sea_surface_temperature',
+                'sea_surface_salinity',
+                'sea_water_potential_density',
+            ])
 
     def test_dataset_parameters_rtofs_2ds_ice(self):
         """Should return the proper dataset parameters"""
         attributes = {'url': 'ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/rtofs/prod/'
                              'rtofs.20210518/rtofs_glo_2ds_f062_ice.nc'}
-        self.assertListEqual(self.normalizer.get_dataset_parameters(attributes), [
-            DATASET_PARAMETERS['ice_coverage'],
-            DATASET_PARAMETERS['ice_temperature'],
-            DATASET_PARAMETERS['ice_thickness'],
-            DATASET_PARAMETERS['ice_uvelocity'],
-            DATASET_PARAMETERS['icd_vvelocity'],
-        ])
+        with mock.patch('metanorm.utils.create_parameter_list') as mock_utils_method:
+            self.assertEqual(
+                self.normalizer.get_dataset_parameters(attributes),
+                mock_utils_method.return_value)
+            mock_utils_method.assert_called_with([
+                'ice_coverage',
+                'ice_temperature',
+                'ice_thickness',
+                'ice_uvelocity',
+                'icd_vvelocity',
+            ])
 
     def test_dataset_parameters_rtofs_3dz(self):
         """Should return the proper dataset parameters"""
         attributes = {'url': 'ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/rtofs/prod/'
                              'rtofs.20210518/rtofs_glo_3dz_f024_daily_3zsio.nc'}
-        self.assertListEqual(self.normalizer.get_dataset_parameters(attributes), [
-            DATASET_PARAMETERS['eastward_sea_water_velocity'],
-            DATASET_PARAMETERS['northward_sea_water_velocity'],
-            DATASET_PARAMETERS['sea_surface_temperature'],
-            DATASET_PARAMETERS['sea_surface_salinity'],
-        ])
+        with mock.patch('metanorm.utils.create_parameter_list') as mock_utils_method:
+            self.assertEqual(
+                self.normalizer.get_dataset_parameters(attributes),
+                mock_utils_method.return_value)
+            mock_utils_method.assert_called_with([
+                'eastward_sea_water_velocity',
+                'northward_sea_water_velocity',
+                'sea_surface_temperature',
+                'sea_surface_salinity',
+            ])
 
     def test_dataset_parameters_missing_attribute(self):
         """An exception must be raised if the attribute is missing"""

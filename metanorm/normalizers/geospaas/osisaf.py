@@ -3,7 +3,6 @@
 import re
 
 import dateutil.parser
-import pythesint as pti
 from dateutil.tz import tzutc
 
 import metanorm.utils as utils
@@ -60,12 +59,12 @@ class OSISAFMetadataNormalizer(GeoSPaaSMetadataNormalizer):
             if ('_ice_conc' in raw_metadata['product_name']
                     or '_ice_type' in raw_metadata['product_name']
                     or '_ice_edge' in raw_metadata['product_name']):
-                return pti.get_gcmd_instrument('Imaging Spectrometers/Radiometers')
+                return utils.get_gcmd_instrument('Imaging Spectrometers/Radiometers')
             elif 'amsr2ice_conc' in raw_metadata['product_name']:
-                return pti.get_gcmd_instrument('AMSR2')
+                return utils.get_gcmd_instrument('AMSR2')
             elif '_mr_ice_drift' in raw_metadata['product_name']:
-                return pti.get_gcmd_instrument('AVHRR')
-        return pti.get_gcmd_instrument('Earth Remote Sensing Instruments')
+                return utils.get_gcmd_instrument('AVHRR')
+        return utils.get_gcmd_instrument('Earth Remote Sensing Instruments')
 
     @utils.raises(KeyError)
     def get_location_geometry(self, raw_metadata):

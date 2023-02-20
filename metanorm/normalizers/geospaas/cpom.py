@@ -39,7 +39,7 @@ class CPOMAltimetryMetadataNormalizer(GeoSPaaSMetadataNormalizer):
         return raw_metadata.get('geometry', '')
 
     def get_provider(self, raw_metadata):
-        return pti.get_gcmd_provider('UC-LONDON/CPOM')
+        return utils.get_gcmd_provider(['UC-LONDON/CPOM'])
 
     def get_dataset_parameters(self, raw_metadata):
-        return [pti.get_wkv_variable('sea_surface_height_above_sea_level')]
+        return utils.create_parameter_list(['sea_surface_height_above_sea_level'])

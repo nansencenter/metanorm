@@ -1,7 +1,7 @@
 """Tests for the Radarsat 2 CSV normalizer"""
 import datetime as dt
 import unittest
-from collections import OrderedDict
+import unittest.mock as mock
 
 from dateutil.tz import tzutc
 
@@ -101,25 +101,26 @@ class Radarsat2CSVNormalizerTests(unittest.TestCase):
         with self.assertRaises(MetadataNormalizationError):
             self.normalizer.get_time_coverage_end({})
 
-    def test_get_platform(self):
-        """ shall return radarsat-2 """
-        self.assertEqual(
-            self.normalizer.get_platform(self.metadata),
-            OrderedDict([('Category', 'Earth Observation Satellites'),
-             ('Series_Entity', 'RADARSAT'),
-             ('Short_Name', 'RADARSAT-2'),
-             ('Long_Name', '')]))
+    def test_gcmd_platform(self):
+        """Test getting the platform"""
+        with mock.patch('metanorm.utils.get_gcmd_platform') as mock_get_gcmd_method:
+            self.assertEqual(
+                self.normalizer.get_platform({}),
+                mock_get_gcmd_method.return_value)
 
-    def test_get_instrument(self):
-        """ shall return c-sar """
-        self.assertEqual(
-            self.normalizer.get_instrument(self.metadata),
-            OrderedDict([('Category', 'Earth Remote Sensing Instruments'),
-                         ('Class', 'Active Remote Sensing'),
-                         ('Type', 'Imaging Radars'),
-                         ('Subtype', ''),
-                         ('Short_Name', 'C-SAR'),
-                         ('Long_Name', 'C-Band Synthetic Aperture Radar')]))
+    def test_gcmd_instrument(self):
+        """Test getting the instrument"""
+        with mock.patch('metanorm.utils.get_gcmd_instrument') as mock_get_gcmd_method:
+            self.assertEqual(
+                self.normalizer.get_instrument({}),
+                mock_get_gcmd_method.return_value)
+
+    def test_gcmd_provider(self):
+        """Test getting the provider"""
+        with mock.patch('metanorm.utils.get_gcmd_provider') as mock_get_gcmd_method:
+            self.assertEqual(
+                self.normalizer.get_provider({}),
+                mock_get_gcmd_method.return_value)
 
     def test_get_location_geometry(self):
         """ shall return POLYGON """
@@ -135,26 +136,9 @@ class Radarsat2CSVNormalizerTests(unittest.TestCase):
         with self.assertRaises(MetadataNormalizationError):
             self.normalizer.get_location_geometry({})
 
-    def test_get_provider(self):
-        """ shall return csa """
-        self.assertEqual(
-            self.normalizer.get_provider(self.metadata),
-            OrderedDict([('Bucket_Level0', 'COMMERCIAL'),
-                         ('Bucket_Level1', ''),
-                         ('Bucket_Level2', ''),
-                         ('Bucket_Level3', ''),
-                         ('Short_Name', 'CSA'),
-                         ('Long_Name', 'Cambridge Scientific Abstracts'),
-                         ('Data_Center_URL', 'http://www.csa.com/')]))
-
-    def test_get_parameters(self):
-        """ shall return sigma0 wkv """
-        self.assertCountEqual(
-            self.normalizer.get_dataset_parameters(self.metadata), [
-                OrderedDict([
-                    ('standard_name', 'surface_backwards_scattering_coefficient_of_radar_wave'),
-                    ('long_name', 'Normalized Radar Cross Section'),
-                    ('short_name', 'sigma0'),
-                    ('units', 'm/m'),
-                    ('minmax', '0 0.1'),
-                    ('colormap', 'gray')])])
+    def test_dataset_parameters(self):
+        """dataset_parameters from CEDAESACCIMetadataNormalizer """
+        with mock.patch('metanorm.utils.create_parameter_list') as mock_get_gcmd_method:
+            self.assertEqual(
+                self.normalizer.get_dataset_parameters({}),
+                mock_get_gcmd_method.return_value)

@@ -1,7 +1,6 @@
 """Tests for the OSISAF metadata normalizer"""
 import unittest
 import unittest.mock as mock
-from collections import OrderedDict
 
 import dateutil
 from dateutil.tz import tzutc
@@ -86,29 +85,12 @@ class OSISAFMetadataNormalizer(unittest.TestCase):
         with self.assertRaises(MetadataNormalizationError):
             self.normalizer.get_time_coverage_end({})
 
-    def test_get_platform(self):
-        """Test getting the platform OSISAFMetadataNormalizer"""
-
-        def get_gcmd_platform_side_effect(keyword):
-            return {'foo': 'bar', 'Earth Observation Satellites': 'baz'}[keyword]
-
-        with mock.patch('metanorm.utils.get_gcmd_platform') as mock_get_gcmd_platform:
-            mock_get_gcmd_platform.side_effect = get_gcmd_platform_side_effect
-            self.assertEqual(self.normalizer.get_platform({'platform_name': 'foo'}), 'bar')
-            self.assertEqual(self.normalizer.get_platform({}), 'baz')
-
-    def test_get_platform_unknown_platform_name(self):
-        """A GCMD like platform is built when no platform can be found
-        by pythesint using the platform_name raw attribute
-        """
-        with mock.patch('pythesint.get_gcmd_platform', side_effect=IndexError):
-            self.assertDictEqual(
-                self.normalizer.get_platform({'platform_name': 'foo'}),
-                OrderedDict([
-                    ('Category', 'Unknown'),
-                    ('Series_Entity', 'Unknown'),
-                    ('Short_Name', 'foo'),
-                    ('Long_Name', 'foo')]))
+    def test_gcmd_platform(self):
+        """Test getting the platform"""
+        with mock.patch('metanorm.utils.get_gcmd_platform') as mock_get_gcmd_method:
+            self.assertEqual(
+                self.normalizer.get_platform({}),
+                mock_get_gcmd_method.return_value)
 
     def test_get_instrument_from_instrument_type(self):
         """Test getting the instrument from the 'instrument_type'
@@ -124,69 +106,59 @@ class OSISAFMetadataNormalizer(unittest.TestCase):
         """Test getting a spectrometer/radiometer instrument from the
         'product_name' attribute
         """
-        expected_instrument = OrderedDict([('Category', 'Earth Remote Sensing Instruments'),
-                                           ('Class', 'Passive Remote Sensing'),
-                                           ('Type', 'Spectrometers/Radiometers'),
-                                           ('Subtype', 'Imaging Spectrometers/Radiometers'),
-                                           ('Short_Name', ''),
-                                           ('Long_Name', '')])
+        with mock.patch('metanorm.utils.get_gcmd_instrument') as mock_get_gcmd_instrument:
+            self.assertEqual(
+                self.normalizer.get_instrument({'product_name': 'osi_saf_ice_conc'}),
+                mock_get_gcmd_instrument.return_value)
+            mock_get_gcmd_instrument.assert_called_with('Imaging Spectrometers/Radiometers')
 
-        self.assertDictEqual(
-            self.normalizer.get_instrument({'product_name': 'osi_saf_ice_conc'}),
-            expected_instrument)
+            self.assertEqual(
+                self.normalizer.get_instrument({'product_name': 'osi_saf_ice_type'}),
+                mock_get_gcmd_instrument.return_value)
+            mock_get_gcmd_instrument.assert_called_with('Imaging Spectrometers/Radiometers')
 
-        self.assertDictEqual(
-            self.normalizer.get_instrument({'product_name': 'osi_saf_ice_type'}),
-            expected_instrument)
-
-        self.assertDictEqual(
-            self.normalizer.get_instrument({'product_name': 'osi_saf_ice_edge'}),
-            expected_instrument)
+            self.assertEqual(
+                self.normalizer.get_instrument({'product_name': 'osi_saf_ice_edge'}),
+                mock_get_gcmd_instrument.return_value)
+            mock_get_gcmd_instrument.assert_called_with('Imaging Spectrometers/Radiometers')
 
     def test_get_instrument_amsr2(self):
         """Test getting an AMSR2 instrument from the 'product_name'
         attribute
         """
-        self.assertDictEqual(
-            self.normalizer.get_instrument({'product_name': 'osi_saf_amsr2ice_conc'}),
-            OrderedDict([('Category', 'Earth Remote Sensing Instruments'),
-                         ('Class', 'Passive Remote Sensing'),
-                         ('Type', 'Spectrometers/Radiometers'),
-                         ('Subtype', 'Imaging Spectrometers/Radiometers'),
-                         ('Short_Name', 'AMSR2'),
-                         ('Long_Name', 'Advanced Microwave Scanning Radiometer 2')]))
+        with mock.patch('metanorm.utils.get_gcmd_instrument') as mock_get_gcmd_instrument:
+            self.assertEqual(
+                self.normalizer.get_instrument({'product_name': 'osi_saf_amsr2ice_conc'}),
+                mock_get_gcmd_instrument.return_value)
+            mock_get_gcmd_instrument.assert_called_with('AMSR2')
 
     def test_instrument_avhrr(self):
         """Test getting an AVHRR instrument from the 'product_name'
         attribute
         """
-        self.assertDictEqual(
-            self.normalizer.get_instrument({'product_name': 'osi_saf_mr_ice_drift'}),
-            OrderedDict([('Category', 'Earth Remote Sensing Instruments'),
-                         ('Class', 'Passive Remote Sensing'),
-                         ('Type', 'Spectrometers/Radiometers'),
-                         ('Subtype', 'Imaging Spectrometers/Radiometers'),
-                         ('Short_Name', 'AVHRR'),
-                         ('Long_Name', 'Advanced Very High Resolution Radiometer')]))
+        with mock.patch('metanorm.utils.get_gcmd_instrument') as mock_get_gcmd_instrument:
+            self.assertEqual(
+                self.normalizer.get_instrument({'product_name': 'osi_saf_mr_ice_drift'}),
+                mock_get_gcmd_instrument.return_value)
+            mock_get_gcmd_instrument.assert_called_with('AVHRR')
 
     def test_get_instrument_default(self):
         """Test getting the default instrument"""
-        default_instrument = OrderedDict([('Category', 'Earth Remote Sensing Instruments'),
-                                          ('Class', ''),
-                                          ('Type', ''),
-                                          ('Subtype', ''),
-                                          ('Short_Name', ''),
-                                          ('Long_Name', '')])
+        with mock.patch('metanorm.utils.get_gcmd_instrument') as mock_get_gcmd_instrument:
+            self.assertEqual(
+                self.normalizer.get_instrument({'product_name': 'osi_saf_lr_ice_drift'}),
+                mock_get_gcmd_instrument.return_value)
+            mock_get_gcmd_instrument.assert_called_with('Earth Remote Sensing Instruments')
 
-        self.assertEqual(
-            self.normalizer.get_instrument({'product_name': 'osi_saf_lr_ice_drift'}),
-            default_instrument)
+            self.assertEqual(
+                self.normalizer.get_instrument({'product_name': 'osi_saf_2'}),
+                mock_get_gcmd_instrument.return_value)
+            mock_get_gcmd_instrument.assert_called_with('Earth Remote Sensing Instruments')
 
-        self.assertEqual(
-            self.normalizer.get_instrument({'product_name': 'osi_saf_2'}), default_instrument)
-
-        self.assertEqual(
-            self.normalizer.get_instrument({}), default_instrument)
+            self.assertEqual(
+                self.normalizer.get_instrument({}),
+                mock_get_gcmd_instrument.return_value)
+            mock_get_gcmd_instrument.assert_called_with('Earth Remote Sensing Instruments')
 
     def test_location_geometry(self):
         """Test getting the location_geometry, with and without the
@@ -213,24 +185,9 @@ class OSISAFMetadataNormalizer(unittest.TestCase):
             'westernmost_longitude': "-175.084000"
         }))
 
-    def test_get_provider(self):
-        """Test getting the provider from the 'institution' attribute"""
-        with mock.patch('metanorm.utils.get_gcmd_provider') as mock_get_gcmd_provider:
-            mock_get_gcmd_provider.return_value = 'foo'
-            self.assertEqual(self.normalizer.get_provider({'institution': 'bar'}), 'foo')
-        mock_get_gcmd_provider.assert_called_once_with(['bar'])
-
-
-    def test_get_provider_default(self):
-        """Test getting the default provider"""
-        self.assertDictEqual(
-            self.normalizer.get_provider({}),
-            OrderedDict([('Bucket_Level0', 'MULTINATIONAL ORGANIZATIONS'),
-                        ('Bucket_Level1', ''),
-                        ('Bucket_Level2', ''),
-                        ('Bucket_Level3', ''),
-                        ('Short_Name', 'EUMETSAT/OSISAF'),
-                        ('Long_Name',
-                         'Satellite Application Facility on Ocean and Sea ice, European '
-                         'Organisation for the Exploitation of Meteorological Satellites'),
-                        ('Data_Center_URL', 'http://www.eumetsat.int/')]))
+    def test_gcmd_provider(self):
+        """Test getting the provider"""
+        with mock.patch('metanorm.utils.get_gcmd_provider') as mock_get_gcmd_method:
+            self.assertEqual(
+                self.normalizer.get_provider({}),
+                mock_get_gcmd_method.return_value)

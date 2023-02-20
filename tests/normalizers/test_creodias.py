@@ -1,12 +1,13 @@
 """Tests for the Creodias metadata normalizer"""
 import unittest
-from collections import OrderedDict
+import unittest.mock as mock
 from datetime import datetime
 
 from dateutil.tz import tzutc
 
 import metanorm.normalizers as normalizers
 from metanorm.errors import MetadataNormalizationError
+
 
 class CreodiasEOFinderMetadataNormalizerTestCase(unittest.TestCase):
     """Tests for the Creodias API attributes normalizer"""
@@ -109,15 +110,12 @@ class CreodiasEOFinderMetadataNormalizerTestCase(unittest.TestCase):
         with self.assertRaises(MetadataNormalizationError):
             self.normalizer.get_time_coverage_end({})
 
-    def test_platform(self):
-        """gcmd_platform from CreodiasEOFinderMetadataNormalizer"""
-        self.assertEqual(
-            self.normalizer.get_platform({'platform': 'S1A'}),
-            OrderedDict([('Category', 'Earth Observation Satellites'),
-                         ('Series_Entity', 'Sentinel-1'),
-                         ('Short_Name', 'Sentinel-1A'),
-                         ('Long_Name', 'Sentinel-1A')]),
-        )
+    def test_gcmd_platform(self):
+        """Test getting the platform"""
+        with mock.patch('metanorm.utils.get_gcmd_platform') as mock_get_gcmd_method:
+            self.assertEqual(
+                self.normalizer.get_platform({'platform': 'foo'}),
+                mock_get_gcmd_method.return_value)
 
     def test_platform_missing_attribute(self):
         """An exception must be raised if the attribute is missing"""
@@ -125,17 +123,11 @@ class CreodiasEOFinderMetadataNormalizerTestCase(unittest.TestCase):
             self.normalizer.get_platform({})
 
     def test_gcmd_instrument(self):
-        """GCMD instrument from CreodiasEOFinderMetadataNormalizer"""
-        attributes = {'instrument': 'OL'}
-        self.assertEqual(
-            self.normalizer.get_instrument(attributes),
-            OrderedDict([('Category', 'Earth Remote Sensing Instruments'),
-                         ('Class', 'Passive Remote Sensing'),
-                         ('Type', 'Spectrometers/Radiometers'),
-                         ('Subtype', 'Imaging Spectrometers/Radiometers'),
-                         ('Short_Name', 'OLCI'),
-                         ('Long_Name', 'Ocean and Land Colour Imager')])
-        )
+        """Test getting the instrument"""
+        with mock.patch('metanorm.utils.get_gcmd_instrument') as mock_get_gcmd_method:
+            self.assertEqual(
+                self.normalizer.get_instrument({'instrument': 'foo'}),
+                mock_get_gcmd_method.return_value)
 
     def test_instrument_missing_attribute(self):
         """An exception must be raised if the attribute is missing"""
@@ -157,22 +149,14 @@ class CreodiasEOFinderMetadataNormalizerTestCase(unittest.TestCase):
         with self.assertRaises(MetadataNormalizationError):
             self.normalizer.get_location_geometry({})
 
-    def test_gcmd_provider_esa(self):
-        """GCMD provider from CreodiasEOFinderMetadataNormalizer"""
-        attributes = {'organisationName': 'ESA'}
+    def test_gcmd_provider(self):
+        """Test getting the provider"""
+        with mock.patch('metanorm.utils.get_gcmd_provider') as mock_get_gcmd_method:
+            self.assertEqual(
+                self.normalizer.get_provider({'organisationName': 'foo'}),
+                mock_get_gcmd_method.return_value)
 
-        self.assertEqual(
-            self.normalizer.get_provider(attributes),
-            OrderedDict([('Bucket_Level0', 'MULTINATIONAL ORGANIZATIONS'),
-                         ('Bucket_Level1', ''),
-                         ('Bucket_Level2', ''),
-                         ('Bucket_Level3', ''),
-                         ('Short_Name', 'ESA/EO'),
-                         ('Long_Name', 'Observing the Earth, European Space Agency'),
-                         ('Data_Center_URL', 'http://www.esa.int/esaEO/')])
-        )
-
-    def test_unknown_provider_returns_none(self):
+    def test_unknown_provider(self):
         """An exception must be raised if the provider is unknown"""
         with self.assertRaises(MetadataNormalizationError) as raised:
             self.normalizer.get_provider({'organisationName': 'something'})

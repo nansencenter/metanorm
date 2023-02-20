@@ -301,7 +301,7 @@ def translate_west_coordinates(multipolygon):
         return shapely.geometry.LinearRing(translate_point(point) for point in ring.coords)
 
     new_polygons = []
-    for polygon in multipolygon:
+    for polygon in multipolygon.geoms:
 
         exterior_ring = translate_ring(polygon.exterior)
 
@@ -335,7 +335,7 @@ def restore_west_coordinates(multipolygon):
         return shapely.geometry.LinearRing(restore_point(point, is_east) for point in ring.coords)
 
     new_polygons = []
-    for polygon in multipolygon:
+    for polygon in multipolygon.geoms:
         # Determine if this polygon is on the east or west side of the
         # IDL. It has been split already, so it is either east or west.
         # We find the first point which is not on the IDL and check
