@@ -75,7 +75,7 @@ class CreodiasEOFinderMetadataNormalizer(GeoSPaaSMetadataNormalizer):
     @utils.raises(KeyError)
     def get_provider(self, raw_metadata):
         """Returns a GCMD-like provider data structure"""
-        provider = utils.get_gcmd_provider([raw_metadata['organisationName']])
+        provider = utils.get_gcmd_provider([raw_metadata['organisationName'] or 'ESA/EO'])
         if provider:
             return provider
         else:
