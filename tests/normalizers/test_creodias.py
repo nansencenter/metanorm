@@ -17,15 +17,20 @@ class CreodiasEOFinderMetadataNormalizerTestCase(unittest.TestCase):
 
     def test_check(self):
         """Test the checking condition"""
-        valid_url = 'https://zipper.creodias.eu/download/023c3fe8-bfac-5b58-a359-6aab4bf30bd6'
+        valid_urls = ('https://zipper.creodias.eu/download/023c3fe8-bfac-5b58-a359-6aab4bf30bd6',
+                      'https://datahub.creodias.eu/download/d4e81902-cc32-42dd-bc45-daf789e593cd')
         invalid_url = 'https://apihub.copernicus.eu/'
 
         # use the URL attribute added in geospaas_harvesting
-        self.assertTrue(self.normalizer.check({'url': valid_url}))
+        for valid_url in valid_urls:
+            self.assertTrue(self.normalizer.check({'url': valid_url}),
+                            f"{valid_url} should be valid")
         self.assertFalse(self.normalizer.check({'url': invalid_url}))
 
         # use the URL attribute in the original location
-        self.assertTrue(self.normalizer.check({'services': {'download': {'url': valid_url}}}))
+        for valid_url in valid_urls:
+            self.assertTrue(self.normalizer.check({'services': {'download': {'url': valid_url}}}),
+                            f"{valid_url} should be valid")
         self.assertFalse(self.normalizer.check({'services': {'download': {'url': invalid_url}}}))
 
         # no URL attribute can be found

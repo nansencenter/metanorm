@@ -25,7 +25,8 @@ class CreodiasEOFinderMetadataNormalizer(GeoSPaaSMetadataNormalizer):
             raw_metadata.get('url', '') or
             raw_metadata.get('services', {}).get('download', {}).get('url', '')
         )
-        return url.startswith('https://zipper.creodias.eu')
+        return any(url.startswith(prefix) for prefix in ('https://datahub.creodias.eu/download/',
+                                                         'https://zipper.creodias.eu'))
 
     @utils.raises(KeyError)
     def get_entry_title(self, raw_metadata):
