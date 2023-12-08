@@ -1,10 +1,6 @@
 
-ARG BASE_IMAGE=nansencenter/nansat_base:latest-slim
+ARG BASE_IMAGE=nansencenter/nansat_base:latest
 FROM ${BASE_IMAGE}
-
-RUN pip install --no-cache-dir \
-    setuptools \
-    wheel
 
 RUN python -c 'import pythesint; pythesint.update_all_vocabularies()'
 

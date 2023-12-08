@@ -6,12 +6,20 @@ on:
   release:
     types: [prereleased, released]
 env:
-  BASE_IMAGE_NAME: "${{ vars.DOCKER_ORG }}/nansat_base:2.1.3-slim"
+  BASE_IMAGE_NAME: "${{ vars.DOCKER_ORG }}/nansat_base"
   TESTING_IMAGE_NAME: metanorm_tests
 jobs:
-  tests_build:
+  tests:
     name: Run unit tests and build package
     runs-on: 'ubuntu-latest'
+    strategy:
+      matrix:
+        version:
+          - {'python': '3.7', 'latest': false}
+          - {'python': '3.8', 'latest': false}
+          - {'python': '3.9', 'latest': false}
+          - {'python': '3.10', 'latest': false}
+          - {'python': '3.11', 'latest': true}
     steps:
       - name: 'Checkout repository'
         uses: actions/checkout@v4
@@ -40,7 +48,7 @@ jobs:
           context: ./docker
           file: ./docker/Dockerfile_tests
           build-args: |
-            BASE_IMAGE=${{ env.BASE_IMAGE_NAME }}
+            BASE_IMAGE=${{ env.BASE_IMAGE_NAME }}:latest-python${{ matrix.version.python }}
           push: false
           load: true
           tags: ${{ env.TESTING_IMAGE_NAME }}
@@ -71,29 +79,37 @@ jobs:
              "${TESTING_IMAGE_NAME}"
              bash -c "coverage run --source=./metanorm -m unittest discover tests"
 
-      - name: 'Install Python 3.7'
+      - name: 'Install Python 3.11'
+        if: ${{ matrix.version.latest }}
         uses: actions/setup-python@v4
         with:
-          python-version: '3.7'
+          python-version: '3.11'
 
       - name: 'Upload coverage to coveralls.io'
+        if: ${{ matrix.version.latest }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: pip install coveralls && coveralls --service=github
 
+
+  publish_python_package:
+    name: Build Python package and publish it as a release artifact
+    runs-on: 'ubuntu-latest'
+    needs: 'tests'
+    if: ${{ github.event_name == 'release' }}
+    steps:
+      - name: 'Checkout repository'
+        uses: actions/checkout@v4
+
       - name: 'Build Python package'
-        if: startsWith(github.event.ref, 'refs/tags/')
-        env:
-          TAG_REF: ${{ github.ref }}
         run: >
              docker run --rm
              -v "$(pwd):/src"
-             -e "METANORM_RELEASE=${TAG_REF#refs/tags/}"
+             -e "METANORM_RELEASE=${{ github.ref_name }}"
              "${TESTING_IMAGE_NAME}"
              python setup.py sdist bdist_wheel
 
       - name: 'Deploy package to the Github release'
-        if: startsWith(github.event.ref, 'refs/tags/')
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
