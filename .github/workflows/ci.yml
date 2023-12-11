@@ -101,13 +101,16 @@ jobs:
       - name: 'Checkout repository'
         uses: actions/checkout@v4
 
+      - name: 'Install Python 3.11'
+        if: ${{ matrix.version.latest }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
       - name: 'Build Python package'
-        run: >
-             docker run --rm
-             -v "$(pwd):/src"
-             -e "METANORM_RELEASE=${{ github.ref_name }}"
-             "${TESTING_IMAGE_NAME}"
-             python setup.py sdist bdist_wheel
+        env:
+          METANORM_RELEASE: ${{ github.ref_name }}
+        run: python setup.py sdist bdist_wheel
 
       - name: 'Deploy package to the Github release'
         env:
