@@ -108,6 +108,9 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: 'Install build tools'
+        run: pip install setuptools wheel
+
       - name: 'Build Python package'
         env:
           METANORM_RELEASE: ${{ github.ref_name }}
