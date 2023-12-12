@@ -1,4 +1,5 @@
 """Tests for the utils module"""
+import importlib
 import re
 import unittest
 import unittest.mock as mock
@@ -413,9 +414,10 @@ class SubclassesTestCase(unittest.TestCase):
             (mock.Mock(), 'module1', False),
             (mock.Mock(), 'module2', False)
         )
-        with mock.patch('pkgutil.iter_modules', return_value=iter(modules)), \
-             mock.patch('importlib.import_module') as mock_import_module, \
-             mock.patch('sys.modules') as mock_sys_modules:
-            package__all__ = []
-            utils.export_subclasses(package__all__, 'package', '/foo/package', self.Base)
+        with mock.patch.dict('sys.modules', {'package': mock.Mock()}):
+            patched_utils = importlib.import_module('metanorm.utils')
+            with mock.patch('pkgutil.iter_modules', return_value=iter(modules)), \
+                mock.patch('importlib.import_module'):
+                package__all__ = []
+                patched_utils.export_subclasses(package__all__, 'package', '/foo/package', self.Base)
         self.assertCountEqual(package__all__, ['Base', 'A', 'B', 'C', 'D'])
