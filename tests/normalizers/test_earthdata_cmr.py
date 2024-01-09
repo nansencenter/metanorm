@@ -103,6 +103,11 @@ class EarthdataCMRMetadataNormalizerTestCase(unittest.TestCase):
             'Description: Platform=SUOMI-NPP, ' +
             'Instrument=VIIRS, Start date=2020-09-01T00:06:00Z;' +
             'Processing level: 2')
+        attributes['umm']['CollectionReference']['ShortName'] = 'VIIRSN'
+        self.assertEqual(
+            self.normalizer.get_summary(attributes),
+            'Description: Platform=SUOMI-NPP, ' +
+            'Instrument=VIIRS, Start date=2020-09-01T00:06:00Z')
 
     def test_summary_missing_attribute(self):
         """A MetadataNormalizationError must be raised if the raw
@@ -217,8 +222,8 @@ class EarthdataCMRMetadataNormalizerTestCase(unittest.TestCase):
         with self.assertRaises(MetadataNormalizationError):
             self.normalizer.get_instrument({'umm': {'foo': 'bar'}})
 
-    def test_location_geometry(self):
-        """Test getting the location_geometry"""
+    def test_location_geometry_one_bounding_box(self):
+        """Test getting the location_geometry from one bounding box"""
 
         attributes = {
             'umm': {
@@ -238,13 +243,108 @@ class EarthdataCMRMetadataNormalizerTestCase(unittest.TestCase):
                 }
             }
         }
-        expected_wkt = ('POLYGON(('
+        expected_wkt = ('GEOMETRYCOLLECTION('
+            'POLYGON(('
             '155.812729 -84.093506,'
             '-84.524773 -84.093506,'
             '-84.524773 -54.569214,'
             '155.812729 -54.569214,'
-            '155.812729 -84.093506))')
+            '155.812729 -84.093506)))')
+        self.assertEqual(self.normalizer.get_location_geometry(attributes), expected_wkt)
 
+    def test_location_geometry_multiple_bounding_boxes(self):
+        """Test getting the location_geometry from multiple bounding boxes"""
+
+        attributes = {
+            'umm': {
+                "SpatialExtent": {
+                    "HorizontalSpatialDomain": {
+                        "Geometry": {
+                            "BoundingRectangles": [
+                                {
+                                    "EastBoundingCoordinate": -84.524773,
+                                    "SouthBoundingCoordinate": -84.093506,
+                                    "NorthBoundingCoordinate": -54.569214,
+                                    "WestBoundingCoordinate": 155.812729
+                                },
+                                {
+                                    "EastBoundingCoordinate": 80.0,
+                                    "SouthBoundingCoordinate": 50.0,
+                                    "NorthBoundingCoordinate": 60.0,
+                                    "WestBoundingCoordinate": 70.0
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+        expected_wkt = ('GEOMETRYCOLLECTION('
+            'POLYGON(('
+            '155.812729 -84.093506,'
+            '-84.524773 -84.093506,'
+            '-84.524773 -54.569214,'
+            '155.812729 -54.569214,'
+            '155.812729 -84.093506)),'
+            'POLYGON(('
+            '70.0 50.0,'
+            '80.0 50.0,'
+            '80.0 60.0,'
+            '70.0 60.0,'
+            '70.0 50.0)))')
+        self.assertEqual(self.normalizer.get_location_geometry(attributes), expected_wkt)
+
+    def test_location_geometry_gpolygons(self):
+        """Test getting the location_geometry from gpolygons"""
+
+        attributes = {
+            'umm': {
+                "SpatialExtent": {
+                    "HorizontalSpatialDomain": {
+                        "Geometry": {
+                            "GPolygons": [
+                                {
+                                    'Boundary': {
+                                        'Points': [
+                                            {'Longitude': 80.0, 'Latitude': 50.0},
+                                            {'Longitude': 60.0, 'Latitude': 50.0},
+                                            {'Longitude': 60.0, 'Latitude': 70.0},
+                                            {'Longitude': 80.0, 'Latitude': 70.0},
+                                            {'Longitude': 80.0, 'Latitude': 50.0},
+                                        ]
+                                    },
+                                    'ExclusiveZone': {
+                                        'Boundaries': [{
+                                            'Points': [
+                                                {'Longitude': 75, 'Latitude': 55},
+                                                {'Longitude': 65, 'Latitude': 55},
+                                                {'Longitude': 65, 'Latitude': 65},
+                                                {'Longitude': 75, 'Latitude': 65},
+                                                {'Longitude': 75, 'Latitude': 55},
+                                            ]
+                                        }]
+                                    }
+                                },
+                                {
+                                    'Boundary': {
+                                        'Points': [
+                                            {'Longitude': 20.0, 'Latitude': 40.0},
+                                            {'Longitude': 20.0, 'Latitude': 30.0},
+                                            {'Longitude': 10.0, 'Latitude': 30.0},
+                                            {'Longitude': 20.0, 'Latitude': 40.0},
+                                        ]
+                                    },
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+        expected_wkt = (
+            'GEOMETRYCOLLECTION('
+            'POLYGON ((80 50, 60 50, 60 70, 80 70, 80 50), (75 55, 65 55, 65 65, 75 65, 75 55)),'
+            'POLYGON ((20 40, 20 30, 10 30, 20 40)))')
         self.assertEqual(self.normalizer.get_location_geometry(attributes), expected_wkt)
 
     def test_location_geometry_missing_attribute(self):
