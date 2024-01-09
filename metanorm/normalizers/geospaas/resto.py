@@ -1,4 +1,6 @@
-"""Normalizer for the metadata used in the Creodias finder API"""
+"""Normalizer for the metadata used in a resto API
+(https://github.com/jjrom/resto)
+"""
 
 import dateutil
 import dateutil.parser
@@ -9,8 +11,8 @@ from .base import GeoSPaaSMetadataNormalizer
 from ...errors import MetadataNormalizationError
 
 
-class CreodiasEOFinderMetadataNormalizer(GeoSPaaSMetadataNormalizer):
-    """Generate the properties of a GeoSPaaS Dataset using Creodias
+class RestoAPIMetadataNormalizer(GeoSPaaSMetadataNormalizer):
+    """Generate the properties of a GeoSPaaS Dataset using resto
     attributes
     """
 
@@ -21,12 +23,10 @@ class CreodiasEOFinderMetadataNormalizer(GeoSPaaSMetadataNormalizer):
         `raw_metadata['services']['download']['url']`
         (original location)
         """
-        url = (
-            raw_metadata.get('url', '') or
-            raw_metadata.get('services', {}).get('download', {}).get('url', '')
-        )
-        return any(url.startswith(prefix) for prefix in ('https://datahub.creodias.eu/download/',
-                                                         'https://zipper.creodias.eu'))
+        attributes = set((
+            'collection', 'status', 'license', 'productIdentifier', 'parentIdentifier', 'title',
+            'description', 'productType', 'sensorMode', 'resolution', 'services', 'links'))
+        return attributes.issubset(set(raw_metadata.keys()))
 
     @utils.raises(KeyError)
     def get_entry_title(self, raw_metadata):
