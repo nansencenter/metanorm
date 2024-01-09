@@ -1,4 +1,4 @@
-"""Tests for the Creodias metadata normalizer"""
+"""Tests for the resto API metadata normalizer"""
 import unittest
 import unittest.mock as mock
 from datetime import datetime
@@ -9,36 +9,59 @@ import metanorm.normalizers as normalizers
 from metanorm.errors import MetadataNormalizationError
 
 
-class CreodiasEOFinderMetadataNormalizerTestCase(unittest.TestCase):
-    """Tests for the Creodias API attributes normalizer"""
+class RestoAPIMetadataNormalizerTestCase(unittest.TestCase):
+    """Tests for the restp API attributes normalizer"""
 
     def setUp(self):
-        self.normalizer = normalizers.geospaas.CreodiasEOFinderMetadataNormalizer()
+        self.normalizer = normalizers.geospaas.RestoAPIMetadataNormalizer()
 
     def test_check(self):
         """Test the checking condition"""
-        valid_urls = ('https://zipper.creodias.eu/download/023c3fe8-bfac-5b58-a359-6aab4bf30bd6',
-                      'https://datahub.creodias.eu/download/d4e81902-cc32-42dd-bc45-daf789e593cd')
-        invalid_url = 'https://apihub.copernicus.eu/'
+        valid_metadata = {
+            'collection': "S2GLC",
+            'status': "ONLINE",
+            'license': {},
+            'productIdentifier': "/eodata/auxdata/S2GLC/2017/S2GLC_T32TQS_2017",
+            'parentIdentifier': None,
+            'title': "S2GLC_T32TQS_2017",
+            'description': "The S2GLC 2017 product r…ps://s2glc.cbk.waw.pl/].",
+            'organisationName': None,
+            'startDate': "2019-07-15T00:00:00.000Z",
+            'completionDate': "2019-07-15T00:00:00.000Z",
+            'productType': "GLC",
+            'processingLevel': None,
+            'platform': "",
+            'instrument': None,
+            'resolution': 0,
+            'sensorMode': None,
+            'orbitNumber': 0,
+            'quicklook': None,
+            'thumbnail': "https://catalogue.datasp…32TQS_2017/thumbnail.png",
+            'updated': "2019-10-04T09:46:30.218Z",
+            'published': "2019-10-04T09:46:30.218Z",
+            'snowCover': 0,
+            'cloudCover': 0,
+            'gmlgeometry': '<gml:Polygon srsName="EP…undaryIs></gml:Polygon>',
+            'centroid': {},
+            'version': 0,
+            'services': {},
+            'links': [],
+            'foo': 'bar',
+        }
+        invalid_metadata_examples = [
+            {'productType': "GLC", 'processingLevel': None},
+            {},
+            {'foo': 'bar'}
+        ]
 
         # use the URL attribute added in geospaas_harvesting
-        for valid_url in valid_urls:
-            self.assertTrue(self.normalizer.check({'url': valid_url}),
-                            f"{valid_url} should be valid")
-        self.assertFalse(self.normalizer.check({'url': invalid_url}))
-
-        # use the URL attribute in the original location
-        for valid_url in valid_urls:
-            self.assertTrue(self.normalizer.check({'services': {'download': {'url': valid_url}}}),
-                            f"{valid_url} should be valid")
-        self.assertFalse(self.normalizer.check({'services': {'download': {'url': invalid_url}}}))
-
-        # no URL attribute can be found
-        self.assertFalse(self.normalizer.check({}))
-        self.assertFalse(self.normalizer.check({'foo': 'bar'}))
+        self.assertTrue(self.normalizer.check(valid_metadata))
+        for invalid_metadata in invalid_metadata_examples:
+            self.assertFalse(self.normalizer.check(invalid_metadata),
+                             f"check for {invalid_metadata} should return False")
 
     def test_entry_title(self):
-        """entry_title from CreodiasEOFinderMetadataNormalizer"""
+        """entry_title from RestoAPIMetadataNormalizer"""
         self.assertEqual(self.normalizer.get_entry_title({'title': 'foo'}), 'foo')
 
     def test_missing_raw_title(self):
@@ -49,7 +72,7 @@ class CreodiasEOFinderMetadataNormalizerTestCase(unittest.TestCase):
             self.normalizer.get_entry_title({})
 
     def test_entry_id(self):
-        """entry_id from CreodiasEOFinderMetadataNormalizer """
+        """entry_id from RestoAPIMetadataNormalizer """
         attributes = {
             'url': "https://zipper.creodias.eu/foo",
             'title': 'id_value'
@@ -62,7 +85,7 @@ class CreodiasEOFinderMetadataNormalizerTestCase(unittest.TestCase):
             self.normalizer.get_entry_id({})
 
     def test_summary_description_only(self):
-        """summary from CreodiasEOFinderMetadataNormalizer"""
+        """summary from RestoAPIMetadataNormalizer"""
         attributes = {
             'startDate': '2018-04-18T01:02:03Z',
             'instrument': 'instrument_value',
@@ -75,7 +98,7 @@ class CreodiasEOFinderMetadataNormalizerTestCase(unittest.TestCase):
             'instrument=instrument_value, startDate=2018-04-18T01:02:03Z')
 
     def test_summary_with_processing_level(self):
-        """summary from CreodiasEOFinderMetadataNormalizer with processing level"""
+        """summary from RestoAPIMetadataNormalizer with processing level"""
         attributes = {
             'startDate': '2018-04-18T01:02:03Z',
             'instrument': 'instrument_value',
@@ -94,7 +117,7 @@ class CreodiasEOFinderMetadataNormalizerTestCase(unittest.TestCase):
             self.normalizer.get_summary({})
 
     def test_time_coverage_start(self):
-        """time_coverage_start from CreodiasEOFinderMetadataNormalizer"""
+        """time_coverage_start from RestoAPIMetadataNormalizer"""
         self.assertEqual(
             self.normalizer.get_time_coverage_start({'startDate': "2020-12-15T11:40:38.211Z"}),
             datetime(year=2020, month=12, day=15, hour=11, minute=40, second=38, tzinfo=tzutc()))
@@ -105,7 +128,7 @@ class CreodiasEOFinderMetadataNormalizerTestCase(unittest.TestCase):
             self.normalizer.get_time_coverage_start({})
 
     def test_time_coverage_end(self):
-        """time_coverage_end from CreodiasEOFinderMetadataNormalizer"""
+        """time_coverage_end from RestoAPIMetadataNormalizer"""
         self.assertEqual(
             self.normalizer.get_time_coverage_end({'completionDate': "2020-12-15T11:43:38.211Z"}),
             datetime(year=2020, month=12, day=15, hour=11, minute=43, second=38, tzinfo=tzutc()))
@@ -140,7 +163,7 @@ class CreodiasEOFinderMetadataNormalizerTestCase(unittest.TestCase):
             self.normalizer.get_instrument({})
 
     def test_location_geometry(self):
-        """location_geometry from CreodiasEOFinderMetadataNormalizer"""
+        """location_geometry from RestoAPIMetadataNormalizer"""
 
         attributes = {
             'geometry': '''{"type": "Polygon","coordinates": [[[-141.363,-70.8481],
