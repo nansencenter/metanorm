@@ -171,7 +171,7 @@ def gcmd_search(vocabulary_name, keyword, additional_keywords=None):
         # If the additional keywords did not manage to narrow down the search enough, or if no
         # additional keyword was provided, try the strict `get_` method from pythesint
         try:
-            gcmd_object = pti_get_method(keyword)
+            gcmd_object = pti_get_method(translated_keyword)
         except IndexError:
             pass
 
