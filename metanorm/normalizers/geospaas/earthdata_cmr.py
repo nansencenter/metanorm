@@ -4,6 +4,7 @@ import re
 
 import dateutil
 import dateutil.parser
+import shapely.geometry
 
 import metanorm.utils as utils
 
@@ -41,10 +42,12 @@ class EarthdataCMRMetadataNormalizer(GeoSPaaSMetadataNormalizer):
             f", Start date={umm['TemporalExtent']['RangeDateTime']['BeginningDateTime']}")
         summary_fields[utils.SUMMARY_FIELDS['description']] = description
 
-        processing_level = re.match(
+        processing_level_match = re.match(
             r'^.*_L(\d[^_]*)_.*$',
-            umm['CollectionReference']['ShortName']).group(1)
-        summary_fields[utils.SUMMARY_FIELDS['processing_level']] = processing_level
+            umm['CollectionReference'].get('ShortName', ''))
+        if processing_level_match:
+            summary_fields[
+                utils.SUMMARY_FIELDS['processing_level']] = processing_level_match.group(1)
 
         return utils.dict_to_string(summary_fields)
 
@@ -75,17 +78,33 @@ class EarthdataCMRMetadataNormalizer(GeoSPaaSMetadataNormalizer):
 
     @utils.raises((KeyError, IndexError))
     def get_location_geometry(self, raw_metadata):
-        bounds = (raw_metadata['umm']['SpatialExtent']
-                              ['HorizontalSpatialDomain']
-                              ['Geometry']
-                              ['BoundingRectangles']
-                              [0])
-        return utils.wkt_polygon_from_wgs84_limits(
-            bounds['NorthBoundingCoordinate'],
-            bounds['SouthBoundingCoordinate'],
-            bounds['EastBoundingCoordinate'],
-            bounds['WestBoundingCoordinate']
-        )
+        geometries = []
+        raw_geometry = (raw_metadata['umm']['SpatialExtent']
+                                ['HorizontalSpatialDomain']
+                                ['Geometry'])
+        try:
+            for bounds in raw_geometry['BoundingRectangles']:
+                geometries.append(utils.wkt_polygon_from_wgs84_limits(
+                    bounds['NorthBoundingCoordinate'],
+                    bounds['SouthBoundingCoordinate'],
+                    bounds['EastBoundingCoordinate'],
+                    bounds['WestBoundingCoordinate']))
+        except KeyError:
+            for gpolygon in raw_geometry['GPolygons']:
+                boundary = [(p['Longitude'], p['Latitude'])
+                            for p in gpolygon['Boundary']['Points']]
+                try:
+                    holes = [
+                        [
+                            (p['Longitude'], p['Latitude'])
+                            for p in hole['Points']
+                        ]
+                        for hole in gpolygon['ExclusiveZone']['Boundaries']
+                    ]
+                except KeyError:
+                    holes = []
+                geometries.append(shapely.geometry.Polygon(boundary, holes).wkt)
+        return f"GEOMETRYCOLLECTION({','.join(geometries)})"
 
     @utils.raises((KeyError, IndexError))
     def get_provider(self, raw_metadata):
