@@ -8,10 +8,10 @@ import metanorm.normalizers as normalizers
 from metanorm.errors import MetadataNormalizationError
 
 
-class GPortalGCOMAMSR2L3MetadataNormalizerTestCase(unittest.TestCase):
+class GPortalGCOMWAMSR2MetadataNormalizerTestCase(unittest.TestCase):
     """Tests for the GPortal GCOM-W ftp normalizer"""
     def setUp(self):
-        self.normalizer = normalizers.geospaas.GPortalGCOMAMSR2L3MetadataNormalizer()
+        self.normalizer = normalizers.geospaas.GPortalGCOMWAMSR2MetadataNormalizer()
 
     def test_check(self):
         """Test the checking condition"""
@@ -23,16 +23,20 @@ class GPortalGCOMAMSR2L3MetadataNormalizerTestCase(unittest.TestCase):
             'url': 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25/3/2018/07/'
                    'GW1AM2_20180703_01D_EQOA_L3SGSSTHB3300300.h5'
         }))
+        self.assertTrue(self.normalizer.check({
+            'url': 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L1R/2/2020/02/'
+                   'GW1AM2_202002011046_045A_L1SGRTBR_2220220.h5'
+        }))
 
         self.assertFalse(self.normalizer.check({}))
         self.assertFalse(self.normalizer.check({'url': 'ftp://foo/bar'}))
 
     def test_entry_title(self):
-        """entry_title from GPortalGCOMAMSR2L3MetadataNormalizer """
-        self.assertEqual(self.normalizer.get_entry_title({}), 'AMSR2-L3 Sea Surface Temperature')
+        """entry_title from GPortalGCOMWAMSR2MetadataNormalizer """
+        self.assertEqual(self.normalizer.get_entry_title({}), 'GCOM-W AMSR2')
 
     def test_entry_id(self):
-        """entry_id from GPortalGCOMAMSR2L3MetadataNormalizer """
+        """entry_id from GPortalGCOMWAMSR2MetadataNormalizer """
         attributes = {
             'url': 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25/3/2012/07/'
                    'GW1AM2_201207031905_134D_L2SGSSTLB3300300.h5'}
@@ -49,10 +53,19 @@ class GPortalGCOMAMSR2L3MetadataNormalizerTestCase(unittest.TestCase):
             self.normalizer.get_entry_id({})
 
     def test_summary(self):
-        """summary from GPortalGCOMAMSR2L3MetadataNormalizer """
+        """summary from GPortalGCOMWAMSR2MetadataNormalizer """
         self.assertEqual(
-            self.normalizer.get_summary({}),
+            self.normalizer.get_summary({
+                'url': 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25/3/2017/12/'
+                       'GW1AM2_20171201_01D_EQOA_L3SGSSTLB3300300.h5'
+            }),
             'Description: GCOM-W AMSR2 data;Processing level: 3')
+        self.assertEqual(
+            self.normalizer.get_summary({
+                'url': 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L1R/2/2020/02/'
+                       'GW1AM2_202002011046_045A_L1SGRTBR_2220220.h5'
+            }),
+            'Description: GCOM-W AMSR2 data;Processing level: 1R')
 
     def test_time_coverage_start_day(self):
         """Test getting time_coverage_start from a day file"""
@@ -118,14 +131,7 @@ class GPortalGCOMAMSR2L3MetadataNormalizerTestCase(unittest.TestCase):
                 mock_get_gcmd_method.return_value)
 
     def test_location_geometry(self):
-        """geometry from GPortalGCOMAMSR2L3MetadataNormalizer """
+        """geometry from GPortalGCOMWAMSR2MetadataNormalizer """
         self.assertEqual(
             self.normalizer.get_location_geometry({}),
             'POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))')
-
-    def test_dataset_parameters(self):
-        """dataset_parameters from GPortalGCOMAMSR2L3MetadataNormalizer """
-        with mock.patch('metanorm.utils.create_parameter_list') as mock_get_gcmd_method:
-            self.assertEqual(
-                self.normalizer.get_dataset_parameters({}),
-                mock_get_gcmd_method.return_value)
