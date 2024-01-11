@@ -1,4 +1,4 @@
-"""Normalizer for the Copernicus In Situ TAC metadata convention"""
+"""Normalizer for NextSIM datasets"""
 
 import re
 from datetime import timedelta, timezone
@@ -13,12 +13,11 @@ from ...errors import MetadataNormalizationError
 
 
 class NextsimMetadataNormalizer(GeoSPaaSMetadataNormalizer):
-    """Generate the properties of a GeoSPaaS Dataset using
-    CMEMS In Situ TAC attributes
+    """Generate the properties of a NextSIM GeoSPaaS Dataset
     """
 
     def check(self, raw_metadata):
-        """Check that the dataset's id matches CMEMS in situ TAC data"""
+        """Check that the dataset's id matches a NextSIM file"""
         try:
             entry_id = self.get_entry_id(raw_metadata)
         except MetadataNormalizationError:
