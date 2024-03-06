@@ -25,7 +25,10 @@ class EarthdataCMRMetadataNormalizer(GeoSPaaSMetadataNormalizer):
 
     @utils.raises((KeyError, IndexError))
     def get_entry_id(self, raw_metadata):
-        return raw_metadata['umm']['DataGranule']['Identifiers'][0]['Identifier'].rstrip('.nc')
+        try:
+            return raw_metadata['umm']['DataGranule']['Identifiers'][0]['Identifier'].rstrip('.nc')
+        except KeyError:
+            return raw_metadata['umm']['GranuleUR']
 
     @utils.raises((KeyError, IndexError))
     def get_summary(self, raw_metadata):
@@ -33,10 +36,13 @@ class EarthdataCMRMetadataNormalizer(GeoSPaaSMetadataNormalizer):
         description = ''
         umm = raw_metadata['umm']
 
-        for platform in umm['Platforms']:
-            description += (
-                f"Platform={platform['ShortName']}, " +
-                ', '.join(f"Instrument={i['ShortName']}" for i in platform['Instruments']))
+        try:
+            for platform in umm['Platforms']:
+                description += (
+                    f"Platform={platform['ShortName']}, " +
+                    ', '.join(f"Instrument={i['ShortName']}" for i in platform['Instruments']))
+        except KeyError:
+            pass
 
         description += (
             f", Start date={umm['TemporalExtent']['RangeDateTime']['BeginningDateTime']}")
@@ -66,7 +72,10 @@ class EarthdataCMRMetadataNormalizer(GeoSPaaSMetadataNormalizer):
         """Only get the first platform from the raw metadata, because
         GeoSPaaS does not support more than one platform per dataset
         """
-        return utils.get_gcmd_platform(raw_metadata['umm']['Platforms'][0]['ShortName'])
+        try:
+            return utils.get_gcmd_platform(raw_metadata['umm']['Platforms'][0]['ShortName'])
+        except KeyError:
+            return utils.get_gcmd_platform('UNKNOWN')
 
     @utils.raises((KeyError, IndexError))
     def get_instrument(self, raw_metadata):
