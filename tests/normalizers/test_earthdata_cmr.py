@@ -1,6 +1,7 @@
 """Tests for the ACDD metadata normalizer"""
 import unittest
 import unittest.mock as mock
+from collections import OrderedDict
 from datetime import datetime
 
 from dateutil.tz import tzutc
@@ -189,10 +190,15 @@ class EarthdataCMRMetadataNormalizerTestCase(unittest.TestCase):
         """A MetadataNormalizationError must be raised if the raw
         attribute is missing
         """
-        with self.assertRaises(MetadataNormalizationError):
-            self.normalizer.get_platform({})
-        with self.assertRaises(MetadataNormalizationError):
-            self.normalizer.get_platform({'umm': {'foo': 'bar'}})
+        unknown_platform = OrderedDict([
+            ('Category', 'Unknown'),
+            ('Series_Entity', 'Unknown'),
+            ('Short_Name', 'Unknown'),
+            ('Long_Name', 'Unknown')
+        ])
+        self.assertDictEqual(self.normalizer.get_platform({}), unknown_platform)
+        self.assertDictEqual(self.normalizer.get_platform({'umm': {'foo': 'bar'}}),
+                             unknown_platform)
 
     def test_instrument(self):
         """Test getting the instrument"""
