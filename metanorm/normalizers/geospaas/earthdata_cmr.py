@@ -40,12 +40,12 @@ class EarthdataCMRMetadataNormalizer(GeoSPaaSMetadataNormalizer):
             for platform in umm['Platforms']:
                 description += (
                     f"Platform={platform['ShortName']}, " +
-                    ', '.join(f"Instrument={i['ShortName']}" for i in platform['Instruments']))
+                    ', '.join(f"Instrument={i['ShortName']}" for i in platform['Instruments']) +
+                    ', ')
         except KeyError:
             pass
+        description += f"Start date={umm['TemporalExtent']['RangeDateTime']['BeginningDateTime']}"
 
-        description += (
-            f", Start date={umm['TemporalExtent']['RangeDateTime']['BeginningDateTime']}")
         summary_fields[utils.SUMMARY_FIELDS['description']] = description
 
         processing_level_match = re.match(
