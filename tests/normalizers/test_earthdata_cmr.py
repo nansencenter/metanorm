@@ -39,6 +39,11 @@ class EarthdataCMRMetadataNormalizerTestCase(unittest.TestCase):
         }
         self.assertEqual(self.normalizer.get_entry_id(attributes), 'V2020245000600.L2_SNPP_OC')
 
+    def test_entry_id_from_granuleUR(self):
+        """Test getting the ID from the GranuleUR field"""
+        attributes = {'umm': {'GranuleUR': 'foo'}}
+        self.assertEqual(self.normalizer.get_entry_id(attributes), 'foo')
+
     def test_entry_id_missing_attribute(self):
         """A MetadataNormalizationError must be raised if the raw
         attribute is missing
@@ -109,6 +114,27 @@ class EarthdataCMRMetadataNormalizerTestCase(unittest.TestCase):
             self.normalizer.get_summary(attributes),
             'Description: Platform=SUOMI-NPP, ' +
             'Instrument=VIIRS, Start date=2020-09-01T00:06:00Z')
+
+    def test_summary_no_platform(self):
+        """Test getting a summary when no platform info is available
+        """
+        attributes = {
+            "umm": {
+                "TemporalExtent": {
+                    "RangeDateTime": {
+                        "BeginningDateTime": "2020-09-01T00:06:00Z",
+                        "EndingDateTime": "2020-09-01T00:11:59Z"
+                    }
+                },
+                "CollectionReference": {
+                    "ShortName": "VIIRSN_L2_OC",
+                    "Version": "2018"
+                }
+            }
+        }
+        self.assertEqual(
+            self.normalizer.get_summary(attributes),
+            'Description: Start date=2020-09-01T00:06:00Z;Processing level: 2')
 
     def test_summary_missing_attribute(self):
         """A MetadataNormalizationError must be raised if the raw
