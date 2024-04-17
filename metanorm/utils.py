@@ -80,6 +80,7 @@ PYTHESINT_KEYWORD_TRANSLATION = {
     # providers
     'ESA/EO': ('ESA',),
     'OB.DAAC': ('OB_DAAC',),
+    'NASA/JPL/PODAAC': ('POCLOUD',),
     'C-SAR': ('SAR-C', 'SAR-C SAR'),
     'EUMETSAT/OSISAF': ('EUMETSAT OSI SAF',),
     'NSIDC': ('NSIDC_ECS',),
