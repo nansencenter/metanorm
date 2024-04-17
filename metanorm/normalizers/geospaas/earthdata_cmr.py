@@ -75,7 +75,7 @@ class EarthdataCMRMetadataNormalizer(GeoSPaaSMetadataNormalizer):
         try:
             return utils.get_gcmd_platform(raw_metadata['umm']['Platforms'][0]['ShortName'])
         except KeyError:
-            return utils.get_gcmd_platform('UNKNOWN')
+            return utils.get_gcmd_platform(utils.UNKNOWN)
 
     @utils.raises((KeyError, IndexError))
     def get_instrument(self, raw_metadata):
