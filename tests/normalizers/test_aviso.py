@@ -158,6 +158,23 @@ class AVISOAltimetryMetadataNormalizerTests(unittest.TestCase):
         """Test getting the geometry"""
         self.assertEqual(self.normalizer.get_location_geometry({'geometry': 'wkt'}), 'wkt')
 
+    def test_get_location_geometry_bbox(self):
+        """Test building a bounding box"""
+        attributes = {
+            'geospatial_lat_max': "9.47472000",
+            'geospatial_lat_min': "-15.3505001",
+            'geospatial_lon_max': "-142.755005",
+            'geospatial_lon_min': "-175.084000"
+        }
+        expected_geometry = ('POLYGON((' +
+                             '-175.084000 -15.3505001,' +
+                             '-142.755005 -15.3505001,' +
+                             '-142.755005 9.47472000,' +
+                             '-175.084000 9.47472000,' +
+                             '-175.084000 -15.3505001))')
+
+        self.assertEqual(self.normalizer.get_location_geometry(attributes), expected_geometry)
+
     def test_missing_geometry(self):
         """An empty string must be returned when the geometry raw
         attribute is missing
