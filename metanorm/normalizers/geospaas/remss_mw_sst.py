@@ -14,7 +14,9 @@ class REMSSMWSSTMetadataNormalizer(GeoSPaaSMetadataNormalizer):
 
     def check(self, raw_metadata):
         """Checks that the URL starts with the right prefix"""
-        return '://data.remss.com/SST/daily/mw/' in raw_metadata.get('url', '')
+        return bool(re.match(
+            r'(https|ftp)://(data|ftp).remss.com/SST/daily/mw/',
+            raw_metadata.get('url', '')))
 
     def get_entry_title(self, raw_metadata):
         return 'Sea surface temperature from passive microwave sensors'
