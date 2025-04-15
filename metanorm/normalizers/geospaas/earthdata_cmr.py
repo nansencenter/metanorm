@@ -82,8 +82,11 @@ class EarthdataCMRMetadataNormalizer(GeoSPaaSMetadataNormalizer):
         """Only get the first instrument from the raw metadata, because
         GeoSPaaS does not support more than one instrument per dataset
         """
-        return utils.get_gcmd_instrument(
-            raw_metadata['umm']['Platforms'][0]['Instruments'][0]['ShortName'])
+        try:
+            return utils.get_gcmd_instrument(
+                raw_metadata['umm']['Platforms'][0]['Instruments'][0]['ShortName'])
+        except KeyError:
+            return utils.get_gcmd_instrument(utils.UNKNOWN)
 
     @utils.raises((KeyError, IndexError))
     def get_location_geometry(self, raw_metadata):
