@@ -246,13 +246,10 @@ class EarthdataCMRMetadataNormalizerTestCase(unittest.TestCase):
             mock_get_gcmd_method.assert_called_with('VIIRS')
 
     def test_instrument_missing_attribute(self):
-        """A MetadataNormalizationError must be raised if the raw
-        attribute is missing
+        """An unknown instrument must be returned if the raw attribute
+        is missing
         """
-        with self.assertRaises(MetadataNormalizationError):
-            self.normalizer.get_instrument({})
-        with self.assertRaises(MetadataNormalizationError):
-            self.normalizer.get_instrument({'umm': {'foo': 'bar'}})
+        self.assertEqual(self.normalizer.get_instrument({})['Category'], 'Unknown')
 
     def test_location_geometry_one_bounding_box(self):
         """Test getting the location_geometry from one bounding box"""
